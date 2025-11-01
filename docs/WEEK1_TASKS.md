@@ -299,7 +299,7 @@ Create docker-compose.yml with PostgreSQL 15 and Redis 7.
 Use the template from WEEK1_TASKS.md"
 
 # 2. Claude will create files, you test:
-docker-compose up -d
+docker compose up -d
 
 # 3. When working, commit:
 git add backend/docker-compose.yml backend/.env.example

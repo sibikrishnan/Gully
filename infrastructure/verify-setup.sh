@@ -32,7 +32,7 @@ check "Docker is installed"
 
 # Docker Compose
 echo "Checking Docker Compose..."
-docker-compose --version > /dev/null 2>&1
+docker compose version > /dev/null 2>&1
 check "Docker Compose is installed"
 
 # Docker Daemon
@@ -68,7 +68,7 @@ if [ $? -eq 0 ]; then
     check "Can connect to PostgreSQL"
 else
     echo -e "${YELLOW}⚠️  PostgreSQL container is NOT running${NC}"
-    echo -e "${YELLOW}→ Start with: cd backend && docker-compose up -d${NC}"
+    echo -e "${YELLOW}→ Start with: cd backend && docker compose up -d${NC}"
 fi
 
 # Redis Container
@@ -82,7 +82,7 @@ if [ $? -eq 0 ]; then
     check "Can connect to Redis"
 else
     echo -e "${YELLOW}⚠️  Redis container is NOT running${NC}"
-    echo -e "${YELLOW}→ Start with: cd backend && docker-compose up -d${NC}"
+    echo -e "${YELLOW}→ Start with: cd backend && docker compose up -d${NC}"
 fi
 
 # Git

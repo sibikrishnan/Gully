@@ -58,8 +58,8 @@ docker --version
 # Should show: Docker version 24.x.x
 
 # Check Docker Compose
-docker-compose --version
-# Should show: docker-compose version 2.x.x
+docker compose version
+# Should show: Docker Compose version v2.x.x
 
 # Test Docker is running
 docker run hello-world
@@ -76,10 +76,10 @@ Once Docker is running, proceed:
 cd /Users/sibikrishnan/Documents/Gully/backend
 
 # Start all services
-docker-compose up -d
+docker compose up -d
 
 # Verify services are running
-docker-compose ps
+docker compose ps
 
 # Expected output:
 # NAME                  IMAGE           STATUS          PORTS
@@ -90,25 +90,25 @@ docker-compose ps
 ### View Logs
 ```bash
 # All services
-docker-compose logs -f
+docker compose logs -f
 
 # Just PostgreSQL
-docker-compose logs -f postgres
+docker compose logs -f postgres
 
 # Just Redis
-docker-compose logs -f redis
+docker compose logs -f redis
 ```
 
 ### Stop Services
 ```bash
 # Stop (data persists)
-docker-compose stop
+docker compose stop
 
 # Stop and remove containers (data persists in volumes)
-docker-compose down
+docker compose down
 
 # Stop and DELETE all data (use carefully!)
-docker-compose down -v
+docker compose down -v
 ```
 
 ---
@@ -206,13 +206,13 @@ Expected output:
 ### PostgreSQL Connection Refused
 ```bash
 # Check if container is running
-docker-compose ps
+docker compose ps
 
 # Check logs for errors
-docker-compose logs postgres
+docker compose logs postgres
 
 # Restart the container
-docker-compose restart postgres
+docker compose restart postgres
 ```
 
 ### Port Already in Use
@@ -230,10 +230,10 @@ brew services stop postgresql@15
 ### Redis Connection Issues
 ```bash
 # Check if container is running
-docker-compose ps
+docker compose ps
 
 # Check logs
-docker-compose logs redis
+docker compose logs redis
 
 # Test connection
 docker exec -it gully-redis redis-cli PING
@@ -250,10 +250,10 @@ docker exec -it gully-redis redis-cli PING
 cd /Users/sibikrishnan/Documents/Gully/backend
 
 # Start all services (PostgreSQL, Redis)
-docker-compose up -d
+docker compose up -d
 
 # Verify running
-docker-compose ps
+docker compose ps
 
 # Start your app (after Week 1 setup)
 npm run dev
@@ -262,17 +262,17 @@ npm run dev
 ### Stopping Your Dev Environment
 ```bash
 # Stop services (data persists)
-docker-compose stop
+docker compose stop
 
 # Or stop and remove containers
-docker-compose down
+docker compose down
 ```
 
 ### Resetting Database (Fresh Start)
 ```bash
 # WARNING: This deletes all data!
-docker-compose down -v  # -v removes volumes
-docker-compose up -d
+docker compose down -v  # -v removes volumes
+docker compose up -d
 npm run migrate:latest  # Re-run migrations
 npm run seed:run        # Re-seed test data
 ```

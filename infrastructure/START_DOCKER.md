@@ -45,10 +45,10 @@ Once Docker is running:
 cd /Users/sibikrishnan/Documents/Gully/backend
 
 # Start PostgreSQL and Redis
-docker-compose up -d
+docker compose up -d
 
 # Verify services are running
-docker-compose ps
+docker compose ps
 
 # Expected output:
 # NAME             IMAGE                 STATUS         PORTS
@@ -62,22 +62,22 @@ docker-compose ps
 
 ```bash
 # Start services
-docker-compose up -d
+docker compose up -d
 
 # Stop services (keeps data)
-docker-compose stop
+docker compose stop
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # Restart services
-docker-compose restart
+docker compose restart
 
 # Stop and remove containers (keeps data in volumes)
-docker-compose down
+docker compose down
 
 # Reset everything (DELETES ALL DATA!)
-docker-compose down -v
+docker compose down -v
 ```
 
 ---
