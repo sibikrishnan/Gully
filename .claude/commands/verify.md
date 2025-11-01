@@ -1,7 +1,3 @@
----
-description: Verify current setup - check Docker, database, and dependencies
----
-
 Run verification checks for the development environment:
 
 1. Check Docker services status:

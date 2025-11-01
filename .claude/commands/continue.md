@@ -1,7 +1,3 @@
----
-description: Continue from last task - auto-load context and start next task
----
-
 1. Read TASK_HISTORY.md to identify the next pending task
 2. Read the task specification from docs/WEEK1_TASKS.md
 3. Provide a brief summary of what will be done (3-4 bullet points)

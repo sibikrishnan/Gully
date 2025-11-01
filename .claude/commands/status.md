@@ -1,7 +1,3 @@
----
-description: Quick context check - show current project status and next tasks
----
-
 Read TASK_HISTORY.md and provide a 3-5 sentence summary of:
 1. Current week and phase
 2. Last completed task (with commit hash)
