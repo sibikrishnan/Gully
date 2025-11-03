@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2025-11-03T12:00:00Z",
+  "description": "Task registry for structured task management with automated workflow enforcement",
+  "tasks": [
+    {
+      "id": "3",
+      "file": "task-3-jwt-utils.json",
+      "status": "pending",
+      "priority": "critical",
+      "title": "JWT Utils Implementation and Testing"
+    },
+    {
+      "id": "4",
+      "file": "task-4-auth-tests.json",
+      "status": "pending",
+      "priority": "critical",
+      "title": "Auth Middleware and Passport Integration Tests"
+    }
+  ]
+}

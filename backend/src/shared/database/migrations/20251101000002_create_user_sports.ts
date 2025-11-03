@@ -4,11 +4,12 @@ export async function up(knex: Knex): Promise<void> {
   // Create user_sports table
   await knex.schema.createTable('user_sports', (table) => {
     // Primary key
-    table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
+    table.increments('id').primary();
 
     // Foreign key to users
     table
-      .uuid('user_id')
+      .integer('user_id')
+      .unsigned()
       .notNullable()
       .references('id')
       .inTable('users')

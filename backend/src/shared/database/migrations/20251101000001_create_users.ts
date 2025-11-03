@@ -4,7 +4,7 @@ export async function up(knex: Knex): Promise<void> {
   // Create users table
   await knex.schema.createTable('users', (table) => {
     // Primary key
-    table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
+    table.increments('id').primary();
 
     // Authentication fields
     table.string('username', 50).notNullable().unique();
@@ -12,31 +12,32 @@ export async function up(knex: Knex): Promise<void> {
     table.string('password_hash', 255).notNullable();
 
     // Profile fields
-    table.string('phone', 20);
+    table.string('phone_number', 20);
     table.string('full_name', 100);
-    table.string('avatar_url', 500);
-    table.text('bio');
+    table.string('profile_image_url', 500);
+
+    // Skill level
+    table.enu('skill_level', ['beginner', 'intermediate', 'advanced', 'expert']).notNullable();
 
     // Location fields
-    table.string('location_city', 100);
-    table.string('location_country', 100);
-
-    // Personal info
-    table.date('date_of_birth');
+    table.decimal('location_lat', 10, 7);
+    table.decimal('location_lng', 10, 7);
+    table.string('location_name', 255);
+    table.integer('preferred_radius_km').defaultTo(10);
 
     // Status fields
-    table.boolean('is_verified').defaultTo(false);
-    table.boolean('is_active').defaultTo(true);
+    table.enu('status', ['active', 'inactive', 'suspended']).defaultTo('active');
 
     // Timestamps
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
-    table.timestamp('last_active');
+    table.timestamp('last_login_at');
 
     // Indexes
     table.index('username');
     table.index('email');
     table.index('created_at');
+    table.index(['location_lat', 'location_lng']); // For geo queries
   });
 
   // Create updated_at trigger function
