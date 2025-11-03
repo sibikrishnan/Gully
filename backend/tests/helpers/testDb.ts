@@ -1,97 +1,87 @@
-/**
- * Test Database Utilities
- * Setup, teardown, and seed helpers for tests
- */
+import knex, { Knex } from 'knex';
+import knexConfig from '../../knexfile';
 
-import db from '../../src/shared/database/connection';
-import { hashPassword } from '../../src/shared/utils/password.utils';
-import { User } from '../../src/shared/types/auth.types';
+let db: Knex | null = null;
 
 /**
- * Clean all tables (in correct order due to foreign keys)
+ * Get or create a database connection for tests
  */
-export async function cleanDatabase(): Promise<void> {
-  await db('user_sports').del();
-  await db('users').del();
-}
+export const getTestDb = (): Knex => {
+  if (!db) {
+    db = knex(knexConfig.test);
+  }
+  return db;
+};
 
 /**
- * Seed test users
+ * Setup test database - run migrations
  */
-export async function seedTestUsers(): Promise<User[]> {
-  const password = await hashPassword('Test123!@#');
-
-  const users = [
-    {
-      email: 'test1@example.com',
-      password_hash: password,
-      username: 'testuser1',
-      full_name: 'Test User One',
-      phone_number: '+1234567890',
-      skill_level: 'intermediate',
-      location_lat: 37.7749,
-      location_lng: -122.4194,
-      location_name: 'San Francisco, CA',
-      preferred_radius_km: 10,
-      status: 'active',
-    },
-    {
-      email: 'test2@example.com',
-      password_hash: password,
-      username: 'testuser2',
-      full_name: 'Test User Two',
-      skill_level: 'beginner',
-      preferred_radius_km: 5,
-      status: 'active',
-    },
-    {
-      email: 'inactive@example.com',
-      password_hash: password,
-      username: 'inactiveuser',
-      full_name: 'Inactive User',
-      skill_level: 'advanced',
-      preferred_radius_km: 15,
-      status: 'inactive',
-    },
-  ];
-
-  const insertedUsers = await db('users').insert(users).returning('*');
-  return insertedUsers;
-}
+export const setupTestDb = async (): Promise<void> => {
+  const testDb = getTestDb();
+  
+  // Rollback all migrations
+  await testDb.migrate.rollback(undefined, true);
+  
+  // Run all migrations
+  await testDb.migrate.latest();
+};
 
 /**
- * Create a single test user with custom data
+ * Clean all tables in the test database
  */
-export async function createTestUser(
-  overrides: Partial<User> = {}
-): Promise<User> {
-  const defaultPassword = await hashPassword('Test123!@#');
-
-  const defaultUser = {
-    email: `test${Date.now()}@example.com`,
-    password_hash: defaultPassword,
-    username: `testuser${Date.now()}`,
-    full_name: 'Test User',
-    skill_level: 'intermediate',
-    preferred_radius_km: 10,
-    status: 'active',
-    ...overrides,
-  };
-
-  const [user] = await db('users').insert(defaultUser).returning('*');
-  return user;
-}
+export const cleanTestDb = async (): Promise<void> => {
+  const testDb = getTestDb();
+  
+  // Get all table names
+  const tables = await testDb.raw(`
+    SELECT tablename 
+    FROM pg_tables 
+    WHERE schemaname = 'public' 
+    AND tablename != 'knex_migrations' 
+    AND tablename != 'knex_migrations_lock'
+  `);
+  
+  // Truncate all tables
+  for (const table of tables.rows) {
+    await testDb.raw(`TRUNCATE TABLE "${table.tablename}" CASCADE`);
+  }
+};
 
 /**
- * Setup test database (run before each test suite)
+ * Seed test database with data
  */
-export async function setupTestDb(): Promise<void> {
-  await cleanDatabase();
-}
+export const seedTestDb = async (): Promise<void> => {
+  const testDb = getTestDb();
+  await testDb.seed.run();
+};
 
 /**
- * Teardown test database (run after each test suite)
+ * Teardown test database - close connections
  */
-export async function teardownTestDb(): Promise<void> {
-  await cleanDatabase();
-}
+export const teardownTestDb = async (): Promise<void> => {
+  if (db) {
+    await db.destroy();
+    db = null;
+  }
+};
+
+/**
+ * Run a callback within a transaction that gets rolled back
+ * Useful for tests that need database isolation
+ */
+export const withTransaction = async <T>(
+  callback: (trx: Knex.Transaction) => Promise<T>
+): Promise<T> => {
+  const testDb = getTestDb();
+  
+  return testDb.transaction(async (trx) => {
+    try {
+      const result = await callback(trx);
+      await trx.rollback();
+      return result;
+    } catch (error) {
+      await trx.rollback();
+      throw error;
+    }
+  });
+};

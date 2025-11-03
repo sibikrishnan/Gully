@@ -3,7 +3,7 @@
  * Token generation, validation, and refresh token management
  */
 
-import jwt, { type SignOptions } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { JWTPayload, TokenPair, UserWithoutPassword } from '../types/auth.types';
 
 // Environment variables with fallback (should be set in .env)
@@ -24,9 +24,7 @@ export function generateAccessToken(user: UserWithoutPassword): string {
     username: user.username,
   };
 
-  return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN as string | number,
-  });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN } as jwt.SignOptions);
 }
 
 /**
@@ -41,9 +39,7 @@ export function generateRefreshToken(user: UserWithoutPassword): string {
     username: user.username,
   };
 
-  return jwt.sign(payload, JWT_REFRESH_SECRET, {
-    expiresIn: JWT_REFRESH_EXPIRES_IN as string | number,
-  });
+  return jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_EXPIRES_IN } as jwt.SignOptions);
 }
 
 /**
@@ -96,8 +92,8 @@ export function extractTokenFromHeader(authHeader: string | undefined): string |
     return null;
   }
 
-  const parts = authHeader.split(' ');
-  if (parts.length !== 2 || parts[0] !== 'Bearer') {
+  const parts = authHeader.trim().split(/\s+/);
+  if (parts.length !== 2 || parts[0] !== 'Bearer' || !parts[1]) {
     return null;
   }
 

@@ -61,9 +61,10 @@ describe('JWT Utilities', () => {
       expect(user1Token).not.toBe(user2Token);
     });
 
-    it('should generate different tokens at different times for same user', () => {
+    it('should generate different tokens at different times for same user', async () => {
       const token1 = generateAccessToken(testUser);
-      // Small delay to ensure different iat
+      // Small delay to ensure different iat (1 second)
+      await new Promise(resolve => setTimeout(resolve, 1000));
       const token2 = generateAccessToken(testUser);
 
       // Tokens will be different due to different iat timestamps
