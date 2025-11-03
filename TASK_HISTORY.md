@@ -2,6 +2,11 @@
 
 **Purpose:** Track completed tasks for smooth session-to-session continuation with Claude Code.
 
+**Task Status Types:**
+- `✅` - Completed (in "Completed Tasks" section)
+- `⏳` - Pending (not started, in "Pending Tasks" section)
+- `⏸️` - Paused (work started but interrupted, add `status=paused` on same line as task heading)
+
 ---
 
 ## Current Status (Last Updated: 2025-11-01)
@@ -91,11 +96,40 @@ npm run seed:run          # Seed test data
 
 ---
 
+## Paused Tasks
+
+**Note:** When you pause a task (e.g., blocked, need clarification, switching context), move it here with `status=paused` in the heading.
+
+**Example Format:**
+```markdown
+### ⏸️ Task X.Y: [Name] `status=paused`
+**Paused On:** 2025-11-XX
+**Reason:** [Why paused: blocked by X, waiting for Y, etc.]
+**Resume Steps:** [What to do when resuming]
+
+[Rest of task details...]
+```
+
+*Currently no paused tasks.*
+
+---
+
 ## Pending Tasks
 
 ### ⏳ Task 3.1: Auth Utilities & Middleware (Next)
 **Target:** Days 4-5
 **Estimated Duration:** 90 min
+
+**Commit Message Template:**
+```
+feat: implement authentication utilities and middleware
+
+- Passport.js local strategy
+- JWT token generation/validation
+- Password hashing with bcrypt
+- Auth middleware for protected routes
+- TypeScript types for User/Auth
+```
 
 **Planned Work:**
 - Passport.js local strategy configuration
@@ -105,19 +139,29 @@ npm run seed:run          # Seed test data
 - TypeScript types for User/Auth
 
 **Files to Create:**
-- `src/shared/middleware/auth.middleware.ts`
-- `src/shared/utils/jwt.utils.ts`
-- `src/shared/utils/password.utils.ts`
-- `src/shared/types/auth.types.ts`
-- `src/shared/config/passport.config.ts`
-
-**Reference:** `docs/WEEK1_TASKS.md` (Task 3.1)
+- `backend/src/shared/middleware/auth.middleware.ts`
+- `backend/src/shared/utils/jwt.utils.ts`
+- `backend/src/shared/utils/password.utils.ts`
+- `backend/src/shared/types/auth.types.ts`
+- `backend/src/shared/config/passport.config.ts`
 
 ---
 
 ### ⏳ Task 3.2: User Service Auth Routes
 **Target:** Days 4-5
 **Estimated Duration:** 90 min
+
+**Commit Message Template:**
+```
+feat: add user service authentication endpoints
+
+- POST /api/auth/signup
+- POST /api/auth/login
+- POST /api/auth/refresh
+- GET /api/auth/me (protected)
+- Input validation with Zod
+- Error handling
+```
 
 **Planned Work:**
 - POST /api/auth/signup
@@ -128,29 +172,83 @@ npm run seed:run          # Seed test data
 - Error handling
 
 **Files to Create:**
-- `src/services/user-service/controllers/auth.controller.ts`
-- `src/services/user-service/routes/auth.routes.ts`
-- `src/services/user-service/validators/auth.validator.ts`
-- `src/services/user-service/models/user.model.ts`
-- `src/services/user-service/index.ts`
+- `backend/src/services/user-service/controllers/auth.controller.ts`
+- `backend/src/services/user-service/routes/auth.routes.ts`
+- `backend/src/services/user-service/validators/auth.validator.ts`
+- `backend/src/services/user-service/models/user.model.ts`
+- `backend/src/services/user-service/index.ts`
 
 ---
 
 ### ⏳ Task 4: Core Application Setup
 **Target:** Day 6
-**Files:** `src/app.ts`, `src/server.ts`, error middleware, logger
+**Estimated Duration:** 90 min
+
+**Commit Message Template:**
+```
+feat: create main application entry point
+
+- Express app configuration
+- Route aggregation in app.ts
+- Error handling middleware
+- Request logging (morgan)
+- CORS configuration
+- Health check endpoint
+```
+
+**Files to Create:**
+- `backend/src/app.ts`
+- `backend/src/server.ts`
+- `backend/src/shared/middleware/error.middleware.ts`
+- `backend/src/shared/middleware/logger.middleware.ts`
 
 ---
 
 ### ⏳ Task 5: Testing Framework
 **Target:** Day 7
-**Files:** Jest config, test utilities, integration tests
+**Estimated Duration:** 90 min
+
+**Commit Message Template:**
+```
+feat: setup testing framework and initial tests
+
+- Jest configuration for TypeScript
+- Supertest for API testing
+- Test utilities and helpers
+- Auth endpoint tests (signup, login)
+- Database connection tests
+- Health check test
+```
+
+**Files to Create:**
+- `backend/jest.config.js`
+- `backend/tests/setup.ts`
+- `backend/tests/helpers/testDb.ts`
+- `backend/tests/unit/utils/password.test.ts`
+- `backend/tests/integration/auth.test.ts`
+- `backend/tests/integration/health.test.ts`
 
 ---
 
 ### ⏳ Task 6: Week 1 Review
 **Target:** End of Day 7
-**Files:** `docs/weekly-reviews/WEEK1_REVIEW.md`
+**Estimated Duration:** Included in Day 7 (90 min)
+
+**Commit Message Template:**
+```
+docs: add Week 1 review and learnings
+
+- Token consumption analysis
+- Features completed vs planned
+- Patterns that worked well
+- Hallucinations encountered
+- Adjustments for Week 2
+```
+
+**Files to Create:**
+- `docs/weekly-reviews/WEEK1_REVIEW.md`
+- Update `README.md` with Week 1 completion status
+- Update `.claude/.claude.md` with Week 2 focus
 
 ---
 
@@ -158,6 +256,14 @@ npm run seed:run          # Seed test data
 
 ### Starting a New Session
 
+**Quick Start (Recommended):**
+```bash
+/clear              # Clear context
+/gullystatus        # See current status (3-5 sentences)
+/gullycontinue      # Load next task and ask for confirmation
+```
+
+**Manual Start (Alternative):**
 1. **Check this file** (`TASK_HISTORY.md`) for last completed task
 2. **Check git log** to see recent commits:
    ```bash
@@ -174,8 +280,15 @@ npm run seed:run          # Seed test data
 5. **Tell Claude**:
    ```
    "Let's continue with Week 1 Task [X.Y]: [Task Name].
-   Reference docs/WEEK1_TASKS.md for the spec."
+   Use the spec from TASK_HISTORY.md"
    ```
+
+**Token Optimization:**
+- ✅ `/gullycontinue` parses `/gullystatus` output from conversation context
+- ✅ Uses targeted read (Grep + offset/limit) for only the next task section
+- ❌ Does NOT read entire TASK_HISTORY.md or WEEK1_TASKS.md
+- 💰 Saves ~3.5K tokens per session start (85% reduction)
+- 📖 See `.claude/WORKFLOW_GUIDE.md` for detailed workflow
 
 ### After Completing a Task
 
@@ -187,6 +300,17 @@ npm run seed:run          # Seed test data
    - Verification results
 2. **Update "Current Status"** section at the top
 3. **Commit this file** with the task commit or separately
+
+### When Pausing a Task
+
+1. **Move task** from "Pending Tasks" to "Paused Tasks" section
+2. **Update heading** to use `⏸️` emoji and add `status=paused`
+3. **Add context:**
+   - `**Paused On:**` date
+   - `**Reason:**` why paused (blocked, needs review, etc.)
+   - `**Resume Steps:**` what to do when resuming
+4. **Update "Current Status"** section if this was the next task
+5. **Use `/gullycontinue`** - it will detect paused tasks and ask which to resume
 
 ---
 
@@ -209,6 +333,7 @@ npm run seed:run          # Seed test data
 - ✅ Creating instructions BEFORE executing prevents rework
 - ✅ Verification scripts catch issues early
 - ✅ Seed data makes testing easier
+- ✅ Self-sufficient TASK_HISTORY.md eliminates redundant file reads
 
 ### Patterns to Reuse
 - Always create `.env.example` + actual `.env`
@@ -216,6 +341,13 @@ npm run seed:run          # Seed test data
 - Document setup in both README + dedicated guides
 - Use TodoWrite tool to track multi-step tasks
 - Test migrations immediately after creation
+- Add commit message templates to TASK_HISTORY.md for pending tasks
+- Use `/clear` + `/gullystatus` + `/gullycontinue` workflow for session starts
+
+### Token Optimizations Implemented
+- **Session Start Workflow:** `/gullycontinue` now only reads TASK_HISTORY.md (not WEEK1_TASKS.md)
+- **Savings:** ~2.3K tokens per session start (~91% reduction)
+- **TASK_HISTORY.md Structure:** All pending tasks now include commit templates and full file paths
 
 ### Hallucinations Avoided
 - None significant in Week 1 Tasks 1-2.2
