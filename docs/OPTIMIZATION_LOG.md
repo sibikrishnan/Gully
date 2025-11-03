@@ -327,5 +327,101 @@ After Optimizations #1 and #2, we had effective token reduction (98% improvement
 
 ---
 
+## Optimization #4: Auto-Commit Workflow (2025-11-03)
+
+### Problem Identified
+User was spending mental energy deciding when to commit and how to phrase "commit and push" requests:
+- Cognitive overhead: "Should I commit now or wait?"
+- Inconsistent phrasing: "commit", "push changes", "make a commit", etc.
+- Interrupts flow: Breaks focus from actual development work
+- Token waste: User says "commit" → Claude asks what to commit → back-and-forth
+
+### Solution Implemented
+
+#### Auto-Commit Policy in `.claude/.claude.md`
+**File Modified:** `.claude/.claude.md` - Git Workflow Policy section
+
+**New Behavior:**
+Claude automatically commits when:
+1. ✅ Todo items marked `status: completed` in TodoWrite
+2. ✅ Logical units finished (feature done, tests pass, refactor complete)
+3. ✅ Multiple related files created/modified
+4. ✅ Bug fixes completed and verified
+5. ✅ Documentation updates (unless trivial)
+
+**Auto-Commit Workflow:**
+1. Detect completion trigger
+2. Run `git status` + `git diff` to review changes
+3. Update `.gitignore` if needed (proactive, no asking)
+4. Stage relevant files (exclude secrets, system files)
+5. Generate conventional commit message
+6. Commit immediately
+7. Push to remote immediately (auto-backup)
+8. Brief confirmation to user: "✅ Committed: [message]"
+
+**User never has to say "commit" unless overriding.**
+
+#### Exception Handling
+Claude ONLY asks user before:
+- ⚠️ Pushing to `main`/`master` branch
+- ⚠️ Force push (conflict resolution)
+- ⚠️ Detected secrets in staged files
+- ⚠️ Rewriting published history
+
+#### User Override Commands
+User can still control when needed:
+- "don't commit yet" → Skip auto-commit this time
+- "commit without push" → Commit locally only
+- "amend last commit" → Amend instead of new commit
+
+### Results
+
+**Before Auto-Commit:**
+```
+User: "commit and push"
+Claude: *runs git status, git diff*
+Claude: "Here's what changed, shall I commit?"
+User: "yes"
+Claude: *commits and pushes*
+Total: 2 messages, ~300 tokens, user mental overhead
+```
+
+**After Auto-Commit:**
+```
+Claude: *marks todo complete*
+Claude: *auto-runs git status, diff, commit, push*
+Claude: "✅ Committed: feat: implement X"
+Total: 0 user messages, ~300 tokens, zero mental overhead
+```
+
+**Benefits:**
+- **Zero mental overhead:** User never thinks about git
+- **Consistent history:** All commits follow conventional commits format
+- **Auto-backup:** Every completed unit pushed immediately
+- **Fewer interruptions:** No back-and-forth about commits
+- **Same token cost:** ~300 tokens per commit (unchanged)
+
+**Trade-offs:**
+- More frequent commits (good for backup, might clutter history)
+- Less control (mitigated by override commands)
+- Auto-push means less review time (acceptable for solo dev)
+
+### Files Modified
+1. `.claude/.claude.md` - Replaced "Git Best Practices" with "Git Workflow Policy (AUTO-COMMIT MODE)"
+
+### Lessons Learned
+1. **Automate Decision Fatigue:** Small decisions add up; automate when consequences are low
+2. **Token Cost ≠ Mental Cost:** Same tokens, huge reduction in cognitive load
+3. **User Delegation:** When user says "you handle it", make it explicit in config
+4. **Override Escape Hatches:** Automation + easy overrides = best of both worlds
+5. **Backup Paranoia:** Auto-push after every commit = never lose work
+
+### Future Enhancements
+- Track commit frequency via `/gullymetrics log` to validate pattern
+- Add `--no-push` flag if user prefers batched pushes
+- Consider commit squashing before PR creation
+
+---
+
 **Last Updated:** 2025-11-03
 **Next Review:** After Week 1 completion (check if pattern scales)
