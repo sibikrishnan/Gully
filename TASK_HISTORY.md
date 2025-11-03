@@ -9,12 +9,14 @@
 
 ---
 
-## Current Status (Last Updated: 2025-11-01)
+## Current Status (Last Updated: 2025-11-03)
 
-**Week:** 1 (Foundation Phase)
+**Week:** 1 (Foundation Phase - TDD Approach)
 **Branch:** `week1`
-**Last Task Completed:** Task 2.2 - Database Schema & Migrations
-**Next Task:** Task 3.1 - Auth Utilities & Middleware
+**Last Task Completed:** Task 2.2 - Database Schema & Migrations (commit: 96e3f88)
+**Task Paused:** Task 3.1 - Auth Utilities & Middleware (code done, tests pending)
+**Next Task:** Task 3.0 - Setup Testing Infrastructure
+**Important Note:** Switching to Test-Driven Development - all future tasks include test expectations
 
 ---
 
@@ -110,40 +112,90 @@ npm run seed:run          # Seed test data
 [Rest of task details...]
 ```
 
-*Currently no paused tasks.*
+### ⏸️ Task 3.1: Auth Utilities & Middleware `status=paused`
+**Paused On:** 2025-11-03
+**Reason:** Implementation completed (commit: cf01833) but needs tests before marking as truly complete. Pausing to set up testing infrastructure first (TDD approach).
+
+**Resume Steps:**
+1. Complete Task 3.0 (Setup Testing Infrastructure)
+2. Write unit tests for password.utils.ts
+3. Write unit tests for jwt.utils.ts
+4. Write integration tests for auth.middleware.ts
+5. Write integration tests for passport.config.ts
+6. Run all tests and verify 90%+ coverage
+7. Mark Task 3.1 as completed
+
+**Implementation Status:** ✅ Code written, ⏳ Tests pending
+
+**Commit:** `cf01833` - feat: implement authentication utilities and middleware
+
+**Files Created:**
+- `backend/src/shared/types/auth.types.ts`
+- `backend/src/shared/utils/password.utils.ts`
+- `backend/src/shared/utils/jwt.utils.ts`
+- `backend/src/shared/config/passport.config.ts`
+- `backend/src/shared/middleware/auth.middleware.ts`
+
+**Tests Needed:**
+- Unit Tests:
+  - password.utils.test.ts (hashPassword, comparePassword, validatePasswordStrength)
+  - jwt.utils.test.ts (generate/verify tokens, extract from header)
+- Integration Tests:
+  - auth.middleware.test.ts (requireAuth, optionalAuth, requireStatus)
+  - passport.config.test.ts (local strategy authentication)
 
 ---
 
 ## Pending Tasks
 
-### ⏳ Task 3.1: Auth Utilities & Middleware (Next)
-**Target:** Days 4-5
-**Estimated Duration:** 90 min
+### ⏳ Task 3.0: Setup Testing Infrastructure (Next)
+**Target:** Day 4
+**Estimated Duration:** 45 min
+
+**Expectations:**
+- Jest configured for TypeScript with proper module resolution
+- Supertest available for API integration tests
+- Test database setup/teardown utilities created
+- Tests can run with `npm test` command
+- Coverage reports generated with `npm run test:coverage`
+- Test helpers for creating fixtures (users, tokens, etc.)
+
+**Tests (Meta - testing the test setup):**
+- Sample test file runs successfully
+- TypeScript compilation works in test environment
+- Database connection in tests works
+- Test database can be seeded and cleaned
+
+**Verification:**
+- `npm test` runs without errors
+- `npm run test:coverage` generates coverage report
+- Sample test passes
 
 **Commit Message Template:**
 ```
-feat: implement authentication utilities and middleware
+feat: setup testing infrastructure with Jest and Supertest
 
-- Passport.js local strategy
-- JWT token generation/validation
-- Password hashing with bcrypt
-- Auth middleware for protected routes
-- TypeScript types for User/Auth
+- Jest configuration for TypeScript
+- Supertest for API testing
+- Test database utilities (setup/teardown/seed)
+- Test helpers for fixtures and mocks
+- Sample test to verify setup
 ```
 
 **Planned Work:**
-- Passport.js local strategy configuration
-- JWT token generation/validation utilities
-- Password hashing with bcrypt
-- Auth middleware for protected routes
-- TypeScript types for User/Auth
+- Install Jest, ts-jest, @types/jest, supertest, @types/supertest
+- Create jest.config.js for TypeScript
+- Create test database utilities (connection, seed, cleanup)
+- Create test helpers (createTestUser, generateTestToken, etc.)
+- Add npm scripts for testing
+- Write sample test to verify setup
 
 **Files to Create:**
-- `backend/src/shared/middleware/auth.middleware.ts`
-- `backend/src/shared/utils/jwt.utils.ts`
-- `backend/src/shared/utils/password.utils.ts`
-- `backend/src/shared/types/auth.types.ts`
-- `backend/src/shared/config/passport.config.ts`
+- `backend/jest.config.js`
+- `backend/tests/setup.ts`
+- `backend/tests/helpers/testDb.ts`
+- `backend/tests/helpers/fixtures.ts`
+- `backend/tests/sample.test.ts` (verify setup, can delete later)
 
 ---
 
@@ -151,25 +203,71 @@ feat: implement authentication utilities and middleware
 **Target:** Days 4-5
 **Estimated Duration:** 90 min
 
+**Expectations:**
+- POST /api/auth/signup creates new user and returns tokens
+- POST /api/auth/login authenticates user and returns tokens
+- POST /api/auth/refresh generates new access token from refresh token
+- GET /api/auth/me returns current user data (requires auth)
+- Invalid input is rejected with clear validation errors
+- Duplicate email signup is rejected
+- Wrong credentials return 401
+- All endpoints return consistent JSON response format
+
+**Tests:**
+- Integration Tests:
+  - POST /api/auth/signup:
+    - ✅ Creates user with valid data (201)
+    - ❌ Rejects duplicate email (409)
+    - ❌ Rejects weak password (400)
+    - ❌ Rejects missing required fields (400)
+    - ✅ Returns accessToken and refreshToken
+    - ✅ Password is hashed in database
+
+  - POST /api/auth/login:
+    - ✅ Login with valid credentials (200)
+    - ❌ Reject invalid email (401)
+    - ❌ Reject wrong password (401)
+    - ❌ Reject inactive user (403)
+    - ✅ Updates last_login_at timestamp
+    - ✅ Returns accessToken and refreshToken
+
+  - POST /api/auth/refresh:
+    - ✅ Generates new access token with valid refresh token (200)
+    - ❌ Rejects invalid refresh token (401)
+    - ❌ Rejects expired refresh token (401)
+
+  - GET /api/auth/me:
+    - ✅ Returns user data with valid token (200)
+    - ❌ Rejects request without token (401)
+    - ❌ Rejects request with invalid token (401)
+    - ✅ Does not include password_hash in response
+
+**Verification:**
+- `npm test -- auth.routes.test.ts`
+- All 17 test cases pass
+- Test coverage > 90% for auth controller
+
 **Commit Message Template:**
 ```
 feat: add user service authentication endpoints
 
-- POST /api/auth/signup
-- POST /api/auth/login
-- POST /api/auth/refresh
-- GET /api/auth/me (protected)
+- POST /api/auth/signup (with validation)
+- POST /api/auth/login (with Passport)
+- POST /api/auth/refresh (JWT refresh)
+- GET /api/auth/me (protected route)
 - Input validation with Zod
-- Error handling
+- Comprehensive error handling
+- Integration tests (17 test cases)
 ```
 
 **Planned Work:**
-- POST /api/auth/signup
-- POST /api/auth/login
-- POST /api/auth/refresh
-- GET /api/auth/me (protected)
-- Input validation with Zod
-- Error handling
+- Create Zod validation schemas for signup/login
+- Implement auth controller with all 4 endpoints
+- Create auth routes with validation middleware
+- Create user model for database operations
+- Set up user-service Express app
+- Write comprehensive integration tests
+- Verify all tests pass
 
 **Files to Create:**
 - `backend/src/services/user-service/controllers/auth.controller.ts`
@@ -177,6 +275,7 @@ feat: add user service authentication endpoints
 - `backend/src/services/user-service/validators/auth.validator.ts`
 - `backend/src/services/user-service/models/user.model.ts`
 - `backend/src/services/user-service/index.ts`
+- `backend/tests/integration/auth.routes.test.ts`
 
 ---
 
@@ -184,49 +283,82 @@ feat: add user service authentication endpoints
 **Target:** Day 6
 **Estimated Duration:** 90 min
 
+**Expectations:**
+- Express server starts on configured PORT
+- All service routes are mounted correctly (/api/auth, etc.)
+- CORS allows configured origins
+- Request/response logging works (morgan)
+- Errors are caught and returned in consistent JSON format
+- Health check endpoint returns 200 with system status
+- Server gracefully handles shutdown signals
+
+**Tests:**
+- Integration Tests:
+  - Health Check:
+    - ✅ GET /health returns 200 with status "ok"
+    - ✅ GET /health includes database connection status
+    - ✅ GET /health includes Redis connection status (if available)
+
+  - Error Handling:
+    - ✅ 404 for unknown routes
+    - ✅ 500 errors return JSON format (not HTML)
+    - ✅ Validation errors return 400 with details
+    - ✅ Uncaught errors are logged
+
+  - CORS:
+    - ✅ Allowed origins can make requests
+    - ❌ Disallowed origins are blocked
+
+  - Logging:
+    - ✅ Requests are logged with method, path, status, duration
+
+**Verification:**
+- `npm test -- app.test.ts`
+- `npm run dev` starts server without errors
+- Health check responds: `curl http://localhost:3000/health`
+- All 9 test cases pass
+
 **Commit Message Template:**
 ```
 feat: create main application entry point
 
-- Express app configuration
+- Express app configuration with middleware
 - Route aggregation in app.ts
-- Error handling middleware
+- Global error handling middleware
 - Request logging (morgan)
 - CORS configuration
-- Health check endpoint
+- Health check endpoint with DB status
+- Integration tests (9 test cases)
 ```
+
+**Planned Work:**
+- Create Express app with middleware (body-parser, cors, morgan)
+- Implement global error handling middleware
+- Create health check endpoint
+- Mount all service routes
+- Create server.ts with graceful shutdown
+- Write integration tests for app setup
+- Verify all tests pass
 
 **Files to Create:**
 - `backend/src/app.ts`
 - `backend/src/server.ts`
 - `backend/src/shared/middleware/error.middleware.ts`
 - `backend/src/shared/middleware/logger.middleware.ts`
+- `backend/tests/integration/app.test.ts`
 
 ---
 
-### ⏳ Task 5: Testing Framework
-**Target:** Day 7
-**Estimated Duration:** 90 min
+### ⏳ Task 5: Auth Utilities Test Coverage `status=deprecated`
+**Note:** This task has been replaced by Task 3.0 (testing infrastructure) and integrated into other tasks.
+**Original Target:** Day 7
+**Status:** Testing is now done incrementally with each feature (TDD approach)
 
-**Commit Message Template:**
-```
-feat: setup testing framework and initial tests
-
-- Jest configuration for TypeScript
-- Supertest for API testing
-- Test utilities and helpers
-- Auth endpoint tests (signup, login)
-- Database connection tests
-- Health check test
-```
-
-**Files to Create:**
-- `backend/jest.config.js`
-- `backend/tests/setup.ts`
-- `backend/tests/helpers/testDb.ts`
-- `backend/tests/unit/utils/password.test.ts`
-- `backend/tests/integration/auth.test.ts`
-- `backend/tests/integration/health.test.ts`
+**What was moved:**
+- Testing infrastructure → Task 3.0
+- Auth utilities tests → Part of Task 3.1 (paused)
+- Auth routes tests → Part of Task 3.2
+- App/health tests → Part of Task 4
 
 ---
 
