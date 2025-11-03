@@ -1,22 +1,14 @@
-# Gully - Task History & Session Status
+# Gully - Task History (Archival Reference)
 
-**Purpose:** Track completed tasks for smooth session-to-session continuation with Claude Code.
+**Purpose:** Complete historical record of all tasks (completed, pending, paused).
+
+**For Current Status:** See `STATUS.md` (lightweight, quick access)
+**For Task Details:** This file contains full specifications and history
 
 **Task Status Types:**
 - `✅` - Completed (in "Completed Tasks" section)
 - `⏳` - Pending (not started, in "Pending Tasks" section)
 - `⏸️` - Paused (work started but interrupted, add `status=paused` on same line as task heading)
-
----
-
-## Current Status (Last Updated: 2025-11-03)
-
-**Week:** 1 (Foundation Phase - TDD Approach)
-**Branch:** `week1`
-**Last Task Completed:** Task 2.2 - Database Schema & Migrations (commit: 96e3f88)
-**Task Paused:** Task 3.1 - Auth Utilities & Middleware (code done, tests pending)
-**Next Task:** Task 3.0 - Setup Testing Infrastructure
-**Important Note:** Switching to Test-Driven Development - all future tasks include test expectations
 
 ---
 
@@ -98,6 +90,17 @@ npm run seed:run          # Seed test data
 
 ---
 
+### ✅ Task 3.0: Setup Testing Infrastructure
+**Commit:** `9337219` - "feat: setup testing infrastructure with Jest and Supertest"
+**Date:** 2025-11-03
+**Duration:** ~75 min
+
+**What Was Done:**
+- Configured Jest with TypeScript, created test database utilities (setup/teardown/cleanup), test fixtures (createTestUser, generateTestTokens), and comprehensive unit tests for JWT utilities.
+- Fixed TypeScript errors in jwt.utils.ts, enhanced extractTokenFromHeader with edge case handling. Result: 58 tests passing, 96% code coverage.
+
+---
+
 ## Paused Tasks
 
 **Note:** When you pause a task (e.g., blocked, need clarification, switching context), move it here with `status=paused` in the heading.
@@ -147,57 +150,6 @@ npm run seed:run          # Seed test data
 ---
 
 ## Pending Tasks
-
-### ⏳ Task 3.0: Setup Testing Infrastructure (Next)
-**Target:** Day 4
-**Estimated Duration:** 45 min
-
-**Expectations:**
-- Jest configured for TypeScript with proper module resolution
-- Supertest available for API integration tests
-- Test database setup/teardown utilities created
-- Tests can run with `npm test` command
-- Coverage reports generated with `npm run test:coverage`
-- Test helpers for creating fixtures (users, tokens, etc.)
-
-**Tests (Meta - testing the test setup):**
-- Sample test file runs successfully
-- TypeScript compilation works in test environment
-- Database connection in tests works
-- Test database can be seeded and cleaned
-
-**Verification:**
-- `npm test` runs without errors
-- `npm run test:coverage` generates coverage report
-- Sample test passes
-
-**Commit Message Template:**
-```
-feat: setup testing infrastructure with Jest and Supertest
-
-- Jest configuration for TypeScript
-- Supertest for API testing
-- Test database utilities (setup/teardown/seed)
-- Test helpers for fixtures and mocks
-- Sample test to verify setup
-```
-
-**Planned Work:**
-- Install Jest, ts-jest, @types/jest, supertest, @types/supertest
-- Create jest.config.js for TypeScript
-- Create test database utilities (connection, seed, cleanup)
-- Create test helpers (createTestUser, generateTestToken, etc.)
-- Add npm scripts for testing
-- Write sample test to verify setup
-
-**Files to Create:**
-- `backend/jest.config.js`
-- `backend/tests/setup.ts`
-- `backend/tests/helpers/testDb.ts`
-- `backend/tests/helpers/fixtures.ts`
-- `backend/tests/sample.test.ts` (verify setup, can delete later)
-
----
 
 ### ⏳ Task 3.2: User Service Auth Routes
 **Target:** Days 4-5
@@ -391,58 +343,49 @@ docs: add Week 1 review and learnings
 **Quick Start (Recommended):**
 ```bash
 /clear              # Clear context
-/gullystatus        # See current status (3-5 sentences)
-/gullycontinue      # Load next task and ask for confirmation
+/gullystatus        # See current status from STATUS.md (~500 tokens)
+/gullycontinue      # Load next task from TASK_HISTORY.md (targeted read)
 ```
 
 **Manual Start (Alternative):**
-1. **Check this file** (`TASK_HISTORY.md`) for last completed task
-2. **Check git log** to see recent commits:
+1. **Check STATUS.md** for current state (quick overview)
+2. **Check this file** (`TASK_HISTORY.md`) for task details
+3. **Check git log** to see recent commits:
    ```bash
    git log --oneline -5
    ```
-3. **Check Docker services**:
-   ```bash
-   cd backend && docker compose ps
-   ```
-4. **Verify database** (if needed):
-   ```bash
-   npm run migrate:status
-   ```
-5. **Tell Claude**:
-   ```
-   "Let's continue with Week 1 Task [X.Y]: [Task Name].
-   Use the spec from TASK_HISTORY.md"
-   ```
+4. **Verify environment** with `/gullyverify`
 
-**Token Optimization:**
-- ✅ `/gullycontinue` parses `/gullystatus` output from conversation context
-- ✅ Uses targeted read (Grep + offset/limit) for only the next task section
-- ❌ Does NOT read entire TASK_HISTORY.md or WEEK1_TASKS.md
-- 💰 Saves ~3.5K tokens per session start (85% reduction)
+**Token Optimization (New Design):**
+- ✅ `STATUS.md` replaces "Current Status" section (~500 tokens vs 22K)
+- ✅ `/gullycontinue` uses targeted reads (only the specific task section)
+- ✅ TASK_HISTORY.md = archival reference (read only when needed)
+- 💰 Saves ~21K tokens per `/gullystatus` call (95% reduction)
 - 📖 See `.claude/WORKFLOW_GUIDE.md` for detailed workflow
 
 ### After Completing a Task
 
-1. **Update this file** with:
+1. **Update STATUS.md** with:
+   - New "Last Completed" task + commit
+   - Updated "Next Task"
+   - Remove from "Paused Tasks" if applicable
+2. **Update TASK_HISTORY.md** with:
    - Commit hash and message
    - Date and duration
    - What was done (bullet points)
    - Files changed count
    - Verification results
-2. **Update "Current Status"** section at the top
-3. **Commit this file** with the task commit or separately
+3. **Commit both files** with the task commit or separately
 
 ### When Pausing a Task
 
-1. **Move task** from "Pending Tasks" to "Paused Tasks" section
-2. **Update heading** to use `⏸️` emoji and add `status=paused`
-3. **Add context:**
-   - `**Paused On:**` date
-   - `**Reason:**` why paused (blocked, needs review, etc.)
-   - `**Resume Steps:**` what to do when resuming
-4. **Update "Current Status"** section if this was the next task
-5. **Use `/gullycontinue`** - it will detect paused tasks and ask which to resume
+1. **Update STATUS.md** with paused task info
+2. **Update TASK_HISTORY.md:**
+   - Move task from "Pending Tasks" to "Paused Tasks" section
+   - Update heading to use `⏸️` emoji and add `status=paused`
+   - Add context: Paused On, Reason, Resume Steps
+3. **Use `/gullypause`** - automates the above steps
+4. **Use `/gullycontinue`** - detects paused tasks and asks which to resume
 
 ---
 
