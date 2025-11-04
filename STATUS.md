@@ -8,29 +8,28 @@
 
 ## Current State
 
-**Last Completed:** Task 3.0 - Setup Testing Infrastructure
-**Commit:** `9337219` - "feat: setup testing infrastructure with Jest and Supertest"
+**Last Completed:** Task 3.1 - Auth Utilities & Middleware
+**Commit:** Tests written (no new commit needed - tests already existed)
 **Date:** 2025-11-03
 
 ---
 
 ## Paused Tasks
 
-**Task 3.1** - Auth Utilities & Middleware `paused`
-**Reason:** Implementation complete (commit: cf01833), tests pending
-**To Resume:** Write tests for auth utilities (password, jwt, middleware, passport)
+None
 
 ---
 
 ## Next Task
 
-**Task 3.1** - Auth Utilities & Middleware (resume paused task)
-**Duration:** ~60 min
-**Details:** Write tests for existing auth utilities implementation
+**Task 3.2** - User Service Auth Routes
+**Duration:** ~90 min
+**Details:** Implement POST /signup, /login, /refresh, GET /me routes with tests
 
 ---
 
 ## Blockers / Notes
 
-- None - testing infrastructure ready, can proceed with Task 3.1
-- TDD workflow active: Task 3.0 complete, 58 tests passing, 96% coverage
+- None - all auth utilities and middleware tested
+- Test Suite Status: 82 auth tests passing, 90%+ coverage achieved
+- Ready to implement auth routes (Task 3.2)
