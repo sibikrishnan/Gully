@@ -47,10 +47,10 @@
 
 ## What to Look For:
 
-**Expected Token Costs (Post-Optimization):**
-- `/gullystatus`: ~400 tokens (partial TASK_HISTORY.md read)
-- `/gullycontinue`: ~200 tokens (targeted task section read)
-- `/gullypause`: ~500 tokens (read current task + update file)
+**Expected Token Costs (Post-Optimization with STATUS.md):**
+- `/gullystatus`: ~500 tokens (STATUS.md read)
+- `/gullycontinue`: ~200 tokens (targeted task section read from TASK_HISTORY.md)
+- `/gullypause`: ~800 tokens (read + update STATUS.md + TASK_HISTORY.md)
 - File reads: ~5 tokens per line
 
 **Red Flags:**
@@ -66,7 +66,7 @@ Total Used: 23,784 / 200,000 (11.9%)
 Remaining: 176,216 tokens
 
 Command Usage (estimated):
-- /gullystatus: ~420 tokens (expected: 400) ✅
+- /gullystatus: ~480 tokens (expected: 500) ✅
 - /gullycontinue: ~190 tokens (expected: 200) ✅
 
 Efficiency: 🎉 Better than expected
@@ -77,4 +77,9 @@ Recent operations:
 - Edit operations: ~150 tokens each
 
 Session is healthy. Optimizations are working as expected.
+```
+
+**After completing the command, print token expenditure:**
+```
+🔢 Tokens: X,XXX used | XXX,XXX remaining (X.X% of budget)
 ```

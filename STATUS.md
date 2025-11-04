@@ -22,8 +22,8 @@ None
 
 ## Next Task
 
-**Task 3.3** - Database Seed Data (if exists) or next pending task
-**Details:** Check TASK_HISTORY.md for next pending task
+**Task 4** - Core Application Setup
+**Details:** Express server, middleware, health check, error handling, integration tests
 
 ---
 

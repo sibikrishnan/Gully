@@ -1,15 +1,19 @@
-Read TASK_HISTORY.md and provide a 3-5 sentence summary of:
-1. Current week and phase
-2. Last completed task (with commit hash)
-3. Next pending task
-4. Any blockers or important notes
+Read STATUS.md and provide a concise summary for quick session startup.
 
-Keep it concise - this is for quick session startup without wasting tokens.
+**CRITICAL:** Read ONLY `STATUS.md` (not TASK_HISTORY.md). STATUS.md contains all current session info.
 
-Format:
+Format the output as:
 ```
 📍 Status: Week X, [Phase Name]
 ✅ Last: Task X.Y - [Name] (commit: abc1234)
+⏸️ Paused: Task X.Y - [Name] (reason: ...)  # Only if tasks are paused
 ⏭️ Next: Task X.Y - [Name]
-💡 Notes: [any important context]
+💡 Notes: [any blockers or important context]
+```
+
+Keep it concise - 3-5 sentences max.
+
+**After completing the command, print token expenditure:**
+```
+🔢 Tokens: X,XXX used | XXX,XXX remaining (X.X% of budget)
 ```

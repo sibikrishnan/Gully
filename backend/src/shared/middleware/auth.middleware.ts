@@ -5,7 +5,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { verifyAccessToken, extractTokenFromHeader } from '../utils/jwt.utils';
-import { db } from '../database/connection';
+import db from '../database/connection';
 import { User, UserWithoutPassword, AuthenticatedRequest } from '../types/auth.types';
 
 /**
@@ -31,13 +31,12 @@ export async function requireAuth(
     }
 
     // Verify token
-    let decoded;
-    try {
-      decoded = verifyAccessToken(token);
-    } catch (error) {
+    const decoded = verifyAccessToken(token);
+
+    if (!decoded) {
       res.status(401).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Invalid token',
+        error: 'Invalid token',
       });
       return;
     }
@@ -83,7 +82,7 @@ export async function requireAuth(
  */
 export async function optionalAuth(
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
@@ -97,10 +96,9 @@ export async function optionalAuth(
     }
 
     // Try to verify token
-    let decoded;
-    try {
-      decoded = verifyAccessToken(token);
-    } catch (error) {
+    const decoded = verifyAccessToken(token);
+
+    if (!decoded) {
       // Invalid token, continue without user
       next();
       return;

@@ -323,3 +323,12 @@ Please run: /gullycontext commands/docker"
 ---
 
 **Remember:** More granular context = fewer tokens = more efficient sessions!
+
+---
+
+## Token Tracking
+
+**After completing the command, print token expenditure:**
+```
+🔢 Tokens: X,XXX used | XXX,XXX remaining (X.X% of budget)
+```

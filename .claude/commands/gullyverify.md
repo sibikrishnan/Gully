@@ -29,3 +29,8 @@ Provide a summary:
 ```
 
 Flag any issues that need attention.
+
+**After completing the command, print token expenditure:**
+```
+🔢 Tokens: X,XXX used | XXX,XXX remaining (X.X% of budget)
+```

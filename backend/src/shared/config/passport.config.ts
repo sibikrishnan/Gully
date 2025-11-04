@@ -5,7 +5,7 @@
 
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
-import { db } from '../database/connection';
+import db from '../database/connection';
 import { comparePassword } from '../utils/password.utils';
 import { User, UserWithoutPassword } from '../types/auth.types';
 

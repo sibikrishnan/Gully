@@ -15,26 +15,25 @@
    - If reason not provided as argument, ask user: "Why are you pausing this task?"
    - Extract: task number, task name, current progress, blocking issues
 
-3. **Update TASK_HISTORY.md**
+3. **Update STATUS.md**
+   - Add task to "Paused Tasks" section with reason
+   - Update "Next Task" to point to the new next pending task
+   - Update "Last Updated" timestamp
+
+4. **Update TASK_HISTORY.md**
    - Find the task section (e.g., `### ⏳ Task 3.1:`)
    - Change emoji from `⏳` to `⏸️`
    - Add `status=paused` to the heading line
    - Add pause metadata AFTER the heading:
      ```markdown
-     **Paused:** 2025-11-03
+     **Paused On:** 2025-11-03
      **Reason:** [User-provided reason]
-     **Progress:** [What's been completed so far]
-     **To Resume:** [Next steps when resuming]
+     **Resume Steps:** [Next steps when resuming]
      ```
 
-4. **Move to Paused Tasks section**
+5. **Move to Paused Tasks section**
    - Cut the entire task section from "Pending Tasks"
-   - If "Paused Tasks" section doesn't exist, create it AFTER "Pending Tasks" section
-   - Paste the task there
-
-5. **Update Current Status**
-   - Update the "Task Paused:" line in Current Status section (lines 1-20)
-   - Update "Next Task:" to point to the new next pending task
+   - Paste in "Paused Tasks" section of TASK_HISTORY.md
 
 6. **Confirm to user**
    ```
@@ -65,4 +64,9 @@ Progress saved:
 Next pending task: Task 3.0 - Setup Testing Infrastructure
 
 Use /gullycontinue to resume any paused task or continue with Task 3.0
+```
+
+**After completing the command, print token expenditure:**
+```
+🔢 Tokens: X,XXX used | XXX,XXX remaining (X.X% of budget)
 ```

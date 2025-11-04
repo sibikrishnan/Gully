@@ -1,7 +1,7 @@
 **CRITICAL OPTIMIZATION:** Parse task info from conversation history, NOT by reading full files.
 
 ## Usage:
-- `/gullycontinue` - Auto-detect next task from `/gullystatus` output or Current Status
+- `/gullycontinue` - Auto-detect next task from `/gullystatus` output or STATUS.md
 - `/gullycontinue 3.1` - Explicitly load Task 3.1 (bypasses auto-detection)
 
 ## Workflow:
@@ -28,14 +28,13 @@
 ## Fallback Behavior:
 
 If no task number provided AND no `/gullystatus` output found in conversation history:
-- Search TASK_HISTORY.md for tasks with `status=paused`
-- If found, ask user which paused task to resume
-- If not found, read the "Current Status" section (lines 1-13 only) to find next task
+- Read STATUS.md to get the next task number (lightweight read)
+- Then proceed with targeted TASK_HISTORY.md read for that specific task
 
 **Token Optimization:**
 - Primary path: ~200 tokens (targeted task section only)
-- Fallback path: ~100 tokens (Current Status section only)
-- OLD approach: ~1800 tokens (entire file)
+- Fallback path: ~500 tokens (STATUS.md + targeted task section)
+- OLD approach: ~1800 tokens (entire TASK_HISTORY.md)
 - **Savings: 89-94% reduction**
 
 Format:
@@ -51,4 +50,9 @@ Files to create/modify: X files
 Estimated duration: XX min
 
 Ready to proceed? (yes/no)
+```
+
+**After completing the command, print token expenditure:**
+```
+🔢 Tokens: X,XXX used | XXX,XXX remaining (X.X% of budget)
 ```

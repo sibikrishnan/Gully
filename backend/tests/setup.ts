@@ -1,6 +1,8 @@
 // Global test setup and teardown
 // This file runs before all tests
 
+import db from '../src/shared/database/connection';
+
 // Set test environment
 process.env.NODE_ENV = 'test';
 
@@ -9,11 +11,13 @@ jest.setTimeout(10000);
 
 // Global test lifecycle hooks
 beforeAll(async () => {
-  // Any global setup before all tests run
+  // Migrations should be run manually before tests: NODE_ENV=test npm run migrate:latest
+  // This avoids locking issues with multiple test files
 });
 
 afterAll(async () => {
-  // Any global cleanup after all tests complete
+  // Close database connection after all tests
+  await db.destroy();
 });
 
 // Reset mocks between tests
