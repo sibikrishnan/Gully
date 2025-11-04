@@ -14,3 +14,4 @@
   ambiguous, involves architectural changes, or
   requires major choices not detailed in
   TASK_HISTORY.md.
+- always refer the @CLAUDE.md "New Task Beginning Workflow Confirmed" section whnever you begin a new task

@@ -141,11 +141,15 @@ infrastructure/                # Docker, Terraform (future)
 
 ## Development Timeline
 
-### Week 1: Foundation (Current)
+### Week 1: Foundation ✅ Completed
 - ✅ Project structure created
-- ⏳ Database setup (PostgreSQL)
-- ⏳ Auth foundation (Passport.js)
-- ⏳ User service scaffold
+- ✅ Database setup (PostgreSQL + Redis)
+- ✅ Auth foundation (Passport.js + JWT)
+- ✅ User service authentication endpoints
+- ✅ Comprehensive testing infrastructure (121 tests, 90%+ coverage)
+- ✅ Core application with graceful shutdown
+
+**Review:** See [Week 1 Review](docs/weekly-reviews/WEEK1_REVIEW.md) for detailed analysis
 
 ### Weeks 2-4: Core Services
 - User profiles CRUD
@@ -216,10 +220,11 @@ See `.claude/.claude.md` for detailed checklist.
 
 ## Project Status
 
-- **Current Week:** Week 1 (Foundation)
+- **Current Week:** Week 2 (Core Services - User Profiles)
+- **Week 1 Status:** ✅ Completed (121 tests passing, 90%+ coverage)
 - **Branch:** `week1`
-- **Last Updated:** November 1, 2025
-- **Next Milestone:** Day 2 - Database setup
+- **Last Updated:** November 3, 2025
+- **Next Milestone:** Week 2 - User Profile CRUD Operations
 
 ---
 
