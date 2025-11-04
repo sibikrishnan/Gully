@@ -189,7 +189,7 @@ npm run seed:run          # Seed test data
 
 ---
 
-### ⏳ Task 4: Core Application Setup
+### ✅ Task 4: Core Application Setup
 **Target:** Day 6
 **Estimated Duration:** 90 min
 
