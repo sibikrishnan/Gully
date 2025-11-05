@@ -62,9 +62,13 @@ None
 ### Weekly Review Process
 1. Complete all week's tasks
 2. Run Token Auditor agent (scan for context bloat)
-3. Create weekly review document
-4. Archive completed tasks to `docs/archives/tasks/WEEKN_TASKS.md`
-5. Update STATUS.md for next week
+3. **Context Integrity Check:** Review the week's commits and ask:
+   - "Did Claude's responses seem confused, corrupted, or off-topic in any task?"
+   - If YES: Identify which context sections were loaded (check commit messages)
+   - Action: Flag those sections for optimization or splitting
+4. Create weekly review document
+5. Archive completed tasks to `docs/archives/tasks/WEEKN_TASKS.md`
+6. Update STATUS.md for next week
 
 ---
 
