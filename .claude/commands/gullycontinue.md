@@ -34,8 +34,14 @@ If no task number provided AND no `/gullystatus` output found in conversation hi
 **Token Optimization:**
 - Primary path: ~200 tokens (targeted task section only)
 - Fallback path: ~500 tokens (STATUS.md + targeted task section)
-- OLD approach: ~1800 tokens (entire TASK_HISTORY.md)
-- **Savings: 89-94% reduction**
+- OLD approach: ~2,500 tokens (entire 402-line TASK_HISTORY.md)
+- NEW architecture: ~500 tokens (streamlined 86-line TASK_HISTORY.md)
+- **Savings: 80-92% reduction**
+
+**Archive Structure (2025-11-04):**
+- TASK_HISTORY.md contains ONLY pending/active tasks (86 lines, ~500 tokens)
+- Completed tasks archived by week in `docs/archives/tasks/WEEKN_TASKS.md`
+- Week 1 archive: `docs/archives/tasks/WEEK1_TASKS.md` (303 lines, never loaded unless needed)
 
 Format:
 ```
