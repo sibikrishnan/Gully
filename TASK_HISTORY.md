@@ -56,7 +56,7 @@ None
 
 ### After Completing a Task
 1. Update STATUS.md with new "Last Completed" and "Next Task"
-2. Move completed task from TASK_HISTORY.md to weekly archive
+2. Move completed task from TASK_HISTORY.md to weekly archive (see archival format below)
 3. Auto-commit changes (Claude handles this)
 
 ### Weekly Review Process
@@ -67,8 +67,30 @@ None
    - If YES: Identify which context sections were loaded (check commit messages)
    - Action: Flag those sections for optimization or splitting
 4. Create weekly review document
-5. Archive completed tasks to `docs/archives/tasks/WEEKN_TASKS.md`
+5. Archive completed tasks to `docs/archives/tasks/WEEKN_TASKS.md` (use archival format below)
 6. Update STATUS.md for next week
+
+### Archival Format Rule (Locked: 2025-11-04)
+All `WEEKN_TASKS.md` files MUST use YAML Frontmatter for structured metadata:
+
+```yaml
+---
+week: N
+start_date: YYYY-MM-DD
+end_date: YYYY-MM-DD
+status: complete
+tasks_completed: X
+total_duration_min: XXX
+test_coverage: XX%
+branch: weekN
+format_version: 2025-11-04
+---
+
+# Week N - Completed Tasks Archive
+[Human-readable content below]
+```
+
+**Why:** Enables programmatic queries (e.g., "Find all tasks that modified auth module in Weeks 1-3") without parsing full Markdown. Format is locked to prevent ad-hoc archival that breaks future automation.
 
 ---
 
