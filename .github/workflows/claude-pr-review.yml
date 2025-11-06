@@ -224,19 +224,23 @@ jobs:
             DIFF_CONTENT=$(cat pr_diff.txt | head -c $MAX_SIZE)
           fi
 
-          # Create JSON payload for Claude API
-          cat > claude_request.json <<EOF
-          {
-            "model": "claude-sonnet-4-20250514",
-            "max_tokens": 4096,
-            "messages": [
-              {
-                "role": "user",
-                "content": "$(cat review_prompt.md | jq -Rs .)\n\nFull Diff:\n\`\`\`diff\n${DIFF_CONTENT}\n\`\`\`"
-              }
-            ]
-          }
-          EOF
+          # Create JSON payload for Claude API using proper JSON encoding
+          PROMPT_CONTENT=$(cat review_prompt.md)
+
+          jq -n \
+            --arg model "claude-sonnet-4-20250514" \
+            --arg prompt "$PROMPT_CONTENT" \
+            --arg diff "$DIFF_CONTENT" \
+            '{
+              model: $model,
+              max_tokens: 4096,
+              messages: [
+                {
+                  role: "user",
+                  content: ($prompt + "\n\nFull Diff:\n```diff\n" + $diff + "\n```")
+                }
+              ]
+            }' > claude_request.json
 
           # Call Claude API
           RESPONSE=$(curl -s https://api.anthropic.com/v1/messages \
