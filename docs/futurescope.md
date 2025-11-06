@@ -31,3 +31,67 @@ Integrate an external coding assistant or system design expert LLM model (e.g., 
 
 ### Priority
 Low - Focus on core feature implementation first. Revisit when system design complexity increases.
+
+---
+
+## Bidirectional PR Review System
+
+### Concept
+Enable Claude Code (author) to respond to PR review comments with rebuttals, clarifications, and counter-proposals.
+
+### Current Flow
+Week complete → PR created → External Claude reviews → Human reviews → **[One-way, no author response]** → Merge
+
+### Proposed Flow
+Week complete → PR created → External Claude reviews → Human reviews → **Claude Code responds to comments** → Discussion → Resolution → Merge
+
+### Implementation Options
+
+**Option 1: GitHub PR Comments (Simplest)**
+- External Claude posts review on PR
+- Human adds review comments
+- New command: `/gullyreview <pr-number>` loads all PR comments via `gh pr view`
+- Claude Code analyzes comments and drafts responses
+- Responses posted via `gh pr comment` on specific threads
+- Native GitHub conversation threads maintained
+
+**Option 2: Structured Response Document**
+- Create `docs/reviews/PR{N}_RESPONSES.md` for each PR
+- Structure: Comment → Claude Response → Decision → Action
+- Tracked in git for audit trail
+- Posted to GitHub as summary comment
+
+**Hybrid (Recommended):**
+- Use GitHub threads for conversations
+- Generate response document for documentation
+- Both systems complement each other
+
+### Key Features Needed
+- `/gullyreview <pr-number>` - Load PR review comments and context
+- `/gullyrespond <comment-id>` - Draft response to specific comment
+- Response types: Acknowledge → Fix, Rebut → Explain, Propose → Alternative, Request → Clarification
+- Decision tracking: Keep as-is, Will fix, Deferred to Week N
+
+### Benefits
+- Claude Code can defend design decisions with reasoning
+- Human has visibility into trade-offs considered
+- Audit trail of all architectural discussions
+- Iterative improvement through discussion
+
+### Example Conversation
+```
+External Claude: "Auth middleware missing rate limiting (High)"
+↓
+Claude Code: "Acknowledged. Deferred to Week 2 Task 7.1 to maintain
+              scope. Current impl secure via 15min token expiry +
+              refresh rotation per OWASP guidelines."
+↓
+Human: "Agree with deferral, but add TODO comment in code"
+↓
+Claude Code: "Done in commit abc123"
+↓
+[Resolved]
+```
+
+### Priority
+Medium - Valuable for maintaining context and decision rationale. Implement after Week 2-3 when PR review patterns stabilize.
