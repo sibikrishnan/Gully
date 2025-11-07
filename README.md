@@ -1,6 +1,6 @@
 # Gully - Sports Challenge Platform
 
-**Status:** Week 1 (Foundation Phase)
+**Status:** Week 2 (Team Features)
 **Architecture:** Modular Monolith → Microservices
 **Budget:** Zero-cost MVP
 
@@ -22,45 +22,64 @@ Gully is a sports challenge platform MVP connecting athletes and teams for casua
 git clone https://github.com/sibikrishnan/Gully.git
 cd Gully
 
-# Check current structure
-ls -la
+# Start with the master navigator
+cat INDEX.md
 
-# Read project context (auto-loaded by Claude Code)
-cat .claude/.claude.md
+# For Claude Code users
+cat .claude/.claude.md  # Auto-loaded project context
 
-# Review week 1 plan
-See PROJECT_STRUCTURE.md for detailed architecture
+# Start local services
+cd backend
+docker-compose up -d
+npm install
+npm run migrate:latest
+npm run dev
 ```
 
 ### For Claude Code Users
-This project is optimized for Claude Code development:
-- `.claude/.claude.md` - Project context (auto-loaded)
-- Weekly review checklists for token optimization
-- Modular structure for focused sessions
+This project is optimized for Claude Code development with comprehensive navigation:
+
+**Master Navigator:** **[INDEX.md](INDEX.md)** - Quick reference for finding any file
+
+**Custom Commands:**
+- `/gullystatus` - Check current project status
+- `/gullycontinue` - Resume work on next task
+- `/gullycontext [section]` - Load context on-demand
+- See **[.claude/commands/README.md](.claude/commands/README.md)** for all commands
+
+**Documentation Hub:** **[docs/INDEX.md](docs/INDEX.md)**
 
 ---
 
 ## Documentation
 
-All documentation is in `docs/`:
+### Quick Navigation
+**Start here:** **[INDEX.md](INDEX.md)** - Master file navigator for entire project
 
-### Planning Docs
-- **[docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md)** - Vision, phases, features
-- **[docs/ROADMAP.md](docs/ROADMAP.md)** - 9-month development timeline
-- **[docs/FEATURES.md](docs/FEATURES.md)** - Feature specifications
+### Key Documentation
+**Architecture:**
+- **[docs/architecture/OVERVIEW.md](docs/architecture/OVERVIEW.md)** - System architecture overview
+- **[docs/architecture/INDEX.md](docs/architecture/INDEX.md)** - Complete architecture docs navigator
 
-### Technical Docs
-- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture
-- **[docs/DATABASE_SCHEMA.md](docs/DATABASE_SCHEMA.md)** - Database design
-- **[docs/API_ENDPOINTS.md](docs/API_ENDPOINTS.md)** - API documentation
-- **[PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)** - Current project structure
+**Planning:**
+- **[docs/planning/PROJECT_PLAN.md](docs/planning/PROJECT_PLAN.md)** - Vision and phases
+- **[docs/planning/ROADMAP.md](docs/planning/ROADMAP.md)** - 12-week development timeline
+- **[docs/planning/FEATURES.md](docs/planning/FEATURES.md)** - Feature specifications
+- **[docs/planning/DATABASE_SCHEMA.md](docs/planning/DATABASE_SCHEMA.md)** - Database design
+- **[docs/planning/API_ENDPOINTS.md](docs/planning/API_ENDPOINTS.md)** - API documentation
 
-### Development Briefs
-- **[docs/parallel-development/briefs/](docs/parallel-development/briefs/)** - Microservice specifications
-  - UserService-Brief.md
-  - TeamService-Brief.md
-  - MatchService-Brief.md
-  - StatsService-Brief.md
+**Service Development:**
+- **[docs/parallel-development/INDEX.md](docs/parallel-development/INDEX.md)** - All service briefs
+  - UserService-Brief.md (✅ Week 1 - Complete)
+  - TeamService-Brief.md (⏳ Week 2 - Current)
+  - MatchService-Brief.md, LeagueService-Brief.md, TournamentService-Brief.md, StatsService-Brief.md (Future)
+
+**Weekly Reviews:**
+- **[docs/weekly-reviews/WEEK1_REVIEW.md](docs/weekly-reviews/WEEK1_REVIEW.md)** - Week 1 retrospective
+
+**Workflow:**
+- **[docs/WORKFLOW_GUIDE.md](docs/WORKFLOW_GUIDE.md)** - Development best practices
+- **[docs/guides/CLAUDE_SESSION_GUIDE.md](docs/guides/CLAUDE_SESSION_GUIDE.md)** - Claude Code session protocols
 
 ---
 
