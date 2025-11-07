@@ -163,6 +163,98 @@ cd backend && docker compose up -d
 
 ---
 
+## Configuration: settings.local.json
+
+The `.claude/settings.local.json` file controls Claude Code permissions and behavior.
+
+### File Location
+`.claude/settings.local.json`
+
+### Purpose
+- Define which bash commands Claude can run without asking
+- Specify which files Claude can read/write/edit freely
+- Configure hooks for tool execution
+
+### Available Settings
+
+#### Permissions
+```json
+{
+  "permissions": {
+    "bash": ["git*", "npm*", "docker*", "node*", "python3*"],
+    "read": ["**/*"],
+    "write": ["backend/src/**/*", "docs/**/*"],
+    "edit": ["**/*.ts", "**/*.md", "**/*.json"]
+  }
+}
+```
+
+**Permission Types:**
+- **bash**: Allowed bash commands (glob patterns supported)
+  - Example: `"git*"` allows all git commands
+  - Example: `"npm install*"` allows npm install commands only
+
+- **read**: Files Claude can read without permission
+  - Default: `["**/*"]` (all files)
+  - Use to restrict sensitive files
+
+- **write**: Files Claude can create/overwrite without permission
+  - Be specific to prevent accidental overwrites
+  - Example: `["backend/src/**/*"]` allows writing in src/
+
+- **edit**: Files Claude can edit without permission
+  - Safer than write (modifies existing files only)
+  - Example: `["**/*.ts"]` allows editing TypeScript files
+
+#### Hooks
+```json
+{
+  "hooks": {
+    "pre_tool": null,
+    "post_tool": null
+  }
+}
+```
+
+**Hook Types:**
+- **pre_tool**: Shell command to run before each tool execution
+- **post_tool**: Shell command to run after each tool execution
+
+**Use Cases:**
+- Validation before file writes
+- Auto-formatting after file edits
+- Logging tool usage
+- Custom workflows
+
+### Current Configuration
+See `.claude/settings.local.json` for active permissions.
+
+**Default Configuration:**
+- Most bash commands allowed (git, npm, docker, etc.)
+- All files readable
+- Write access to source and docs
+- Edit access to code and markdown
+
+### Security Notes
+- Be cautious with write permissions on sensitive files
+- Exclude `.env`, credentials, secrets from write access
+- Review bash permissions periodically
+- Use specific patterns rather than wildcards when possible
+
+---
+
 ## Maintenance
 
 After completing each task, Claude should update `TASK_HISTORY.md` automatically. These commands read from that file to provide accurate status.
+
+### File Updates
+- **TASK_HISTORY.md** - Task completion status (auto-updated by Claude)
+- **STATUS.md** - Current session status (auto-updated)
+- **.claude/OPTIMIZATION_LOG.md** - Token usage tracking (via `/gullymetrics log`)
+
+### Context Updates
+When architecture changes, update:
+1. Source files in `.claude/context/[section]/`
+2. High-level docs in `docs/architecture/`
+3. Service briefs in `docs/parallel-development/` (if applicable)
+4. Planning docs in `docs/planning/` (if applicable)
