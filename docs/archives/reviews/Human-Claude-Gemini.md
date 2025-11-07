@@ -1,3 +1,15 @@
+⚠️ **ARCHIVED - Historical Review (2025-11)**
+
+**Context:** Early discussion about token optimization and task history management
+
+**Outcome:** Implemented comprehensive refactoring (see REFACTORING_PLAN.md and REFACTORING_SUMMARY.md)
+
+This file is preserved for historical reference showing the evolution of our optimization strategy.
+
+---
+
+# Historical Discussion: Token Optimization Strategy
+
 Here is my plan with Claude Code. Please act as a co-engineer and have you opinion. Provide candid thoughts on the plan. you can suggest if wrong, room of optimization, better solution if you know any. We were doing our task driver development and maintaining a file called Task_history.md which was bloating with 400 lines. So we thought of following
 
   **Claude's Aproach**:

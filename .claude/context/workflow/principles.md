@@ -85,6 +85,7 @@
 - **Verify every AI suggestion** before accepting
 - **Test immediately** after code generation
 - **Question unnecessary complexity**
+- **stick to session goal**
 - **Trust but verify always**
 - Use the Decision Framework checklist
 

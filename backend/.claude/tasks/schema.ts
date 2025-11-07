@@ -3,6 +3,68 @@
  * Defines structured task objects with test suites and workflow automation
  */
 
+/**
+ * Workflow State Machine
+ * Tracks progression through TDD workflow phases
+ */
+export type WorkflowState =
+  | 'idle'              // Task created, not started
+  | 'planning'          // Running 4-phase planning (gather→analyze→design→approve)
+  | 'plan_review'       // Waiting for user approval
+  | 'test_writing'      // TDD: Write tests FIRST
+  | 'test_verification' // TDD: Verify tests fail (red phase)
+  | 'implementation'    // TDD: Write code to make tests pass
+  | 'test_execution'    // TDD: Run tests (green phase)
+  | 'refactoring'       // TDD: Optional refactor (refactor phase)
+  | 'validation'        // Final validation (build, lint, coverage)
+  | 'completed'         // All done
+  | 'blocked'           // Cannot proceed
+  | 'failed';           // Workflow failed
+
+/**
+ * Workflow Execution Log
+ * Tracks state transitions for debugging and auditing
+ */
+export interface WorkflowExecutionLog {
+  state: WorkflowState;
+  enteredAt: string;
+  exitedAt?: string;
+  duration?: number;           // milliseconds
+  outcome?: 'success' | 'failure' | 'blocked';
+  notes?: string;
+  tokensUsed?: number;
+}
+
+/**
+ * Execution Metrics
+ * Detailed logging for observability and optimization
+ */
+export interface ExecutionLogEntry {
+  timestamp: string;
+  phase: string;               // e.g., "planning", "testing", "implementation"
+  action: string;              // e.g., "run_tests", "write_code", "planning_phase1"
+  duration?: number;           // milliseconds
+  filesRead?: string[];
+  filesModified?: string[];
+  testsRun?: number;
+  tokensUsed?: number;
+  outcome: 'success' | 'failure' | 'partial';
+  notes?: string;
+}
+
+/**
+ * Test Health Summary
+ * Aggregated test status for quick health checks
+ */
+export interface TestHealth {
+  total: number;               // Total test cases
+  passing: number;             // Currently passing
+  failing: number;             // Currently failing
+  notRun: number;              // Not yet executed
+  lastUpdated: string;         // ISO timestamp
+  overallStatus: 'healthy' | 'degraded' | 'failing' | 'unknown';
+}
+
 export interface TestCase {
   id: string;                          // e.g., "jwt-utils.unit", "jwt-utils.regression"
   category: 'unit' | 'integration' | 'e2e' | 'regression' | 'performance';
@@ -219,6 +281,26 @@ export interface Task {
       reason: string;
       timestamp: string;
     }[];
+  };
+
+  // === PHASE 1 ENHANCEMENTS ===
+
+  // Workflow State Machine
+  workflowState?: WorkflowState;       // Current workflow state
+  workflowHistory?: WorkflowExecutionLog[];  // State transition history
+
+  // Test Health Aggregation
+  testHealth?: TestHealth;             // Computed test status summary
+
+  // Metrics & Observability
+  executionLog?: ExecutionLogEntry[];  // Detailed execution metrics
+
+  // Context & Output Tracking
+  contextRefs?: string[];              // Reference docs/specs (e.g., ["docs/api-spec.md"])
+  outputArtifacts?: {
+    files?: string[];                  // Created/modified files
+    functions?: string[];              // New functions added
+    migrations?: string[];             // Database migrations
   };
 
   // Metadata

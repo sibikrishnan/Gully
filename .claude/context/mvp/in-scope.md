@@ -11,7 +11,7 @@
 
 ## ✅ Feature 2: User Profiles
 - Name, avatar, bio
-- Sports preferences (cricket/football)
+- Sports preferences (pingpong, paddle, pickleball,cricket,football)
 - Skill level selection
 
 ## ✅ Feature 3: Team Creation & Management

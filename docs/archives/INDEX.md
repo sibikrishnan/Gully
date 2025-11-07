@@ -23,9 +23,14 @@
 ### Historical Reviews
 **[reviews/](reviews/)** - Past review sessions
 
-Currently empty. Future reviews may be archived here.
+- **[Human-Claude-Gemini.md](reviews/Human-Claude-Gemini.md)** - Token optimization discussion (⚠️ Archived 2025-11-06)
+  - **Context:** Early discussion about token optimization and task history management
+  - **Outcome:** Led to comprehensive refactoring (see REFACTORING_PLAN.md)
+  - **Content:** Multi-AI review of token auditor strategy
+  - **Lines:** 179 lines
+  - **Purpose:** Historical reference showing evolution of optimization strategy
 
-Expected content:
+Future reviews may be archived here:
 - Multi-AI review outputs
 - External code reviews
 - Audit reports
