@@ -128,8 +128,8 @@ Use `/gullycontext [section]` to load specific sections only when needed.
 **Load with:** `/gullycontext mvp`
 
 **Files:**
-- **[in-scope.md](mvp/in-scope.md)** (45 lines) - MVP features (MODIFIED)
-  - Must-have features for Week 12
+- **[in-scope.md](mvp/in-scope.md)** (45 lines) - MVP features
+  - 7 core features (1:1 mapped to phases)
   - Core user flows
   - Essential functionality
 
@@ -138,10 +138,10 @@ Use `/gullycontext [section]` to load specific sections only when needed.
   - Nice-to-have features
   - Post-MVP enhancements
 
-- **[timeline.md](mvp/timeline.md)** (97 lines) - Project timeline
-  - 12-week development plan
-  - Week-by-week breakdown
-  - Milestone targets
+- **[timeline.md](mvp/timeline.md)** (106 lines) - Development phases
+  - 7-phase development plan
+  - Phase-by-phase breakdown
+  - Feature-driven milestones
 
 - **[metrics.md](mvp/metrics.md)** (53 lines) - Success metrics
   - Technical metrics (coverage, performance)

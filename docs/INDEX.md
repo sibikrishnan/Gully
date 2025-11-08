@@ -20,18 +20,18 @@ Quick links:
 **[parallel-development/INDEX.md](parallel-development/INDEX.md)** - All service briefs
 
 Services:
-- UserService-Brief.md (✅ Week 1 - Complete)
-- TeamService-Brief.md (⏳ Week 2 - Next)
-- MatchService-Brief.md (Weeks 5-6)
-- LeagueService-Brief.md (Future)
-- TournamentService-Brief.md (Future)
-- StatsService-Brief.md (Weeks 9-10)
+- UserService-Brief.md (✅ Phase 1 - Complete)
+- TeamService-Brief.md (⏳ Phase 2-3 - Upcoming)
+- MatchService-Brief.md (Phases 4-6)
+- LeagueService-Brief.md (Future/out of MVP scope)
+- TournamentService-Brief.md (Future/out of MVP scope)
+- StatsService-Brief.md (Phase 7)
 
-### Weekly Reviews
-**[weekly-reviews/](weekly-reviews/)** - Weekly retrospectives
+### Phase Reviews
+**[weekly-reviews/](weekly-reviews/)** - Phase completion retrospectives
 
-- [WEEK1_REVIEW.md](weekly-reviews/WEEK1_REVIEW.md) - Week 1 completion (✅ Complete)
-- Week 2 Review - Coming soon
+- [WEEK1_REVIEW.md](weekly-reviews/WEEK1_REVIEW.md) - Phase 1 completion (✅ Complete, historical filename)
+- Phase 2+ reviews added as development progresses
 
 ### Planning Documents
 **[planning/](planning/)** - Project planning and specifications
@@ -39,7 +39,7 @@ Services:
 - [API_ENDPOINTS.md](planning/API_ENDPOINTS.md) - Complete API documentation
 - [DATABASE_SCHEMA.md](planning/DATABASE_SCHEMA.md) - Detailed database schema
 - [FEATURES.md](planning/FEATURES.md) - Feature specifications
-- [ROADMAP.md](planning/ROADMAP.md) - 12-week development roadmap
+- [ROADMAP.md](planning/ROADMAP.md) - Long-term vision roadmap (post-MVP)
 - [PROJECT_PLAN.md](planning/PROJECT_PLAN.md) - Project planning overview
 - [FUTURE_FEATURES.md](planning/FUTURE_FEATURES.md) - Future feature ideas
 
@@ -47,7 +47,7 @@ Services:
 **[guides/](guides/)** - Development workflow documentation
 
 - [CLAUDE_SESSION_GUIDE.md](guides/CLAUDE_SESSION_GUIDE.md) - Claude Code session protocols
-- [WEEKLY_REVIEW_CHECKLIST.md](guides/WEEKLY_REVIEW_CHECKLIST.md) - Weekly review process
+- [WEEKLY_REVIEW_CHECKLIST.md](guides/WEEKLY_REVIEW_CHECKLIST.md) - Phase review process
 - [WORKFLOW_GUIDE.md](WORKFLOW_GUIDE.md) - Development workflow and best practices
 
 ### Tool Documentation
@@ -67,7 +67,7 @@ Services:
 - Learn about a specific service? → [parallel-development/INDEX.md](parallel-development/INDEX.md)
 - See API endpoints? → [planning/API_ENDPOINTS.md](planning/API_ENDPOINTS.md)
 - Check database schema? → [planning/DATABASE_SCHEMA.md](planning/DATABASE_SCHEMA.md)
-- Review Week 1 work? → [weekly-reviews/WEEK1_REVIEW.md](weekly-reviews/WEEK1_REVIEW.md)
+- Review Phase 1 work? → [weekly-reviews/WEEK1_REVIEW.md](weekly-reviews/WEEK1_REVIEW.md) (historical)
 - Find historical docs? → [archives/INDEX.md](archives/INDEX.md)
 
 ---
@@ -78,7 +78,7 @@ Services:
 - **Service Briefs:** 6 files (1 complete, 1 in progress, 4 planned)
 - **Planning Docs:** 6 files
 - **Workflow Guides:** 3 files
-- **Weekly Reviews:** 1 file (Week 1)
+- **Phase Reviews:** 1 file (Phase 1)
 - **Archives:** Historical content preserved for reference
 
 ---
