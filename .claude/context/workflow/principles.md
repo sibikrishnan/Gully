@@ -64,7 +64,7 @@
 - Defer nice-to-haves to v2
 
 **Why:**
-- Time-constrained (90 min/day)
+- Feature-driven development
 - Need to validate product-market fit
 - Perfect is enemy of done
 - Learn from users, not assumptions
@@ -149,7 +149,7 @@ Suggested Tool/Service
 - Document patterns for reuse
 - Build mental models
 - Prioritize knowledge over speed
-- 90 min/day sustainable pace
+- Sustainable, focused development pace
 
 **Why:**
 - Solo developer needs to maintain code
