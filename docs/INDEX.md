@@ -41,12 +41,14 @@ Services:
 - [FEATURES.md](planning/FEATURES.md) - Feature specifications
 - [ROADMAP.md](planning/ROADMAP.md) - 12-week development roadmap
 - [PROJECT_PLAN.md](planning/PROJECT_PLAN.md) - Project planning overview
+- [FUTURE_FEATURES.md](planning/FUTURE_FEATURES.md) - Future feature ideas
 
 ### Workflow Guides
 **[guides/](guides/)** - Development workflow documentation
 
+- [CLAUDE_SESSION_GUIDE.md](guides/CLAUDE_SESSION_GUIDE.md) - Claude Code session protocols
+- [WEEKLY_REVIEW_CHECKLIST.md](guides/WEEKLY_REVIEW_CHECKLIST.md) - Weekly review process
 - [WORKFLOW_GUIDE.md](WORKFLOW_GUIDE.md) - Development workflow and best practices
-- CLAUDE_SESSION_GUIDE.md - Session protocols (root level, will be moved)
 
 ### Tool Documentation
 **[tools/](tools/)** - Tool usage and documentation
@@ -72,13 +74,14 @@ Services:
 
 ## 📊 Documentation Statistics
 
-- **Architecture Docs:** 3 active files
+- **Architecture Docs:** 4 files
 - **Service Briefs:** 6 files (1 complete, 1 in progress, 4 planned)
-- **Planning Docs:** 5 files
+- **Planning Docs:** 6 files
+- **Workflow Guides:** 3 files
 - **Weekly Reviews:** 1 file (Week 1)
 - **Archives:** Historical content preserved for reference
 
 ---
 
-**Last Updated:** 2025-11-06
+**Last Updated:** 2025-11-07
 **Purpose:** Central navigation for all documentation

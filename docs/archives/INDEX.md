@@ -25,15 +25,46 @@
 
 - **[Human-Claude-Gemini.md](reviews/Human-Claude-Gemini.md)** - Token optimization discussion (⚠️ Archived 2025-11-06)
   - **Context:** Early discussion about token optimization and task history management
-  - **Outcome:** Led to comprehensive refactoring (see REFACTORING_PLAN.md)
+  - **Outcome:** Led to comprehensive refactoring
   - **Content:** Multi-AI review of token auditor strategy
-  - **Lines:** 179 lines
+  - **Lines:** 190 lines
   - **Purpose:** Historical reference showing evolution of optimization strategy
 
-Future reviews may be archived here:
-- Multi-AI review outputs
-- External code reviews
-- Audit reports
+### Optimization Archives
+**[optimization/](optimization/)** - Historical optimization documents
+
+- **[CLAUDE_MD_OPTIMIZATION.md](optimization/CLAUDE_MD_OPTIMIZATION.md)** - Context optimization discussion (⚠️ Archived 2025-11-07)
+  - **Content:** Early discussion about optimizing .claude.md
+  - **Lines:** 234 lines
+  - **Purpose:** Historical reference for optimization approach evolution
+
+### Refactoring Archives
+**[refactoring/](refactoring/)** - Refactoring plans and summaries
+
+- **[REFACTORING_PLAN.md](refactoring/REFACTORING_PLAN.md)** - Structure refactoring plan (⚠️ Archived 2025-11-07)
+  - **Content:** 5-phase refactoring plan for project structure
+  - **Lines:** 634 lines
+  - **Purpose:** Historical record of refactoring approach
+
+- **[REFACTORING_SUMMARY.md](refactoring/REFACTORING_SUMMARY.md)** - Structure refactoring results (⚠️ Archived 2025-11-07)
+  - **Content:** Complete summary of refactoring execution and results
+  - **Lines:** 331 lines
+  - **Purpose:** Historical record of refactoring outcomes
+
+### Prompts Archive
+**[prompts/](prompts/)** - Historical prompts and context files
+
+- **[prompt01.md](prompts/prompt01.md)** - Early prompt experiments (⚠️ Archived 2025-11-07)
+  - **Lines:** ~150 lines
+  - **Purpose:** Historical reference for early prompt engineering
+
+### Human Notes
+**[human-read-only/](human-read-only/)** - Personal observations and notes
+
+- **[observation.txt](human-read-only/observation.txt)** - Human observations (⚠️ Archived 2025-11-07)
+  - **Content:** Personal notes on Claude behavior and best practices
+  - **Lines:** 42 lines
+  - **Purpose:** Personal reference for session management patterns
 
 ---
 
@@ -98,13 +129,22 @@ Future reviews may be archived here:
 
 ```
 archives/
-├── INDEX.md (this file)        # Archive navigator
+├── INDEX.md (this file)           # Archive navigator
 ├── tasks/
-│   └── WEEK1_TASKS.md          # Week 1 task definitions (archived 2025-11-03)
+│   └── WEEK1_TASKS.md             # Week 1 task definitions (archived 2025-11-03)
 ├── reviews/
-│   └── (empty - future reviews may be archived here)
-└── architecture/
-    └── FULL_CONTEXT.md         # Historical context reference (archived 2025-11-06)
+│   └── Human-Claude-Gemini.md     # Multi-AI optimization review (archived 2025-11-06)
+├── architecture/
+│   └── FULL_CONTEXT.md            # Historical context reference (archived 2025-11-06)
+├── optimization/
+│   └── CLAUDE_MD_OPTIMIZATION.md  # Context optimization discussion (archived 2025-11-07)
+├── refactoring/
+│   ├── REFACTORING_PLAN.md        # Refactoring plan (archived 2025-11-07)
+│   └── REFACTORING_SUMMARY.md     # Refactoring summary (archived 2025-11-07)
+├── prompts/
+│   └── prompt01.md                # Early prompts (archived 2025-11-07)
+└── human-read-only/
+    └── observation.txt            # Human observations (archived 2025-11-07)
 ```
 
 ---
@@ -131,7 +171,13 @@ archives/
 |------|-------|---------------|--------|-------------|
 | WEEK1_TASKS.md | 303 | 2025-11-03 | Week 1 complete | docs/weekly-reviews/WEEK1_REVIEW.md |
 | FULL_CONTEXT.md | 1,074 | 2025-11-06 | Too large, outdated | .claude/context/ + docs/architecture/OVERVIEW.md |
-| **Total** | **1,377** | **-** | **-** | **-** |
+| Human-Claude-Gemini.md | 190 | 2025-11-06 | Historical review | Context now in OPTIMIZATION_LOG.md |
+| CLAUDE_MD_OPTIMIZATION.md | 234 | 2025-11-07 | Historical optimization | .claude/OPTIMIZATION_LOG.md |
+| REFACTORING_PLAN.md | 634 | 2025-11-07 | Refactoring complete | Refactoring done |
+| REFACTORING_SUMMARY.md | 331 | 2025-11-07 | Refactoring complete | Changes integrated |
+| prompt01.md | 150 | 2025-11-07 | Early experiment | Current prompts in .claude/ |
+| observation.txt | 42 | 2025-11-07 | Personal notes | Knowledge captured in guides |
+| **Total** | **2,958** | **-** | **-** | **-** |
 
 **Token Savings:** ~6,500 tokens by eliminating duplicates and encouraging use of focused alternatives
 
@@ -164,6 +210,7 @@ This file is preserved for historical reference but should not be used for activ
 
 ---
 
-**Last Updated:** 2025-11-06
-**Total Archived Files:** 2 files (1,377 lines)
+**Last Updated:** 2025-11-07
+**Total Archived Files:** 8 files (2,958 lines)
+**Token Savings:** ~7,000+ tokens by archiving refactoring artifacts
 **Purpose:** Preserve history while maintaining clean active documentation
