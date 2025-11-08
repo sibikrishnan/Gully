@@ -159,7 +159,7 @@ Before paying for ANY service:
 
 **Wrong:** Managing multiple AI contexts before mastering one
 
-**Right:** Master single workflow in weeks 1-4 first
+**Right:** Master single workflow in early phases first
 
 **Why it's bad:**
 - Context switching overhead
@@ -172,10 +172,10 @@ Before paying for ANY service:
 - Focus on one feature at a time
 - Complete current task before starting new
 - Use sequential workflow
-- Add parallel sessions only when needed (Week 8+)
+- Add parallel sessions only when needed (later phases)
 
 **When parallel is OK:**
-- Week 8+: One for backend, one for frontend
+- Later phases: One for backend, one for frontend
 - Code review: One writes, another reviews
 - Separate concerns: Different services/features
 
@@ -191,7 +191,7 @@ Before paying for ANY service:
 - Delays shipping to users
 - Users might not care about polish
 - Feature might not be needed at all
-- Wastes limited time (90 min/day)
+- Wastes development time
 
 **How to avoid:**
 - Build minimum viable version

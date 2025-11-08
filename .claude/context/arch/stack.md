@@ -44,7 +44,7 @@
 
 ---
 
-## Frontend (Week 3+)
+## Frontend (Future Phases)
 
 ### Web
 - **Next.js:** 14+ (App Router)

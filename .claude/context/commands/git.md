@@ -341,40 +341,40 @@ git graph
 
 ---
 
-## Week 1 Workflow
+## Feature Branch Workflow
 
 ### Current Branch
 
 ```bash
 # Check current branch
 git branch
-# Should show: * week1
+# Should show: * feature/user-profiles (or current feature branch)
 ```
 
 ### Typical Session
 
 ```bash
-# 1. Start of day
+# 1. Start of session
 git status
-git pull origin week1
+git pull origin feature/user-profiles
 
 # 2. Work on tasks
 # ... make changes ...
 
 # 3. Commit regularly
 git add .
-git commit -m "feat: implement user signup endpoint"
+git commit -m "feat: implement user profile endpoint"
 
-# 4. End of day
-git push origin week1
+# 4. End of session
+git push origin feature/user-profiles
 
-# 5. End of week (merge to master)
+# 5. End of phase (merge to master)
 git checkout master
 git pull origin master
-git merge week1
+git merge feature/user-profiles
 git push origin master
-git tag -a v0.1.0 -m "Week 1 complete"
-git push origin v0.1.0
+git tag -a v0.2.0 -m "Phase 2 complete"
+git push origin v0.2.0
 ```
 
 ---

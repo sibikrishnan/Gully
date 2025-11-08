@@ -247,4 +247,4 @@ CREATE INDEX idx_user_sports_sport_skill ON user_sports(sport, skill_level);
 ---
 
 **Current Status:** Basic indexes in place for MVP
-**Review:** After Week 12, analyze slow queries and add targeted indexes
+**Review:** After MVP completion, analyze slow queries and add targeted indexes

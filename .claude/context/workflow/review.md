@@ -1,18 +1,18 @@
-# Weekly Review Protocol
+# Phase Review Protocol
 
-**Purpose:** Structured end-of-week review to optimize workflow and track progress.
+**Purpose:** Structured end-of-phase review to optimize workflow and track progress.
 
-**Duration:** 90 minutes every Sunday or end-of-week
+**Duration:** ~90 minutes at phase completion
 
 ---
 
 ## 1. Token Consumption Analysis (15 min)
 
 ### Track Usage
-- [ ] Total tokens used this week
+- [ ] Total tokens used this phase
 - [ ] Tokens per day average
 - [ ] Identify highest consumption sessions
-- [ ] Compare to previous week
+- [ ] Compare to previous phase
 
 ### Identify Waste
 - [ ] Hallucination loops (repeat requests)
@@ -24,7 +24,7 @@
 - [ ] Remove unnecessary files from context
 - [ ] Refine prompting strategy
 - [ ] Document token-efficient patterns
-- [ ] Set target for next week
+- [ ] Set target for next phase
 
 **Action Items:**
 - Archive completed feature branches
@@ -36,7 +36,7 @@
 ## 2. Progress Assessment (15 min)
 
 ### Completed vs Planned
-- [ ] Features completed this week
+- [ ] Features completed this phase
 - [ ] Features planned but not done
 - [ ] Unexpected work (bugs, changes)
 - [ ] Time spent vs estimated
@@ -48,14 +48,14 @@
 - [ ] External blockers
 
 ### Velocity Check
-- [ ] On track for 12-week MVP?
+- [ ] On track for 7-phase MVP completion?
 - [ ] Need to adjust timeline?
 - [ ] Need to cut scope?
 - [ ] Need to simplify approach?
 
 **Action Items:**
 - Update WEEK[N]_TASKS.md with status
-- Adjust next week's plan if needed
+- Adjust next phase plan if needed
 - Document blockers and resolutions
 
 ---
@@ -153,7 +153,7 @@
 - [ ] Is .claude/.claude.md current?
 - [ ] Is FULL_CONTEXT.md accurate?
 - [ ] Are subsections up to date?
-- [ ] Update week number/status
+- [ ] Update phase number/status
 
 ### Verify Context Loading
 - [ ] Test /gullycontext commands
@@ -208,17 +208,17 @@
 
 ---
 
-## 8. Next Week Planning (5 min)
+## 8. Next Phase Planning (5 min)
 
 ### Set Goals
-- [ ] Primary goal for next week
+- [ ] Primary goal for next phase
 - [ ] Stretch goal if ahead
 - [ ] Minimum acceptable progress
 - [ ] Dependencies to address
 
 ### Prepare Context
-- [ ] Update week number in .claude/.claude.md
-- [ ] Create/update WEEK[N]_TASKS.md
+- [ ] Update phase number in .claude/.claude.md
+- [ ] Create/update PHASE[N]_TASKS.md
 - [ ] Load necessary context sections
 - [ ] Set up task tracking
 
@@ -229,9 +229,9 @@
 - [ ] Contingency plans?
 
 **Action Items:**
-- Create next week's task file
+- Create next phase's task file
 - Update project status
-- Set weekly commitment
+- Set phase commitment
 
 ---
 
