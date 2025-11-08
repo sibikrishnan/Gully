@@ -1,6 +1,6 @@
 # Gully - Sports Challenge Platform
 
-**Status:** Week 2 (Team Features)
+**Status:** Phase 2 (User Profiles)
 **Architecture:** Modular Monolith → Microservices
 **Budget:** Zero-cost MVP
 
@@ -10,7 +10,7 @@
 
 Gully is a sports challenge platform MVP connecting athletes and teams for casual and competitive matches. Built by a solo developer mastering Claude Code, with zero cloud costs during development.
 
-**Goal:** Build demo-ready app for investors/users in 12 weeks (90 min/day)
+**Goal:** Build demo-ready app for investors/users (~12 weeks, feature-driven)
 
 ---
 
@@ -70,12 +70,12 @@ This project is optimized for Claude Code development with comprehensive navigat
 
 **Service Development:**
 - **[docs/parallel-development/INDEX.md](docs/parallel-development/INDEX.md)** - All service briefs
-  - UserService-Brief.md (✅ Week 1 - Complete)
-  - TeamService-Brief.md (⏳ Week 2 - Current)
-  - MatchService-Brief.md, LeagueService-Brief.md, TournamentService-Brief.md, StatsService-Brief.md (Future)
+  - UserService-Brief.md (✅ Phase 1 - Complete)
+  - TeamService-Brief.md (⏳ Phase 2-3 - Upcoming)
+  - MatchService-Brief.md, LeagueService-Brief.md, TournamentService-Brief.md, StatsService-Brief.md (Future phases)
 
-**Weekly Reviews:**
-- **[docs/weekly-reviews/WEEK1_REVIEW.md](docs/weekly-reviews/WEEK1_REVIEW.md)** - Week 1 retrospective
+**Phase Reviews:**
+- **[docs/weekly-reviews/WEEK1_REVIEW.md](docs/weekly-reviews/WEEK1_REVIEW.md)** - Phase 1 retrospective (historical)
 
 **Workflow:**
 - **[docs/WORKFLOW_GUIDE.md](docs/WORKFLOW_GUIDE.md)** - Development best practices
@@ -158,9 +158,9 @@ infrastructure/                # Docker, Terraform (future)
 
 ---
 
-## Development Timeline
+## Development Phases
 
-### Week 1: Foundation ✅ Completed
+### Phase 1: User Authentication ✅ Completed
 - ✅ Project structure created
 - ✅ Database setup (PostgreSQL + Redis)
 - ✅ Auth foundation (Passport.js + JWT)
@@ -168,23 +168,23 @@ infrastructure/                # Docker, Terraform (future)
 - ✅ Comprehensive testing infrastructure (121 tests, 90%+ coverage)
 - ✅ Core application with graceful shutdown
 
-**Review:** See [Week 1 Review](docs/weekly-reviews/WEEK1_REVIEW.md) for detailed analysis
+**Review:** See [Phase 1 Review](docs/weekly-reviews/WEEK1_REVIEW.md) for detailed analysis
 
-### Weeks 2-4: Core Services
-- User profiles CRUD
-- Team management
-- Challenge flow
+### Phase 2: User Profiles ⏳ Current
+- User profile CRUD endpoints
+- Sport preferences management
+- User search & discovery
 
-### Weeks 5-8: Match System
-- Match scheduling
-- Results submission
-- Basic statistics
+### Phase 3: Team Creation & Management
+- Team creation and roster management
+- Member invitations
+- Team discovery
 
-### Weeks 9-12: Polish & Launch
-- UI refinement
-- Testing
-- Deploy to free hosting
-- Demo preparation
+### Phases 4-7: Match System & Stats
+- Challenge flow (Phase 4)
+- Match scheduling (Phase 5)
+- Result submission (Phase 6)
+- Stats & leaderboard (Phase 7)
 
 ---
 
@@ -224,9 +224,9 @@ cd backend
 
 ---
 
-## Weekly Review Protocol
+## Phase Review Protocol
 
-Every Sunday, review:
+At phase completion, review:
 1. **Token Consumption** - Optimize Claude usage
 2. **Progress** - Features completed vs planned
 3. **Learning** - Document patterns, avoid hallucinations
@@ -239,11 +239,11 @@ See `.claude/.claude.md` for detailed checklist.
 
 ## Project Status
 
-- **Current Week:** Week 2 (Core Services - User Profiles)
-- **Week 1 Status:** ✅ Completed (121 tests passing, 90%+ coverage)
-- **Branch:** `week1`
-- **Last Updated:** November 3, 2025
-- **Next Milestone:** Week 2 - User Profile CRUD Operations
+- **Current Phase:** Phase 2 (User Profiles)
+- **Phase 1 Status:** ✅ Completed (121 tests passing, 90%+ coverage)
+- **Branch:** `feature/user-profiles`
+- **Last Updated:** November 7, 2025
+- **Next Milestone:** Phase 2 - User Profile CRUD Operations
 
 ---
 

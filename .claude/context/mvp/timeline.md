@@ -1,48 +1,54 @@
-# MVP 12-Week Timeline
+# MVP Development Timeline
 
-**Goal:** Demo-ready app by Week 12 with zero monthly costs.
-
----
-
-## Weeks 1-2: Foundation ✅ CURRENT
-**Goal:** Database, Docker, basic structure
-
-### Week 1 Tasks
-- Day 1: Modular monolith project structure
-- Day 2: Docker Compose setup (PostgreSQL, Redis)
-- Day 3: Database migrations framework
-- Day 4: User & auth tables migration
-- Day 5: Passport.js auth setup
-- Day 6: Basic auth endpoints (signup/login)
-- Day 7: Week review & token analysis
-
-### Week 2 Tasks
-- Day 8: User profile endpoints
-- Day 9: User-sports relationship
-- Day 10: JWT middleware
-- Day 11: Auth testing
-- Day 12: Team tables migration
-- Day 13: Team service scaffolding
-- Day 14: Week review
+**Goal:** Demo-ready app with zero monthly costs.
 
 ---
 
-## Weeks 3-4: User & Team Features
-**Goal:** Complete user/team management
+## Phase 1: User Authentication ✅ COMPLETE
+**Feature:** Email/password auth, JWT, profile creation
 
-- User profile CRUD endpoints
+**Tasks Completed:**
+- Modular monolith project structure
+- Docker Compose setup (PostgreSQL, Redis)
+- Database migrations framework
+- User & auth tables migration
+- Passport.js auth setup
+- Auth endpoints (signup/login)
+- JWT middleware
+- Comprehensive auth testing (121 tests, 90%+ coverage)
+
+---
+
+## Phase 2: User Profiles ⏳ CURRENT
+**Feature:** Name, avatar, bio, sports preferences, skill level
+
+**Planned Tasks:**
+- User profile CRUD endpoints (GET, PATCH, DELETE)
+- Sport preferences management
+- User search & discovery with pagination
+- Profile validation & error handling
+- Unit & integration tests for profile operations
+
+---
+
+## Phase 3: Team Creation & Management
+**Feature:** Create teams, invite members, manage roster
+
+**Planned Tasks:**
+- Team tables migration
+- Team service scaffolding
 - Team creation endpoint
 - Member invitation system
 - Accept/decline invitations
-- Team roster management
-- Basic validation & error handling
-- Unit tests for user/team services
+- Team roster management (add/remove)
+- Unit tests for team services
 
 ---
 
-## Weeks 5-6: Challenge System
-**Goal:** Challenge flow working end-to-end
+## Phase 4: Challenge System
+**Feature:** Send/accept/decline challenges, propose match details
 
+**Planned Tasks:**
 - Challenge creation flow
 - Challenge accept/decline logic
 - Match scheduling from challenge
@@ -53,12 +59,13 @@
 
 ---
 
-## Weeks 7-8: Match Management
-**Goal:** Match lifecycle complete
+## Phase 5: Match Scheduling
+**Feature:** Schedule matches, track status, manage details
 
+**Planned Tasks:**
 - Match creation from challenge
-- Result submission endpoints
-- Verification workflow (both teams confirm)
+- Match details (date, time, location, sport)
+- Match status tracking
 - Match history view
 - Match status updates
 - Match cancellation
@@ -66,9 +73,23 @@
 
 ---
 
-## Weeks 9-10: Stats & Leaderboard
-**Goal:** Stats calculation working
+## Phase 6: Result Submission
+**Feature:** Submit results, verification, win/loss/draw recording
 
+**Planned Tasks:**
+- Result submission endpoints
+- Verification workflow (both teams confirm)
+- Win/loss/draw recording
+- Result history
+- Dispute handling (basic)
+- Validation & edge cases
+
+---
+
+## Phase 7: Basic Stats & Leaderboard
+**Feature:** Win/loss records, match history, leaderboard by sport
+
+**Planned Tasks:**
 - Win/loss tracking per user
 - Win/loss tracking per team
 - Match history aggregation
@@ -76,22 +97,9 @@
 - Leaderboard API endpoints
 - Stats caching strategy
 - Performance testing
+- Demo preparation & deployment
 
 ---
 
-## Weeks 11-12: Launch Prep
-**Goal:** Demo-ready deployment
-
-- Bug fixes and polish
-- Frontend basic UI (if not done)
-- Deploy to Render/Railway
-- Seed demo data
-- Create demo accounts
-- Investor demo script
-- Documentation for handoff
-- Week 12 final review
-
----
-
-**Velocity Target:** Complete 1 major milestone every 2 weeks
-**Daily Commitment:** 90 minutes focused work
+**Development Approach:** Feature completion over time constraints
+**Target:** ~12 weeks (flexible based on feature quality)
