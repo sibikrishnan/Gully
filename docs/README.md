@@ -98,4 +98,4 @@ Historical documentation preserved for reference. See `archives/INDEX.md` for na
 
 **Last Updated:** 2025-11-07
 **Purpose:** Central hub for all project documentation
-**Status:** Active development (Week 2)
+**Status:** Active development (Phase 2 - User Profiles)

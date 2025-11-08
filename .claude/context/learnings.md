@@ -322,7 +322,7 @@ export const validate = (data: unknown) => {
 
 ---
 
-## Performance Benchmarks (Week 1)
+## Performance Benchmarks (Phase 1)
 
 **API Response Times (Local):**
 - GET /health: ~8ms (first request), ~0.5ms (subsequent)
@@ -341,7 +341,7 @@ export const validate = (data: unknown) => {
 - 121 tests across 7 suites
 - Average: ~33ms per test
 
-**Use these as baselines for Week 2+ optimization.**
+**Use these as baselines for subsequent phase optimization.**
 
 ---
 

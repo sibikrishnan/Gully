@@ -179,7 +179,7 @@ Shows last completed task with commit hash.
 
 /gullystatus
 # Output:
-# 📍 Status: Week 1, Foundation Phase
+# 📍 Status: Phase 2 (User Profiles) - Following Phase 1 (Foundation)
 # ✅ Last: Task 2.2 - Database Schema (commit: 96e3f88)
 # ⏭️ Next: Task 3.1 - Auth Utilities & Middleware
 # 💡 Notes: Docker + DB ready, 5 test users seeded
@@ -194,7 +194,7 @@ Shows last completed task with commit hash.
 # - Auth middleware for protected routes
 # - TypeScript types for User/Auth
 # Files to create: 5 files
-# Estimated duration: 90 min
+# Estimated duration: Manageable chunks
 # Ready to proceed? (yes/no)
 
 yes

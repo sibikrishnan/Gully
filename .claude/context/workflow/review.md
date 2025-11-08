@@ -2,7 +2,7 @@
 
 **Purpose:** Structured end-of-phase review to optimize workflow and track progress.
 
-**Duration:** ~90 minutes at phase completion
+**Duration:** Approximately 90 minutes at phase completion
 
 ---
 
