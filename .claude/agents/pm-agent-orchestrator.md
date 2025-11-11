@@ -239,26 +239,147 @@ Curate context for task-generation-agent:
 }
 ```
 
-**2.4 Invoke task-generation-agent**
+**2.4 Calculate Test Budget**
+
+Use layer-based allocation for each task:
+
+**For typical CRUD feature (GET, PATCH, DELETE):**
+```
+Repository Layer: 20-30 tests
+- Complex DB queries, JOINs, edge cases
+- Performance, consistency, schema validation
+- Critical: Data integrity
+
+Controller Layer: 12-18 tests
+- Business logic paths
+- Field-level access control
+- Error handling
+- Security scenarios
+
+Route Layer: 10-15 tests
+- Middleware integration (auth, validation)
+- E2E HTTP request/response
+- Status codes, response formats
+
+Total: 50-70 tests for full CRUD feature (all layers)
+```
+
+**Adjust based on complexity:**
+- Simple CRUD (no access control): 40-50 tests
+- Complex CRUD (field-level permissions): 60-70 tests
+- Basic utility endpoint: 20-30 tests
+
+**2.5 Build PM Thoughts**
+
+Synthesize lessons from TASK_HISTORY.json and BUG_TRACKER.json into natural language guidance:
 
 ```
-Input files prepared:
-- AGENT_CONTEXT.json (curated context)
-- PROJECT_PLAN.json (task skeleton reference)
-- TECH_SPEC.json (architecture reference)
+Example pmThoughts string:
 
-Invoke task-generation-agent:
-  Mode: single-task
-  Task: P2-PROF-T2
+"Phase 1 revealed users.id is INTEGER not UUID - always verify schema from migrations first. Previous task (P2-PROF-T1) succeeded with separated architecture (task 1KB, tests separate file), saving 93% tokens. This PATCH endpoint needs ~50 tests total (20 repo + 15 controller + 15 route) for validation and access control. Use integration-style tests with real DB, avoid Jest mocks. Add checkpoints at 10K/30K tokens to catch issues early. Quality over speed - we're building MVP correctly."
+```
 
-Expected output:
-- backend/.claude/tasks/P2-PROF-T2.json (parent task)
-- backend/.claude/tasks/P2-PROF-T2.1-repo.json (subtask)
-- backend/.claude/tasks/P2-PROF-T2.2-controller.json (subtask)
-- backend/.claude/tasks/P2-PROF-T2.3-route.json (subtask)
-- backend/.claude/tasks/tests/P2-PROF-T2.1-repo-tests.json (test suite)
-- backend/.claude/tasks/tests/P2-PROF-T2.2-controller-tests.json
-- backend/.claude/tasks/tests/P2-PROF-T2.3-route-tests.json
+**Key elements to include:**
+- Schema warnings from previous tasks
+- Token efficiency learnings
+- Test budget with rationale
+- Architectural patterns that worked
+- Risk alerts (token limits, checkpoints)
+- Quality guidance
+
+**2.6 Invoke task-generation-agent**
+
+Use the Task tool to launch task-generation-agent with Mode A (full-phase) or Mode B (adhoc-single) input structure:
+
+**For Single Task Generation (Mode A - PM-driven):**
+
+```
+Use Task tool with subagent_type="task-generation-agent"
+
+Provide this JSON input in the prompt:
+
+{
+  "mode": "single-task",
+  "taskId": "P2-PROF-T1",
+  "phase": {
+    "number": 2,
+    "name": "User Profiles"
+  },
+  "taskSkeleton": {
+    "id": "P2-PROF-T1",
+    "feature": "GET /api/users/:id",
+    "layers": ["repository", "controller", "route"],
+    "complexity": "medium",
+    "dependencies": ["Phase 1 Auth"]
+  },
+  "testBudget": {
+    "total": 60,
+    "repository": 25,
+    "controller": 15,
+    "route": 12,
+    "validation": 8
+  },
+  "context": {
+    "databaseSchema": {
+      "validated": true,
+      "source": "migrations/*.ts",
+      "critical": {
+        "users.id": "INTEGER (not UUID)",
+        "users.status": "ENUM (not boolean)",
+        "users.email": "VARCHAR(255) UNIQUE NOT NULL"
+      }
+    },
+    "architecturePatterns": {
+      "layered": true,
+      "testingApproach": "integration-style-unit-tests",
+      "mockingPolicy": "avoid-mocks"
+    }
+  },
+  "pmThoughts": "Phase 1 revealed users.id is INTEGER not UUID - verify schema first. Use separated architecture (task 1KB, tests separate). This GET endpoint needs ~60 tests for field-level access control. Add checkpoints at 10K/30K tokens. Quality over speed - building MVP correctly."
+}
+```
+
+**Expected Token Usage:** ~25K tokens, 5-7 minutes per task
+
+**For Single Task (Mode B - Human Request):**
+
+```
+Use Task tool with subagent_type="task-generation-agent"
+
+Provide this JSON input in the prompt:
+
+{
+  "mode": "adhoc-single",
+  "taskId": "P2-PROF-T2",
+  "layer": "all",
+  "qualityFirst": true,
+  "noTestBudgetConstraint": false,
+  "dependencies": {
+    "P2-PROF-T1": "✅ Complete - UserRepository.getUserWithSports()"
+  },
+  "context": {
+    "databaseSchema": { /* same as Mode A */ },
+    "architecturePatterns": { /* same as Mode A */ }
+  },
+  "pmThoughts": "Regenerating P2-PROF-T2 due to schema issues. Verify users.id is INTEGER. Previous attempt hit 95K tokens. Add checkpoint at 30K."
+}
+```
+
+**Expected output from task-generation-agent:**
+
+For Mode A (single task):
+- backend/.claude/tasks/P2-PROF-T1/P2-PROF-T1.json (parent)
+- backend/.claude/tasks/P2-PROF-T1/P2-PROF-T1.1-repo.json
+- backend/.claude/tasks/P2-PROF-T1/P2-PROF-T1.2-controller.json
+- backend/.claude/tasks/P2-PROF-T1/P2-PROF-T1.3-route.json
+- backend/.claude/tasks/P2-PROF-T1/tests/P2-PROF-T1.1-repo-tests.json (25 tests)
+- backend/.claude/tasks/P2-PROF-T1/tests/P2-PROF-T1.2-controller-tests.json (15 tests)
+- backend/.claude/tasks/P2-PROF-T1/tests/P2-PROF-T1.3-route-tests.json (20 tests)
+
+For Mode B (regeneration):
+- Same structure, overwrites existing task folder
+
+**Note:** Generate ONE task at a time. Repeat for P2-PROF-T2, T3, T4, T5 separately.
 ```
 
 ### Step 3: Review Generated Tasks (10-15 min)
@@ -618,34 +739,166 @@ Action:
   → **STOP** - Human must verify gate before advancing
 ```
 
-**6.3 Update STATUS.md for Phase Completion**
+**6.3 Generate Phase Learning Summary**
+
+Before stopping, create comprehensive learning summary for next phase:
+
+**A. Create PHASE_LEARNINGS.md:**
+
+Save to: `backend/.claude/phases/phase-{N}/PHASE_LEARNINGS_{N}.md`
 
 ```markdown
-### Phase 2: User Profiles ✅ COMPLETE (Pending Gate Verification)
-- Status: All tasks complete, maturity gate pending
-- Tasks: 5/5 complete
-- Tests: 210/210 passing (100%)
-- Coverage: 92%
-- Completion Date: 2025-11-11
+# Phase 2 Learnings Summary
 
-**Maturity Gate Status:**
-- [x] All tasks complete
-- [x] Test coverage > 90%
-- [x] All tests passing
-- [x] Build successful
-- [x] Integration tests passing
-- [ ] Performance < 200ms p95 (TODO: Run benchmarks)
-- [ ] Security tests passing (TODO: Run security suite)
+**Date Completed:** 2025-11-11
+**Total Duration:** 5 days
+**Total Token Usage:** 262,000 tokens
+**Tasks Completed:** 5/5
 
-**Next Actions:**
-1. Run performance benchmarks on all Phase 2 endpoints
-2. Run security test suite (IDOR, SQL injection, XSS, auth bypass)
-3. If gate passes → Human advances to Phase 3
-4. If gate fails → Fix issues and re-verify
+## Key Insights
+
+### Schema & Database
+- users.id is INTEGER (SERIAL), not UUID
+- users.status is ENUM('active', 'inactive', 'suspended'), not boolean
+- Always verify schema from migrations FIRST (Phase 0 step)
+- JSONB fields require careful indexing for performance
+
+### Architecture Patterns That Worked
+- Separated architecture (task 1KB, tests separate) saved 93% tokens
+- Layered approach (repo → controller → route) provides clear separation
+- Integration-style tests with real DB simpler than mocks
+- Zod validation schemas reusable across endpoints
+
+### Test Budget Reality
+- Planned: 210 tests total across 5 tasks
+- Actual: 210 tests (100% on target)
+- Distribution: Repo 30%, Controller 25%, Route 25%, Integration 20%
+- Quality maintained with budget guidance
+
+### Token Efficiency
+- Direct execution: 15-25K tokens per subtask (preferred)
+- Subagent execution: 60-70K tokens per task (for complex only)
+- Savings: 50% with direct execution, no quality loss
+
+### Common Issues & Solutions
+- Issue: Partial PATCH updates required careful field filtering
+  Solution: Use Zod .partial() and filter undefined values
+- Issue: Field-level access control complex with JOIN queries
+  Solution: Fetch full object, filter in controller, cleaner tests
+
+### Risks for Next Phase
+- Team features will add more complex relationships (team_members table)
+- Need to plan JOIN query performance early
+- Access control gets more complex (team admin vs member)
+
+## Recommendations for Phase 3
+
+1. **Schema Discovery First** - Verify teams, team_members, team_roles tables
+2. **Test Budget** - Allocate 60-80 tests for complex team features
+3. **Performance** - Add benchmark tests early for JOIN-heavy queries
+4. **Access Control** - Design role-based permissions upfront
+5. **Token Efficiency** - Continue direct execution for medium complexity
+
+## Git Commits
+- P2-PROF-T1: commit abc123
+- P2-PROF-T2: commit def456
+- P2-PROF-T3: commit ghi789
+- P2-PROF-T4: commit jkl012
+- P2-PROF-T5: commit mno345
 
 ---
 
-⚠️ **PM AGENT STOPPED**: Phase 2 complete. Human must verify maturity gate and approve Phase 3 start.
+**Status:** Ready for Phase 3 planning
+**Next Step:** Human reviews and approves Phase 3 start
+```
+
+**B. Update PROJECT_STATUS.json:**
+
+Mark phase complete, update phaseTransitions array:
+
+```json
+{
+  "currentPhase": {
+    "id": "P2",
+    "status": "complete",
+    "completionDate": "2025-11-11T18:00:00Z"
+  },
+  "phases": [
+    {
+      "id": "P2",
+      "status": "complete",
+      "completionDate": "2025-11-11",
+      "maturityGate": { "status": "pending_verification" }
+    }
+  ],
+  "phaseTransitions": [
+    {
+      "fromPhase": "P2",
+      "toPhase": "P3",
+      "status": "pending_human_approval",
+      "learningsDocPath": "backend/.claude/phases/phase-2/PHASE_LEARNINGS_2.md",
+      "gateStatus": "pending_verification",
+      "notes": "All tasks complete. Awaiting maturity gate verification and Phase 3 approval."
+    }
+  ]
+}
+```
+
+**6.4 Request Human Approval**
+
+Output to human:
+
+```markdown
+# 🎉 Phase 2 Complete!
+
+## Summary
+- ✅ All 5 tasks completed
+- ✅ 210/210 tests passing
+- ✅ 92% code coverage
+- ✅ All builds successful
+- ⏳ Maturity gate: Pending verification
+
+## Phase Learnings
+Comprehensive learnings documented in:
+`backend/.claude/phases/phase-2/PHASE_LEARNINGS_2.md`
+
+Key takeaways:
+- Separated architecture saved 93% tokens
+- Direct execution 50% more efficient than subagents
+- Schema validation critical (users.id INTEGER, not UUID)
+
+## Maturity Gate Status
+**Complete:**
+- [x] All tasks complete (5/5)
+- [x] Test coverage > 90% (92%)
+- [x] All tests passing (210/210)
+- [x] Build successful
+
+**Pending:**
+- [ ] Performance benchmarks (< 200ms p95)
+- [ ] Security test suite (IDOR, SQL injection, auth bypass)
+
+## Next Steps for You (Human)
+
+1. **Review Phase 2 Learnings** (`PHASE_LEARNINGS_2.md`)
+2. **Verify Maturity Gate**:
+   - Run: `npm run benchmark` (verify p95 < 200ms)
+   - Run: `npm run test:security` (verify security tests pass)
+3. **Review Git Commits** (5 commits from Phase 2)
+4. **Approve Phase 3 Start** or request fixes
+
+## Ready for Phase 3?
+
+If maturity gate passes:
+- Say: **"Start Phase 3"** (I'll generate Phase 3 tasks)
+- Or: **"Plan Phase 3"** (I'll create Phase 3 overview first)
+
+If issues found:
+- Say: **"Fix [specific issue]"** (I'll create fix task)
+
+---
+
+⚠️ **PM AGENT STOPPED** - Awaiting your approval to proceed to Phase 3
 ```
 
 ### Step 7: Stop Conditions
