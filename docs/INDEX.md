@@ -12,6 +12,13 @@
 - **[STATUS.md](STATUS.md)** - Current session status (what's happening now)
 - **[TASK_HISTORY.md](TASK_HISTORY.md)** - Completed tasks and upcoming work
 
+**🆕 Project Tracking System:**
+- **[tracker/data/PROJECT_STATUS.json](../tracker/data/PROJECT_STATUS.json)** - Structured project state (phases, tasks, progress)
+- **[tracker/data/TASK_HISTORY.json](../tracker/data/TASK_HISTORY.json)** - Task execution history with metrics
+- **[tracker/data/BUG_TRACKER.json](../tracker/data/BUG_TRACKER.json)** - Bug tracking and resolution log
+- **[tracker/README.md](../tracker/README.md)** - Tracking system usage guide
+- **Dashboard:** Run `cd tracker && ./launch-dashboard.sh` then visit http://localhost:8080/dashboard/
+
 **Weekly Reviews:**
 - **[WEEK1_REVIEW.md](docs/weekly-reviews/WEEK1_REVIEW.md)** - Week 1 completion retrospective (✅ Complete)
 - **Week 2 Planning** - Coming soon
@@ -60,6 +67,7 @@ Use `/gullycontext [section]` to load specific sections on-demand:
 - `/gullycontinue` - Resume work on next task
 - `/gullypause` - Pause current task
 - `/gullymetrics` - Token usage metrics
+- `/cleanup` - Clean up test artifacts (Playwright screenshots, servers)
 
 ---
 
@@ -316,11 +324,22 @@ npm run test:coverage          # Coverage report
 │   ├── tests/                     # Test suite
 │   └── .claude/tasks/             # Task system
 │
+├── tracker/                       # 🆕 Project tracking system
+│   ├── data/                      # Tracking data (JSON)
+│   │   ├── PROJECT_STATUS.json
+│   │   ├── TASK_HISTORY.json
+│   │   └── BUG_TRACKER.json
+│   ├── schemas/                   # JSON schemas
+│   ├── dashboard/                 # Browser dashboard
+│   │   └── index.html
+│   ├── launch-dashboard.sh        # Dashboard launcher
+│   └── README.md
+│
 └── tools/tasks/                   # Task management CLI
 ```
 
 ---
 
-**Last Updated:** 2025-11-06
+**Last Updated:** 2025-11-11
 **Purpose:** Optimize Claude Code file discovery and reduce token usage
-**Status:** Refactoring in progress (Phase 2/5)
+**Status:** Tracking system integrated (Phase 2/5 complete)
