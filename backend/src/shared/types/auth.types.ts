@@ -31,6 +31,23 @@ export interface User {
 export interface UserWithoutPassword extends Omit<User, 'password_hash'> {}
 
 /**
+ * User sport data
+ */
+export interface UserSport {
+  sport_name: string;
+  skill_level: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  years_experience?: number;
+  preferred_position?: string;
+}
+
+/**
+ * User with associated sports
+ */
+export interface UserWithSports extends UserWithoutPassword {
+  sports: UserSport[];
+}
+
+/**
  * JWT payload structure
  */
 export interface JWTPayload {
@@ -76,6 +93,8 @@ export interface SignupData {
 /**
  * Express Request with authenticated user
  */
-export interface AuthenticatedRequest extends Express.Request {
+import { Request } from 'express';
+
+export interface AuthenticatedRequest extends Request {
   user?: UserWithoutPassword;
 }

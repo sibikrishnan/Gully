@@ -1,1 +1,2 @@
 - when suggesting to switch to new sessions, make sure to give the copy paste option of the next feasible thing they may build.
+- Each phase should have it own git branch when working. Upon completing each phase, merge to master branch after all the testing and comleted and PR is approved.

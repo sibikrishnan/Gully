@@ -1,0 +1,527 @@
+{
+  "taskId": "P2-PROF-T1.1",
+  "version": "1.0",
+  "lastModified": "2025-11-10T00:00:00Z",
+  "testCases": [
+    {
+      "id": "user-repository.unit.findById-basic",
+      "category": "unit",
+      "description": "Unit tests for findById method - basic functionality with valid integer IDs",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-repository-findById.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["findById"],
+        "scenarios": [
+          "findById(1) with valid user ID returns user object with all fields except password_hash",
+          "findById(999) with non-existent user ID returns null",
+          "findById with INTEGER ID (not UUID) - validates against schema discovery",
+          "findById excludes password_hash from returned user object",
+          "findById returns user with correct TypeScript types (id: number, status: enum)"
+        ],
+        "edgeCases": [
+          "findById(0) returns null (invalid ID)",
+          "findById(-1) returns null (negative ID)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-repository.unit.findById-status",
+      "category": "unit",
+      "description": "Unit tests for findById with status field validation (active/inactive/suspended)",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-repository-status.test.ts",
+        "status": "not_created",
+        "testCount": 4,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["findById"],
+        "scenarios": [
+          "findById returns user with status='active'",
+          "findById returns user with status='inactive' (soft-deleted user)",
+          "findById returns user with status='suspended'",
+          "Status field uses ENUM values (not boolean is_active) - validates against schema discovery"
+        ],
+        "edgeCases": []
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/database/migrations/20251101000001_create_users.ts"
+        ]
+      },
+      "dependsOn": ["user-repository.unit.findById-basic"]
+    },
+    {
+      "id": "user-repository.unit.getUserWithSports",
+      "category": "unit",
+      "description": "Unit tests for getUserWithSports method - JOIN logic with user_sports table",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-repository-sports-join.test.ts",
+        "status": "not_created",
+        "testCount": 6,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserWithSports", "findById"],
+        "scenarios": [
+          "getUserWithSports(1) returns user with empty sports array (user has no sports)",
+          "getUserWithSports(2) returns user with single sport (pickleball with skill_level='intermediate')",
+          "getUserWithSports(3) returns user with multiple sports (pickleball + paddle)",
+          "Sports array includes sport_name, skill_level, years_experience, preferred_position",
+          "JOIN uses INTEGER user_id (not UUID) - validates against schema discovery",
+          "user_sports table structure matches migration (user_id FK, sport_name, skill_level enum)"
+        ],
+        "edgeCases": [
+          "User with NULL years_experience returns sport with years_experience=null",
+          "User with NULL preferred_position returns sport with preferred_position=null"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/database/migrations/20251101000002_create_user_sports.ts"
+        ]
+      },
+      "dependsOn": ["user-repository.unit.findById-basic"]
+    },
+    {
+      "id": "user-repository.integration.database-query",
+      "category": "integration",
+      "description": "Integration tests for database query execution with real PostgreSQL connection",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-repository-database.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "30 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["findById", "getUserWithSports"],
+        "scenarios": [
+          "Repository connects to test database successfully",
+          "findById executes SELECT query with parameterized WHERE id=$1",
+          "getUserWithSports executes LEFT JOIN user_sports query",
+          "Query uses Knex query builder (not raw SQL) for SQL injection protection",
+          "Database returns rows with correct data types (id as number, not string)"
+        ],
+        "edgeCases": [
+          "Database connection failure returns null gracefully",
+          "Query timeout (>5 seconds) throws error"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/database/config.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-repository.integration.join-performance",
+      "category": "integration",
+      "description": "Performance tests for user_sports JOIN query - must complete <100ms",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-repository-performance.test.ts",
+        "status": "not_created",
+        "testCount": 3,
+        "estimatedDuration": "25 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserWithSports"],
+        "scenarios": [
+          "getUserWithSports completes in <100ms for user with 0 sports",
+          "getUserWithSports completes in <100ms for user with 3 sports",
+          "JOIN query uses index on user_sports.user_id (validate with EXPLAIN)"
+        ],
+        "edgeCases": [
+          "User with 5+ sports still completes in <100ms (no N+1 query problem)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-repository.integration.database-query"]
+    },
+    {
+      "id": "user-repository.integration.transaction-handling",
+      "category": "integration",
+      "description": "Integration tests for database transaction handling and error recovery",
+      "required": true,
+      "priority": "medium",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-repository-transactions.test.ts",
+        "status": "not_created",
+        "testCount": 3,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["findById", "getUserWithSports"],
+        "scenarios": [
+          "Repository methods handle database errors gracefully (connection closed)",
+          "Failed queries return null instead of throwing unhandled exceptions",
+          "Repository uses connection pooling correctly (no connection leaks)"
+        ],
+        "edgeCases": []
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/database/config.ts"
+        ]
+      },
+      "dependsOn": ["user-repository.integration.database-query"]
+    },
+    {
+      "id": "user-repository.edge-case.null-handling",
+      "category": "unit",
+      "description": "Edge case tests for NULL value handling in optional fields",
+      "required": true,
+      "priority": "medium",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-repository-null-handling.test.ts",
+        "status": "not_created",
+        "testCount": 4,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["findById", "getUserWithSports"],
+        "scenarios": [
+          "User with NULL phone_number returns phone_number=null",
+          "User with NULL profile_image_url returns profile_image_url=null",
+          "User with NULL location fields (lat/lng/name) returns all as null",
+          "Sport with NULL years_experience and preferred_position returns both as null"
+        ],
+        "edgeCases": []
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-repository.unit.findById-basic"]
+    },
+    {
+      "id": "user-repository.edge-case.special-characters",
+      "category": "unit",
+      "description": "Edge case tests for special characters and SQL injection attempts in string fields",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-repository-special-chars.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["findById", "getUserWithSports"],
+        "scenarios": [
+          "User with full_name containing apostrophe (e.g., O'Brien) returns correctly",
+          "User with location_name containing quotes returns correctly",
+          "Sport with sport_name='pickleball' (standard) returns correctly",
+          "Repository uses parameterized queries (Knex) to prevent SQL injection",
+          "Special characters in database values do not break queries"
+        ],
+        "edgeCases": [
+          "User with username containing emoji returns correctly (if schema allows)",
+          "User with bio containing newlines/tabs returns correctly"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-repository.unit.findById-basic"]
+    },
+    {
+      "id": "user-repository.integration.data-consistency",
+      "category": "integration",
+      "description": "Integration tests for data consistency between users and user_sports tables",
+      "required": true,
+      "priority": "medium",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-repository-consistency.test.ts",
+        "status": "not_created",
+        "testCount": 3,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserWithSports"],
+        "scenarios": [
+          "getUserWithSports returns sports sorted by created_at ASC (oldest first)",
+          "LEFT JOIN ensures user is returned even with 0 sports (not INNER JOIN)",
+          "Foreign key constraint ON DELETE CASCADE is respected (validate migration)"
+        ],
+        "edgeCases": []
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/database/migrations/20251101000002_create_user_sports.ts"
+        ]
+      },
+      "dependsOn": ["user-repository.unit.getUserWithSports"]
+    },
+    {
+      "id": "user-repository.integration.test-data-setup",
+      "category": "integration",
+      "description": "Integration test for test database seeding and cleanup",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-repository-test-data.test.ts",
+        "status": "not_created",
+        "testCount": 3,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["findById", "getUserWithSports"],
+        "scenarios": [
+          "beforeEach seeds test users with known IDs (1, 2, 3) and predictable data",
+          "afterEach cleans up test data (truncate users, user_sports tables)",
+          "Test isolation: each test gets fresh database state"
+        ],
+        "edgeCases": []
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/tests/setup/test-database.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-repository.unit.typescript-types",
+      "category": "unit",
+      "description": "Unit tests for TypeScript type correctness and interface compliance",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-repository-types.test.ts",
+        "status": "not_created",
+        "testCount": 4,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["findById", "getUserWithSports"],
+        "scenarios": [
+          "findById returns User type (or null) - type assertion succeeds",
+          "User.id is number (not string UUID) - validates against schema discovery",
+          "User.status is 'active' | 'inactive' | 'suspended' enum (not boolean)",
+          "Sports array contains correct interface: { sport_name: string, skill_level: enum, years_experience?: number, preferred_position?: string }"
+        ],
+        "edgeCases": []
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/types/auth.types.ts"
+        ]
+      },
+      "dependsOn": ["user-repository.unit.findById-basic"]
+    },
+    {
+      "id": "user-repository.unit.mock-database",
+      "category": "unit",
+      "description": "Unit tests with mocked database (Knex mock) for isolated repository testing",
+      "required": false,
+      "priority": "low",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-repository-mocked.test.ts",
+        "status": "not_created",
+        "testCount": 3,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["findById", "getUserWithSports"],
+        "scenarios": [
+          "findById with mocked Knex returns expected user object",
+          "getUserWithSports with mocked Knex returns user with sports array",
+          "Mock validates correct SQL query structure (SELECT, LEFT JOIN, WHERE)"
+        ],
+        "edgeCases": []
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-repository.unit.error-scenarios",
+      "category": "unit",
+      "description": "Unit tests for error handling in repository methods",
+      "required": true,
+      "priority": "medium",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-repository-errors.test.ts",
+        "status": "not_created",
+        "testCount": 3,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["findById", "getUserWithSports"],
+        "scenarios": [
+          "findById with database error returns null (not thrown exception)",
+          "getUserWithSports with query timeout returns null",
+          "Repository logs errors appropriately for debugging"
+        ],
+        "edgeCases": []
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-repository.unit.findById-basic"]
+    },
+    {
+      "id": "user-repository.integration.concurrent-queries",
+      "category": "integration",
+      "description": "Integration tests for concurrent query execution and connection pooling",
+      "required": false,
+      "priority": "low",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-repository-concurrent.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["findById", "getUserWithSports"],
+        "scenarios": [
+          "10 concurrent findById calls complete successfully without connection exhaustion",
+          "Connection pool handles concurrent queries efficiently (no deadlocks)"
+        ],
+        "edgeCases": []
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/database/config.ts"
+        ]
+      },
+      "dependsOn": ["user-repository.integration.database-query"]
+    },
+    {
+      "id": "user-repository.integration.migration-validation",
+      "category": "integration",
+      "description": "Integration tests to validate repository queries match actual migration schema",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-repository-schema-validation.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["findById", "getUserWithSports"],
+        "scenarios": [
+          "Repository queries use 'id' column (integer) not 'user_id' or 'uuid'",
+          "Repository queries use 'status' enum column not 'is_active' boolean",
+          "user_sports JOIN uses 'user_id' FK matching users.id (integer)",
+          "All column names match migration schema exactly",
+          "Query EXPLAIN shows index usage on users.id and user_sports.user_id"
+        ],
+        "edgeCases": []
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/database/migrations/20251101000001_create_users.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/database/migrations/20251101000002_create_user_sports.ts"
+        ]
+      },
+      "dependsOn": []
+    }
+  ],
+  "coverageRequirements": {
+    "enabled": true,
+    "minimumPercentage": 90,
+    "criticalFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+    ]
+  },
+  "successCriteria": {
+    "allTestsMustPass": true,
+    "noTypeScriptErrors": true,
+    "noLintingErrors": false,
+    "buildMustSucceed": true
+  },
+  "executionConfig": {
+    "runInOrder": [
+      "user-repository.unit.findById-basic",
+      "user-repository.unit.findById-status",
+      "user-repository.unit.getUserWithSports",
+      "user-repository.integration.database-query",
+      "user-repository.integration.join-performance",
+      "user-repository.integration.migration-validation",
+      "user-repository.edge-case.null-handling",
+      "user-repository.edge-case.special-characters",
+      "user-repository.integration.data-consistency",
+      "user-repository.integration.test-data-setup",
+      "user-repository.unit.typescript-types",
+      "user-repository.unit.error-scenarios",
+      "user-repository.integration.transaction-handling",
+      "user-repository.unit.mock-database",
+      "user-repository.integration.concurrent-queries"
+    ],
+    "stopOnFirstFailure": false,
+    "parallelizable": false
+  }
+}

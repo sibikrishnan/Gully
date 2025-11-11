@@ -14,7 +14,9 @@ import { errorHandler, notFoundHandler } from './shared/middleware/error.middlew
 import { configurePassport } from './shared/config/passport.config';
 
 // Import service routes
-import authRoutes from './services/user-service/routes/auth.routes';
+import userRoutes from './services/user-service/routes/user.routes';
+// TODO: Uncomment when auth routes are re-implemented
+// import authRoutes from './services/user-service/routes/auth.routes';
 
 // Load environment variables
 dotenv.config();
@@ -90,7 +92,9 @@ export function createApp(): Express {
   });
 
   // Mount service routes
-  app.use('/api/auth', authRoutes);
+  app.use('/api/users', userRoutes);
+  // TODO: Uncomment when auth routes are re-implemented
+  // app.use('/api/auth', authRoutes);
 
   // 404 handler for unknown routes (must be after all other routes)
   app.use(notFoundHandler);
