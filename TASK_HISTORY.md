@@ -14,35 +14,57 @@
 
 ## 📋 Pending Tasks
 
-### ⏳ Phase 2 Planning - Define User Profile CRUD Tasks
+### ⏳ Phase 2: Implement User Profile CRUD
 
-**Goal:** Plan and break down Phase 2 tasks into specific, actionable items.
+**Goal:** Implement GET /api/users/:id endpoint with TDD workflow.
 
-**Phase 2 Scope** (from STATUS.md):
-1. User profile CRUD operations (GET, PATCH, DELETE)
-2. Sport preferences management
-3. User search & discovery with pagination
+**Task:** P2-PROF-T1 - GET /api/users/:id endpoint
+- Location: `backend/.claude/tasks/P2-PROF-T1.json`
+- Workflow: TDD (`backend/.claude/workflows/tdd.json`)
+- Test Suite: 22 test cases embedded in task file
+- Dependencies: None (can start immediately)
 
-**What Needs Planning:**
-- Define specific task IDs (e.g., US-1, US-2, US-3)
-- Break down into manageable chunks
-- Specify endpoints, validation rules, test expectations
-- Create commit message templates
-- Identify files to create/modify
+**Next Tasks in Phase 2:**
+1. P2-PROF-T2: PATCH /api/users/:id - Profile updates
+2. P2-PROF-T3: DELETE /api/users/:id - Soft deletion
+3. P2-PROF-T4: POST/DELETE /api/users/:id/sports - Sport management
+4. P2-PROF-T5: GET /api/users/search - Search with pagination
 
-**Planning Approach:**
-- Load context if needed (`/gullycontext mvp`, `/gullycontext database`)
-- Review existing patterns from Phase 1
-- Follow TDD approach (tests first)
-- Maintain 90%+ coverage requirement
+**Workflow Steps:**
+1. Read task object (P2-PROF-T1.json)
+2. Write tests first (all 22 test cases)
+3. Implement code to pass tests
+4. Verify coverage >= 90%
+5. Update task status to "completed"
 
-**Estimated Duration:** 30 min (planning only, no coding)
+**Estimated Duration:** 90-120 min per task
 
 ---
 
 ## ⏸️ Paused Tasks
 
 None
+
+---
+
+## ✅ Recently Completed
+
+### 2025-11-10 Session: Task Generation System Implementation
+
+**Completed:**
+- ✅ Formalized TASK_OBJECTS schemas (separated architecture)
+  - Created `TASK_OBJECT_SCHEMA.json`
+  - Created `TEST_SUITE_SCHEMA.json`
+  - Restored/aligned `TASK_SYSTEM_DESIGN.md`
+- ✅ Created Task Generation Agent (`task-generation-agent.md`)
+- ✅ Created `/generate-tasks` slash command (interactive mode)
+- ✅ Updated FUNNEL documentation (FUNNEL.md, FUNNEL_ARTIFACTS.md)
+
+**Key Achievement:** Separated architecture ready for future tasks (93% token reduction)
+
+**Duration:** ~90 min
+
+**Branch:** week1
 
 ---
 
@@ -54,24 +76,33 @@ None
 /gullycontinue      # Load next task (targeted read, ~200 tokens)
 ```
 
+### Quick Start for Next Session
+```
+Continue Gully Phase 2 development. Implement P2-PROF-T1 (GET /api/users/:id endpoint) using TDD workflow.
+
+Task file: backend/.claude/tasks/P2-PROF-T1.json
+Workflow: backend/.claude/workflows/tdd.json
+```
+
 ### After Completing a Task
-1. Update STATUS.md with new "Last Completed" and "Next Task"
-2. Move completed task from TASK_HISTORY.md to weekly archive (see archival format below)
-3. Auto-commit changes (Claude handles this)
+1. Update task status in task JSON file
+2. Update STATUS.md with new "Last Completed" and "Next Task"
+3. Move completed task from TASK_HISTORY.md to phase archives
+4. Commit changes
 
 ### Phase Review Process
 1. Complete all phase tasks
 2. Run Token Auditor agent (scan for context bloat)
-3. **Context Integrity Check:** Review the phase commits and ask:
-   - "Did Claude's responses seem confused, corrupted, or off-topic in any task?"
-   - If YES: Identify which context sections were loaded (check commit messages)
-   - Action: Flag those sections for optimization or splitting
+3. **Context Integrity Check:** Review phase commits and ask:
+   - "Did Claude's responses seem confused, corrupted, or off-topic?"
+   - If YES: Identify which context sections were loaded
+   - Action: Flag sections for optimization or splitting
 4. Create phase review document
-5. Archive completed tasks to `docs/archives/tasks/PHASEN_TASKS.md` (use archival format below)
+5. Archive completed tasks to `docs/archives/tasks/PHASEN_TASKS.md`
 6. Update STATUS.md for next phase
 
 ### Archival Format Rule (Locked: 2025-11-04)
-All `PHASEN_TASKS.md` files MUST use YAML Frontmatter for structured metadata:
+All `PHASEN_TASKS.md` files MUST use YAML Frontmatter:
 
 ```yaml
 ---
@@ -86,12 +117,7 @@ test_coverage: XX%
 branch: feature/name
 format_version: 2025-11-04
 ---
-
-# Phase N - Completed Tasks Archive
-[Human-readable content below]
 ```
-
-**Why:** Enables programmatic queries (e.g., "Find all tasks that modified auth module in Phases 1-3") without parsing full Markdown. Format is locked to prevent ad-hoc archival that breaks future automation.
 
 ---
 
@@ -99,15 +125,9 @@ format_version: 2025-11-04
 
 **Rule:** No frequently-read file should exceed 100 lines (~500 tokens)
 
-**Files to Monitor:**
-- TASK_HISTORY.md (this file) - Keep under 100 lines
-- STATUS.md - Keep under 50 lines
-- Weekly reviews - Archive after completion
+**Status Files Optimized:**
+- ✅ STATUS.md: ~90 lines (450 tokens)
+- ✅ TASK_HISTORY.md: ~100 lines (500 tokens)
+- ✅ Context sections: < 100 lines each
 
-**Enforcement:** Token Auditor agent runs during each weekly review
-
----
-
-**Last Updated:** 2025-11-07
-**Current Phase:** 2 (User Profiles)
-**Active Tasks:** 1 pending (Phase 2 planning)
+**Keep Archives Separate:** Never load full history into active context.

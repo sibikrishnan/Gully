@@ -1,0 +1,437 @@
+{
+  "id": "P2-PROF-T1",
+  "version": "1.0",
+  "changelog": [
+    {
+      "version": "1.0",
+      "timestamp": "2025-11-08T19:00:00Z",
+      "change": "Initial task definition for GET /api/users/:id endpoint",
+      "author": "claude-opus-4"
+    }
+  ],
+  "content": "Implement GET /api/users/:id endpoint with complete profile retrieval",
+  "activeForm": "Implementing GET /api/users/:id endpoint with complete profile retrieval",
+  "description": "Create controller method, route handler, Zod validation schema, and comprehensive tests for user profile retrieval endpoint. Includes joining user_sports data, proper authentication middleware integration, and handling of soft-deleted users.",
+  "status": "pending",
+  "dependencies": [],
+  "testSuite": {
+    "testCases": [
+      {
+        "id": "user-profile-get.unit.controller",
+        "category": "unit",
+        "description": "Unit tests for getUserProfile controller method with various user ID scenarios",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-profile-controller.test.ts",
+          "status": "not_created",
+          "testCount": 12,
+          "estimatedDuration": "25 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "getUserProfile",
+            "validateUserId",
+            "formatUserResponse",
+            "excludeSensitiveFields"
+          ],
+          "scenarios": [
+            "Valid UUID returns complete user profile",
+            "Invalid UUID format returns 400 error",
+            "Non-existent user returns 404 error",
+            "Soft-deleted user (is_active=false) returns 404",
+            "Own profile includes all non-sensitive fields",
+            "Other user's profile excludes email and phone",
+            "Password hash always excluded from response"
+          ],
+          "edgeCases": [
+            "Malformed UUID with special characters",
+            "Empty string as user ID",
+            "Null/undefined user ID",
+            "UUID with incorrect version",
+            "SQL injection attempt in user ID"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+          ]
+        }
+      },
+      {
+        "id": "user-profile-get.unit.validation",
+        "category": "unit",
+        "description": "Unit tests for Zod validation schema for user ID parameter",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-validation.test.ts",
+          "status": "not_created",
+          "testCount": 8,
+          "estimatedDuration": "15 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "getUserParamsSchema",
+            "validateUUID",
+            "parseUserIdParam"
+          ],
+          "scenarios": [
+            "Valid UUID v4 passes validation",
+            "Invalid UUID format fails validation",
+            "Missing user ID fails validation",
+            "Extra parameters are stripped"
+          ],
+          "edgeCases": [
+            "UUID v1 format handling",
+            "UUID v5 format handling",
+            "Lowercase UUID normalization",
+            "Uppercase UUID normalization"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user.schema.ts"
+          ]
+        }
+      },
+      {
+        "id": "user-profile-get.unit.sports-join",
+        "category": "unit",
+        "description": "Unit tests for user_sports JOIN query and data aggregation",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-sports-query.test.ts",
+          "status": "not_created",
+          "testCount": 10,
+          "estimatedDuration": "20 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "getUserWithSports",
+            "formatSportsArray",
+            "aggregateUserSports"
+          ],
+          "scenarios": [
+            "User with no sports returns empty array",
+            "User with single sport (pickleball) includes all fields",
+            "User with multiple sports (pickleball, paddle) returns sorted array",
+            "Sport skill levels properly formatted",
+            "Years experience included when present",
+            "Preferred position included when present"
+          ],
+          "edgeCases": [
+            "User with 10+ sports performance",
+            "Null skill_level handling",
+            "Invalid sport_name handling",
+            "Duplicate sport entries prevention"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+          ]
+        }
+      },
+      {
+        "id": "user-profile-get.integration.auth",
+        "category": "integration",
+        "description": "Integration tests for authentication middleware with profile endpoint",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-auth.test.ts",
+          "status": "not_created",
+          "testCount": 8,
+          "estimatedDuration": "30 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "authenticateJWT",
+            "requireAuth",
+            "attachUserToRequest"
+          ],
+          "scenarios": [
+            "Valid JWT token allows profile access",
+            "Missing Authorization header returns 401",
+            "Invalid JWT token returns 401",
+            "Expired JWT token returns 401",
+            "Malformed Bearer token returns 401",
+            "Valid token attaches user to request"
+          ],
+          "edgeCases": [
+            "Multiple Authorization headers",
+            "Case sensitivity in Bearer prefix"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/shared/middleware/auth.middleware.ts"
+          ]
+        },
+        "dependsOn": []
+      },
+      {
+        "id": "user-profile-get.integration.database",
+        "category": "integration",
+        "description": "Integration tests with actual PostgreSQL database queries",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-database.test.ts",
+          "status": "not_created",
+          "testCount": 12,
+          "estimatedDuration": "40 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "findUserById",
+            "getUserSports",
+            "checkUserActive"
+          ],
+          "scenarios": [
+            "Retrieve active user with pickleball sport",
+            "Retrieve active user with paddle sport",
+            "Retrieve user with multiple sports",
+            "Handle non-existent user gracefully",
+            "Skip soft-deleted users",
+            "Include all user fields except password_hash",
+            "JOIN query performance under 100ms"
+          ],
+          "edgeCases": [
+            "User with maximum varchar field lengths",
+            "User with null optional fields",
+            "User with special characters in name",
+            "Concurrent read requests",
+            "Database connection pool exhaustion"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+            "/Users/sibikrishnan/Documents/Gully/backend/src/shared/database/connection.ts"
+          ]
+        },
+        "dependsOn": []
+      },
+      {
+        "id": "user-profile-get.integration.route",
+        "category": "integration",
+        "description": "Integration tests for Express route handler and middleware chain",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-route.test.ts",
+          "status": "not_created",
+          "testCount": 10,
+          "estimatedDuration": "35 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "GET /api/users/:id route",
+            "asyncHandler wrapper",
+            "errorHandler middleware"
+          ],
+          "scenarios": [
+            "Successful profile retrieval returns 200",
+            "Invalid UUID returns 400 with error message",
+            "Non-existent user returns 404",
+            "Unauthenticated request returns 401",
+            "Database error returns 500",
+            "Response includes proper Content-Type header"
+          ],
+          "edgeCases": [
+            "Route with trailing slash",
+            "Case sensitivity in route path",
+            "OPTIONS preflight request",
+            "HEAD request handling"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user.routes.ts"
+          ]
+        },
+        "dependsOn": ["user-profile-get.integration.auth"]
+      },
+      {
+        "id": "user-profile-get.e2e",
+        "category": "e2e",
+        "description": "End-to-end tests for complete profile retrieval flow",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/user-profile-flow.test.ts",
+          "status": "not_created",
+          "testCount": 8,
+          "estimatedDuration": "50 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "Complete profile retrieval flow"
+          ],
+          "scenarios": [
+            "Login → Get own profile → Verify all fields",
+            "Login → Get other user's profile → Verify field filtering",
+            "Create user with pickleball → Retrieve → Verify sport data",
+            "Add paddle sport → Retrieve → Verify multiple sports",
+            "Soft delete user → Attempt retrieval → Verify 404"
+          ],
+          "edgeCases": [
+            "Rapid successive profile requests",
+            "Profile request during user update",
+            "Profile request with stale JWT token"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/"
+          ]
+        },
+        "dependsOn": ["user-profile-get.integration.route", "user-profile-get.integration.database"]
+      },
+      {
+        "id": "user-profile-get.regression",
+        "category": "regression",
+        "description": "Regression tests to ensure profile retrieval doesn't break existing functionality",
+        "required": true,
+        "priority": "medium",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/regression/user-profile-regression.test.ts",
+          "status": "not_created",
+          "testCount": 6,
+          "estimatedDuration": "25 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "Existing auth flow compatibility",
+            "Existing user routes compatibility"
+          ],
+          "scenarios": [
+            "Login flow still returns user object",
+            "Refresh token flow includes updated profile",
+            "Other user endpoints remain functional",
+            "Middleware execution order preserved"
+          ],
+          "edgeCases": [
+            "Legacy client compatibility",
+            "Backward compatibility with v1 API"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/"
+          ]
+        },
+        "dependsOn": ["user-profile-get.e2e"]
+      },
+      {
+        "id": "user-profile-get.performance",
+        "category": "performance",
+        "description": "Performance tests for profile retrieval under load",
+        "required": false,
+        "priority": "low",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/performance/user-profile-load.test.ts",
+          "status": "not_created",
+          "testCount": 5,
+          "estimatedDuration": "120 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "Profile retrieval performance"
+          ],
+          "scenarios": [
+            "Single profile request < 100ms",
+            "100 concurrent requests handled",
+            "1000 requests/minute sustained",
+            "Database query optimization verified"
+          ],
+          "edgeCases": [
+            "Connection pool saturation handling"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": true,
+          "unlessFileChanged": []
+        },
+        "dependsOn": []
+      }
+    ],
+    "coverageRequirements": {
+      "enabled": true,
+      "minimumPercentage": 90,
+      "criticalFiles": [
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user.routes.ts"
+      ]
+    },
+    "successCriteria": {
+      "allTestsMustPass": true,
+      "noTypeScriptErrors": true,
+      "noLintingErrors": true,
+      "buildMustSucceed": true
+    },
+    "executionConfig": {
+      "runInOrder": [
+        "user-profile-get.unit.controller",
+        "user-profile-get.unit.validation",
+        "user-profile-get.unit.sports-join",
+        "user-profile-get.integration.auth",
+        "user-profile-get.integration.database",
+        "user-profile-get.integration.route",
+        "user-profile-get.e2e",
+        "user-profile-get.regression"
+      ],
+      "stopOnFirstFailure": false,
+      "parallelizable": false
+    }
+  },
+  "workflow": {
+    "type": "TDD",
+    "workflowRef": "workflows/tdd.json",
+    "planningRequired": false
+  },
+  "context": {
+    "relevantFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user.routes.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user.schema.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/shared/middleware/auth.middleware.ts"
+    ],
+    "keyFindings": [
+      "Must join users table with user_sports table",
+      "Password hash must always be excluded from response",
+      "Soft-deleted users (is_active=false) should return 404",
+      "Email and phone should be hidden for other users' profiles",
+      "Sports array should include pickleball and paddle examples for POC"
+    ],
+    "previousAttempts": []
+  },
+  "metadata": {
+    "phase": 2,
+    "feature": "User Profiles",
+    "estimatedDuration": "90-120 min",
+    "tags": ["user-service", "profiles", "crud", "GET", "pickleball", "paddle"]
+  }
+}

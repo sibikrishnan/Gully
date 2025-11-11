@@ -1,0 +1,367 @@
+{
+  "id": "P2-PROF-T2",
+  "version": "1.0",
+  "changelog": [
+    {
+      "version": "1.0",
+      "timestamp": "2025-11-08T19:15:00Z",
+      "change": "Initial task definition for PATCH /api/users/:id endpoint",
+      "author": "claude-opus-4"
+    }
+  ],
+  "content": "Implement PATCH /api/users/:id endpoint for partial profile updates",
+  "activeForm": "Implementing PATCH /api/users/:id endpoint for partial profile updates",
+  "description": "Create controller method, route handler, Zod validation schema for partial updates, and comprehensive tests for user profile update endpoint. Includes authorization checks ensuring users can only update their own profile, field validation, and proper handling of non-updatable fields.",
+  "status": "pending",
+  "dependencies": ["P2-PROF-T1"],
+  "testSuite": {
+    "testCases": [
+      {
+        "id": "user-profile-patch.unit.controller",
+        "category": "unit",
+        "description": "Unit tests for updateUserProfile controller method with various update scenarios",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-profile-update-controller.test.ts",
+          "status": "not_created",
+          "testCount": 15,
+          "estimatedDuration": "30 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "updateUserProfile",
+            "checkProfileOwnership",
+            "sanitizeUpdateData",
+            "mergeProfileChanges"
+          ],
+          "scenarios": [
+            "Valid partial update of full_name",
+            "Valid partial update of bio and location_city",
+            "Update with all allowed fields",
+            "Reject update of non-updatable fields",
+            "Handle empty update payload",
+            "Preserve unchanged fields during update",
+            "Update avatar_url with valid URL",
+            "Update location for pickleball player",
+            "Update bio for paddle player"
+          ],
+          "edgeCases": [
+            "Update with only whitespace values",
+            "Update with maximum field lengths",
+            "Update with special characters in text fields",
+            "Update with null values for optional fields",
+            "Update with undefined values (should be ignored)",
+            "Concurrent update attempts"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+          ]
+        }
+      },
+      {
+        "id": "user-profile-patch.unit.validation",
+        "category": "unit",
+        "description": "Unit tests for Zod partial update schema with field stripping and validation",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-update-validation.test.ts",
+          "status": "not_created",
+          "testCount": 12,
+          "estimatedDuration": "20 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "updateUserSchema",
+            "validatePartialUpdate",
+            "stripNonUpdatableFields"
+          ],
+          "scenarios": [
+            "Partial schema allows missing fields",
+            "Strip id field from update payload",
+            "Strip created_at field from update payload",
+            "Strip password_hash field from update payload",
+            "Strip email field (separate endpoint)",
+            "Validate phone number format",
+            "Validate avatar_url as valid URL",
+            "Allow empty object for no-op update"
+          ],
+          "edgeCases": [
+            "Nested object attempt (should flatten or reject)",
+            "Array values in scalar fields",
+            "SQL injection attempt in string fields",
+            "XSS attempt in bio field"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user.schema.ts"
+          ]
+        }
+      },
+      {
+        "id": "user-profile-patch.unit.authorization",
+        "category": "unit",
+        "description": "Unit tests for authorization checks ensuring users can only update own profile",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-update-authorization.test.ts",
+          "status": "not_created",
+          "testCount": 10,
+          "estimatedDuration": "20 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "checkProfileOwnership",
+            "authorizeProfileUpdate",
+            "compareUserIds"
+          ],
+          "scenarios": [
+            "User can update own profile (200)",
+            "User cannot update other user's profile (403)",
+            "Missing JWT returns 401",
+            "Invalid JWT returns 401",
+            "Expired JWT returns 401",
+            "Non-existent user ID returns 404",
+            "Soft-deleted user returns 404"
+          ],
+          "edgeCases": [
+            "JWT user_id doesn't match database",
+            "Admin role (future) authorization",
+            "Service account authorization"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/middleware/user-auth.middleware.ts"
+          ]
+        }
+      },
+      {
+        "id": "user-profile-patch.integration.database",
+        "category": "integration",
+        "description": "Integration tests for database update operations and transactions",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-database.test.ts",
+          "status": "not_created",
+          "testCount": 12,
+          "estimatedDuration": "40 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "updateUser",
+            "findAndUpdateUser",
+            "validateUpdateConstraints"
+          ],
+          "scenarios": [
+            "Update single field successfully",
+            "Update multiple fields in transaction",
+            "Rollback on constraint violation",
+            "Updated_at timestamp auto-updates",
+            "Optimistic locking with version field",
+            "Unique constraint on username update",
+            "Update pickleball player profile",
+            "Update paddle player location"
+          ],
+          "edgeCases": [
+            "Update during concurrent read",
+            "Update with database connection loss",
+            "Update with deadlock retry",
+            "Update with cascade effects"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+          ]
+        },
+        "dependsOn": []
+      },
+      {
+        "id": "user-profile-patch.integration.route",
+        "category": "integration",
+        "description": "Integration tests for PATCH route with complete middleware chain",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-route.test.ts",
+          "status": "not_created",
+          "testCount": 11,
+          "estimatedDuration": "35 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "PATCH /api/users/:id route",
+            "validationMiddleware",
+            "authorizationMiddleware"
+          ],
+          "scenarios": [
+            "Successful update returns 200 with updated user",
+            "Invalid UUID returns 400",
+            "Unauthorized (no token) returns 401",
+            "Forbidden (other user) returns 403",
+            "Not found returns 404",
+            "Invalid payload returns 400 with details",
+            "Empty payload returns 200 (no-op)"
+          ],
+          "edgeCases": [
+            "Content-Type validation",
+            "Request body size limit",
+            "Charset encoding issues",
+            "CORS preflight handling"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user.routes.ts"
+          ]
+        },
+        "dependsOn": ["user-profile-patch.unit.authorization"]
+      },
+      {
+        "id": "user-profile-patch.e2e",
+        "category": "e2e",
+        "description": "End-to-end tests for complete profile update flow",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/user-update-flow.test.ts",
+          "status": "not_created",
+          "testCount": 8,
+          "estimatedDuration": "50 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "Complete update flow"
+          ],
+          "scenarios": [
+            "Login → Update own profile → Verify changes",
+            "Login → Attempt update other → Verify forbidden",
+            "Update → Logout → Login → Verify persistence",
+            "Update pickleball player bio → Verify",
+            "Update paddle player location → Verify"
+          ],
+          "edgeCases": [
+            "Update during token refresh",
+            "Update with race condition",
+            "Update rollback on partial failure"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/"
+          ]
+        },
+        "dependsOn": ["user-profile-patch.integration.route", "user-profile-patch.integration.database"]
+      },
+      {
+        "id": "user-profile-patch.regression",
+        "category": "regression",
+        "description": "Regression tests ensuring updates don't break existing functionality",
+        "required": true,
+        "priority": "medium",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/regression/user-update-regression.test.ts",
+          "status": "not_created",
+          "testCount": 5,
+          "estimatedDuration": "25 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "Backward compatibility"
+          ],
+          "scenarios": [
+            "GET profile after PATCH returns updated data",
+            "Auth flow still works after profile update",
+            "Other endpoints unaffected by update",
+            "Websocket notifications trigger on update"
+          ],
+          "edgeCases": [
+            "Legacy client compatibility"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/"
+          ]
+        },
+        "dependsOn": ["user-profile-patch.e2e"]
+      }
+    ],
+    "coverageRequirements": {
+      "enabled": true,
+      "minimumPercentage": 90,
+      "criticalFiles": [
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user.schema.ts",
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/middleware/user-auth.middleware.ts"
+      ]
+    },
+    "successCriteria": {
+      "allTestsMustPass": true,
+      "noTypeScriptErrors": true,
+      "noLintingErrors": true,
+      "buildMustSucceed": true
+    },
+    "executionConfig": {
+      "runInOrder": [
+        "user-profile-patch.unit.controller",
+        "user-profile-patch.unit.validation",
+        "user-profile-patch.unit.authorization",
+        "user-profile-patch.integration.database",
+        "user-profile-patch.integration.route",
+        "user-profile-patch.e2e",
+        "user-profile-patch.regression"
+      ],
+      "stopOnFirstFailure": false,
+      "parallelizable": false
+    }
+  },
+  "workflow": {
+    "type": "TDD",
+    "workflowRef": "workflows/tdd.json",
+    "planningRequired": false
+  },
+  "context": {
+    "relevantFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user.schema.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/middleware/user-auth.middleware.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+    ],
+    "keyFindings": [
+      "Users can only update their own profile (403 for others)",
+      "Non-updatable fields must be stripped (id, created_at, password_hash)",
+      "Zod schema must allow partial updates for PATCH",
+      "Email updates require separate verification flow",
+      "Updated_at timestamp must auto-update"
+    ],
+    "previousAttempts": []
+  },
+  "metadata": {
+    "phase": 2,
+    "feature": "User Profiles",
+    "estimatedDuration": "120-150 min",
+    "tags": ["user-service", "profiles", "crud", "PATCH", "authorization", "pickleball", "paddle"]
+  }
+}
