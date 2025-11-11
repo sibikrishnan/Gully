@@ -1,0 +1,382 @@
+{
+  "id": "P3-TEAM-T7",
+  "version": "1.0",
+  "changelog": [
+    {
+      "version": "1.0",
+      "timestamp": "2025-11-09T06:03:00Z",
+      "change": "Initial task definition for GET /api/teams endpoint (search/list)",
+      "author": "claude-sonnet-4-5"
+    }
+  ],
+  "content": "Implement GET /api/teams endpoint for team search and listing",
+  "activeForm": "Implementing GET /api/teams endpoint for team search and listing",
+  "description": "Create controller method, route handler, Zod validation for team search and listing with filters. Supports filtering by sport, location, is_public flag, pagination (limit/offset), and returns teams array with member counts. Excludes soft-deleted teams from results.",
+  "status": "pending",
+  "dependencies": ["P3-TEAM-T2"],
+  "testSuite": {
+    "testCases": [
+      {
+        "id": "team-search.unit.controller",
+        "category": "unit",
+        "description": "Unit tests for searchTeams controller with filter logic",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/team-search-controller.test.ts",
+          "status": "not_created",
+          "testCount": 16,
+          "estimatedDuration": "35 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "searchTeams",
+            "buildFilterQuery",
+            "applyPagination",
+            "formatSearchResults",
+            "calculateMemberCounts"
+          ],
+          "scenarios": [
+            "List all teams (no filters)",
+            "Filter by sport (pickleball)",
+            "Filter by sport (paddle)",
+            "Filter by location (partial match)",
+            "Filter by is_public=true",
+            "Filter by is_public=false",
+            "Combined filters (sport + location)",
+            "Combined filters (sport + is_public)",
+            "Pagination with limit",
+            "Pagination with limit + offset",
+            "Empty results handling",
+            "Results include member counts"
+          ],
+          "edgeCases": [
+            "Limit exceeds max (100)",
+            "Negative offset handling",
+            "Invalid sport name (returns empty)",
+            "Case-insensitive location search",
+            "Soft-deleted teams excluded"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/controllers/team-search.controller.ts"
+          ]
+        }
+      },
+      {
+        "id": "team-search.unit.validation",
+        "category": "unit",
+        "description": "Unit tests for Zod validation schema for search query parameters",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/team-search-validation.test.ts",
+          "status": "not_created",
+          "testCount": 14,
+          "estimatedDuration": "25 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "searchTeamsQuerySchema",
+            "validateSportName",
+            "validatePagination",
+            "validateIsPublic"
+          ],
+          "scenarios": [
+            "Valid sport enum (pickleball) passes",
+            "Valid sport enum (paddle) passes",
+            "Invalid sport name fails validation",
+            "Valid location string passes",
+            "is_public boolean validation (true/false)",
+            "limit validation (1-100 range)",
+            "limit defaults to 20 if not provided",
+            "offset defaults to 0 if not provided",
+            "offset validation (non-negative)",
+            "All params optional (empty query allowed)"
+          ],
+          "edgeCases": [
+            "limit as string coercion",
+            "offset as string coercion",
+            "is_public as string ('true'/'false') coercion",
+            "Extra query params stripped"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/schemas/team-search.schema.ts"
+          ]
+        }
+      },
+      {
+        "id": "team-search.integration.database",
+        "category": "integration",
+        "description": "Integration tests with PostgreSQL for team search queries",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/team-search-database.test.ts",
+          "status": "not_created",
+          "testCount": 18,
+          "estimatedDuration": "50 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "searchTeamsQuery",
+            "filterBySport",
+            "filterByLocation",
+            "filterByVisibility",
+            "countTeamMembers"
+          ],
+          "scenarios": [
+            "Create 5 pickleball teams → Filter by pickleball → Verify 5 results",
+            "Create 3 paddle teams → Filter by paddle → Verify 3 results",
+            "Create teams in 'NYC' → Filter by location 'NYC' → Verify results",
+            "Location partial match (search 'New' finds 'New York')",
+            "Filter by is_public=true excludes private teams",
+            "Filter by is_public=false returns only private teams",
+            "Pagination limit=10 returns max 10 teams",
+            "Pagination offset=5 skips first 5 results",
+            "Combined filters accuracy (sport + location)",
+            "Soft-deleted teams excluded from all results",
+            "Member counts accurate (COUNT team_members)",
+            "Query performance under 200ms",
+            "Case-insensitive location search"
+          ],
+          "edgeCases": [
+            "Empty result set handling",
+            "Large result set (100+ teams) performance",
+            "Teams with 0 members (captain only)",
+            "Concurrent search queries",
+            "Special characters in location"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/repositories/team-search.repository.ts"
+          ]
+        },
+        "dependsOn": []
+      },
+      {
+        "id": "team-search.integration.route",
+        "category": "integration",
+        "description": "Integration tests for Express GET route with query params",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/team-search-route.test.ts",
+          "status": "not_created",
+          "testCount": 13,
+          "estimatedDuration": "40 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "GET /api/teams route",
+            "asyncHandler wrapper",
+            "validateQuery middleware"
+          ],
+          "scenarios": [
+            "No query params returns all teams (paginated)",
+            "?sport=pickleball returns pickleball teams",
+            "?sport=paddle returns paddle teams",
+            "?location=NYC returns NYC teams",
+            "?is_public=true returns public teams",
+            "?is_public=false returns private teams",
+            "?limit=5 returns max 5 results",
+            "?offset=10 skips first 10 results",
+            "Combined query params work together",
+            "Invalid sport returns 400",
+            "Response includes teams array",
+            "Response includes member_count for each team"
+          ],
+          "edgeCases": [
+            "Empty results return []",
+            "Query param case sensitivity"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/routes/team.routes.ts"
+          ]
+        },
+        "dependsOn": []
+      },
+      {
+        "id": "team-search.e2e",
+        "category": "e2e",
+        "description": "End-to-end tests for complete team search flow",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/team-search-flow.test.ts",
+          "status": "not_created",
+          "testCount": 12,
+          "estimatedDuration": "70 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "Complete team search flow"
+          ],
+          "scenarios": [
+            "Create 3 pickleball teams → Search sport=pickleball → Verify 3 results",
+            "Create 2 paddle teams → Search sport=paddle → Verify 2 results",
+            "Create teams in NYC → Search location=NYC → Verify results",
+            "Create public + private teams → Search is_public=true → Verify only public",
+            "Create 15 teams → Search limit=10 → Verify 10 returned",
+            "Create 15 teams → Search offset=10 → Verify last 5 returned",
+            "Soft delete team → Search → Verify excluded",
+            "Create team → Add members → Search → Verify member_count accurate",
+            "Combined filters: sport=pickleball + location=NYC → Verify intersection"
+          ],
+          "edgeCases": [
+            "Search with no matching teams returns []",
+            "Search during team creation (eventual consistency)",
+            "Rapid successive searches"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/"
+          ]
+        },
+        "dependsOn": ["team-search.integration.route", "team-search.integration.database"]
+      },
+      {
+        "id": "team-search.regression",
+        "category": "regression",
+        "description": "Regression tests for search compatibility",
+        "required": true,
+        "priority": "medium",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/regression/team-search-regression.test.ts",
+          "status": "not_created",
+          "testCount": 5,
+          "estimatedDuration": "25 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "Existing team operations compatibility"
+          ],
+          "scenarios": [
+            "GET /api/teams/:id unaffected by search implementation",
+            "Team creation reflected in search results",
+            "Team updates reflected in search results",
+            "Team deletion reflected in search results"
+          ],
+          "edgeCases": [
+            "Legacy client compatibility"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/"
+          ]
+        },
+        "dependsOn": ["team-search.e2e"]
+      },
+      {
+        "id": "team-search.performance",
+        "category": "performance",
+        "description": "Performance tests for search under load",
+        "required": false,
+        "priority": "low",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/performance/team-search-load.test.ts",
+          "status": "not_created",
+          "testCount": 5,
+          "estimatedDuration": "120 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "Search performance"
+          ],
+          "scenarios": [
+            "Search 1000 teams < 200ms",
+            "Filtered search 1000 teams < 250ms",
+            "Pagination efficiency (offset=900)",
+            "Concurrent search requests (100 simultaneous)"
+          ],
+          "edgeCases": [
+            "Database index usage verification"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": true,
+          "unlessFileChanged": []
+        },
+        "dependsOn": []
+      }
+    ],
+    "coverageRequirements": {
+      "enabled": true,
+      "minimumPercentage": 90,
+      "criticalFiles": [
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/controllers/team-search.controller.ts",
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/repositories/team-search.repository.ts",
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/routes/team.routes.ts",
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/schemas/team-search.schema.ts"
+      ]
+    },
+    "successCriteria": {
+      "allTestsMustPass": true,
+      "noTypeScriptErrors": true,
+      "noLintingErrors": true,
+      "buildMustSucceed": true
+    },
+    "executionConfig": {
+      "runInOrder": [
+        "team-search.unit.controller",
+        "team-search.unit.validation",
+        "team-search.integration.database",
+        "team-search.integration.route",
+        "team-search.e2e",
+        "team-search.regression"
+      ],
+      "stopOnFirstFailure": false,
+      "parallelizable": false
+    }
+  },
+  "workflow": {
+    "type": "TDD",
+    "workflowRef": "workflows/tdd.json",
+    "planningRequired": false
+  },
+  "context": {
+    "relevantFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/controllers/team-search.controller.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/routes/team.routes.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/repositories/team-search.repository.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/schemas/team-search.schema.ts"
+    ],
+    "keyFindings": [
+      "Query params: sport, location, is_public, limit, offset",
+      "All query params optional (defaults: limit=20, offset=0)",
+      "Soft-deleted teams (is_active=false) excluded from results",
+      "Location search case-insensitive partial match",
+      "Each team result includes member_count (COUNT team_members)",
+      "Pagination: limit max 100, offset non-negative",
+      "Include pickleball and paddle team search examples"
+    ],
+    "previousAttempts": []
+  },
+  "metadata": {
+    "phase": 3,
+    "feature": "Team Management",
+    "estimatedDuration": "120-150 min",
+    "tags": ["team-service", "teams", "search", "filters", "pagination", "GET", "pickleball", "paddle"]
+  }
+}

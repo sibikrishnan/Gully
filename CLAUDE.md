@@ -1,0 +1,1 @@
+- when suggesting to switch to new sessions, make sure to give the copy paste option of the next feasible thing they may build.

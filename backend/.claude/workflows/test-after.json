@@ -1,0 +1,72 @@
+{
+  "name": "test-after",
+  "version": "1.0",
+  "description": "Test-After workflow where implementation comes before tests. Implement feature first, then write comprehensive tests. Suitable for bug fixes, minor changes, and urgent patches where quick iteration is needed.",
+  "subagent": {
+    "required": false,
+    "type": "Explore",
+    "thoroughness": "quick",
+    "description": "Quick exploration to understand bug context or feature scope. Planning optional for straightforward changes."
+  },
+  "execution": {
+    "strategy": "test-after",
+    "testFirst": false,
+    "iterative": true,
+    "maxAttempts": 3,
+    "rollbackOnFailure": true
+  },
+  "enforcement": {
+    "mode": "WARN",
+    "rules": {
+      "subagentRequired": false,
+      "phaseSequence": false,
+      "approvalRequired": false,
+      "testFirst": false,
+      "testsMustPass": true
+    }
+  },
+  "workflowSteps": [
+    {
+      "step": 1,
+      "name": "Review Task",
+      "description": "Understand bug report, feature request, or change requirements",
+      "deliverables": ["Root cause identified (for bugs)", "Change scope defined"]
+    },
+    {
+      "step": 2,
+      "name": "Implement Fix/Feature",
+      "description": "Write code to fix bug or implement feature",
+      "deliverables": ["Implementation complete", "Code follows existing patterns"]
+    },
+    {
+      "step": 3,
+      "name": "Manual Verification",
+      "description": "Test implementation manually to confirm it works",
+      "deliverables": ["Feature works as expected", "Bug is resolved"]
+    },
+    {
+      "step": 4,
+      "name": "Write Tests",
+      "description": "Create test suite to prevent regression",
+      "deliverables": ["Test coverage for fix/feature", "Edge cases covered"]
+    },
+    {
+      "step": 5,
+      "name": "Verify",
+      "description": "Run all tests, check for regressions",
+      "deliverables": ["All tests passing", "No TypeScript errors", "No regressions introduced"]
+    }
+  ],
+  "metadata": {
+    "createdBy": "claude-sonnet-4-5",
+    "createdAt": "2025-11-09T02:00:00Z",
+    "approvedBy": "system",
+    "useCases": [
+      "Bug fixes with clear reproduction steps",
+      "Minor feature additions",
+      "Urgent patches requiring quick deployment",
+      "Refactoring existing code",
+      "Documentation updates with example code"
+    ]
+  }
+}

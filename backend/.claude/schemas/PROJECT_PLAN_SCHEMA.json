@@ -1,0 +1,419 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gully.dev/schemas/project-plan.json",
+  "title": "PROJECT_PLAN Schema",
+  "description": "Project execution plan schema for PM Agent output. PM Agent is the orchestrator that analyzes TECH_SPEC, creates phases with task skeletons, defines maturity gates, and controls the fleet of specialized agents (Task Generation, Task Execution).",
+  "type": "object",
+  "required": [
+    "version",
+    "projectName",
+    "projectContext",
+    "phases",
+    "executionStrategy"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version for the PROJECT_PLAN",
+      "pattern": "^\\d+\\.\\d+$",
+      "examples": ["1.0", "2.1"]
+    },
+    "projectName": {
+      "type": "string",
+      "description": "Name of the project (must match TECH_SPEC)",
+      "minLength": 1,
+      "examples": ["Gully", "TaskMaster", "ChatHub"]
+    },
+    "projectContext": {
+      "type": "object",
+      "description": "High-level project context derived from TECH_SPEC",
+      "required": ["techSpecRef", "architectureSummary", "maturityModel"],
+      "properties": {
+        "techSpecRef": {
+          "type": "string",
+          "description": "Path to the TECH_SPEC.json file that this plan is based on",
+          "examples": ["docs/planning/TECH_SPEC.json"]
+        },
+        "architectureSummary": {
+          "type": "string",
+          "description": "Brief summary of system architecture from TECH_SPEC",
+          "examples": [
+            "Modular monolith with Node.js/Express/TypeScript, PostgreSQL database, REST APIs with clear service boundaries for future microservices migration",
+            "Microservices architecture with event-driven communication via Kafka, polyglot persistence"
+          ]
+        },
+        "maturityModel": {
+          "type": "object",
+          "description": "Maturity-based execution model for parallelization strategy",
+          "required": ["levels"],
+          "properties": {
+            "levels": {
+              "type": "array",
+              "description": "Maturity levels from sequential to full parallel",
+              "minItems": 3,
+              "items": {
+                "type": "object",
+                "required": ["level", "description", "parallelizationCapacity"],
+                "properties": {
+                  "level": {
+                    "type": "string",
+                    "enum": ["sequential", "controlled-parallel", "full-parallel"],
+                    "description": "Maturity level identifier"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "What this maturity level means",
+                    "examples": [
+                      "Foundation building - high interdependency, sequential only",
+                      "Stable base established - 2-3 parallel streams safe",
+                      "Mature system - multiple independent features can be developed in parallel"
+                    ]
+                  },
+                  "parallelizationCapacity": {
+                    "type": "string",
+                    "description": "How many parallel streams are safe at this level",
+                    "examples": ["1 stream (sequential only)", "2-3 streams", "unlimited streams"]
+                  }
+                }
+              }
+            },
+            "currentLevel": {
+              "type": "string",
+              "enum": ["sequential", "controlled-parallel", "full-parallel"],
+              "description": "Current maturity level of the project"
+            }
+          }
+        },
+        "technologyStack": {
+          "type": "object",
+          "description": "Key technology choices from TECH_SPEC (for quick reference)",
+          "properties": {
+            "backend": {
+              "type": "string",
+              "examples": ["Node.js 20+ with Express.js and TypeScript"]
+            },
+            "database": {
+              "type": "string",
+              "examples": ["PostgreSQL 15 with Redis 7 cache"]
+            },
+            "testing": {
+              "type": "string",
+              "examples": ["Jest with TDD workflow, 90%+ coverage target"]
+            }
+          }
+        }
+      }
+    },
+    "phases": {
+      "type": "array",
+      "description": "Execution phases with task skeletons. PM Agent decides phase grouping based on TECH_SPEC critical path and feature dependencies.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "phaseId",
+          "phaseName",
+          "features",
+          "maturityLevel",
+          "dependencies",
+          "criticalPath",
+          "maturityGate",
+          "taskSkeletons"
+        ],
+        "properties": {
+          "phaseId": {
+            "type": "string",
+            "description": "Unique phase identifier",
+            "pattern": "^P\\d+$",
+            "examples": ["P1", "P2", "P3"]
+          },
+          "phaseName": {
+            "type": "string",
+            "description": "Human-readable phase name",
+            "examples": [
+              "User Service Foundation",
+              "User Profiles & Sports Preferences",
+              "Team Creation & Management"
+            ]
+          },
+          "features": {
+            "type": "array",
+            "description": "MVP features covered in this phase (from in-scope.md or RefinedIDEA)",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            },
+            "examples": [
+              ["User Authentication"],
+              ["User Profiles"],
+              ["Team Creation & Management", "Challenge System"]
+            ]
+          },
+          "maturityLevel": {
+            "type": "string",
+            "enum": ["sequential", "controlled-parallel", "full-parallel"],
+            "description": "Maturity level for this phase (determines parallelization safety)"
+          },
+          "dependencies": {
+            "type": "array",
+            "description": "Array of phaseIds that must complete before this phase can start",
+            "items": {
+              "type": "string"
+            },
+            "examples": [[], ["P1"], ["P1", "P2"]]
+          },
+          "criticalPath": {
+            "type": "boolean",
+            "description": "Whether this phase is on the critical path for MVP (from TECH_SPEC)",
+            "examples": [true, false]
+          },
+          "maturityGate": {
+            "type": "object",
+            "description": "Exit criteria that must be met before proceeding to next phase. Combines TECH_SPEC NFRs + phase-specific checks (Q3: Option C).",
+            "required": ["nfrChecks", "phaseSpecificChecks"],
+            "properties": {
+              "nfrChecks": {
+                "type": "object",
+                "description": "Non-functional requirements from TECH_SPEC that apply to this phase",
+                "properties": {
+                  "testCoverageTarget": {
+                    "type": "string",
+                    "description": "Minimum test coverage required",
+                    "examples": ["90%+ for production code", "95%+ for critical paths"]
+                  },
+                  "performanceTarget": {
+                    "type": "string",
+                    "description": "Performance requirement for this phase",
+                    "examples": ["<100ms API response time", "<500ms for aggregations"]
+                  },
+                  "securityChecks": {
+                    "type": "array",
+                    "description": "Security requirements that must be verified",
+                    "items": {
+                      "type": "string"
+                    },
+                    "examples": [
+                      ["JWT authentication working", "Password hashing with bcrypt", "No auth vulnerabilities"]
+                    ]
+                  }
+                }
+              },
+              "phaseSpecificChecks": {
+                "type": "array",
+                "description": "Phase-specific exit criteria beyond NFRs",
+                "items": {
+                  "type": "string"
+                },
+                "examples": [
+                  ["All User Service tests pass", "JWT token generation and validation working", "User registration and login flows complete"],
+                  ["User profile CRUD operations complete", "Sports preferences management working", "Integration tests with User Service passing"]
+                ]
+              },
+              "integrationTestsPassing": {
+                "type": "boolean",
+                "description": "Whether integration tests must pass for this phase gate",
+                "default": true
+              },
+              "buildSuccessful": {
+                "type": "boolean",
+                "description": "Whether build must succeed for this phase gate",
+                "default": true
+              }
+            }
+          },
+          "taskSkeletons": {
+            "type": "array",
+            "description": "Lightweight task skeletons for this phase. Task Generation Agent will convert these into comprehensive TASK_OBJECTS.",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "taskId",
+                "title",
+                "priority",
+                "feature",
+                "scope",
+                "requirements",
+                "complexity",
+                "dependencies"
+              ],
+              "properties": {
+                "taskId": {
+                  "type": "string",
+                  "description": "Unique task identifier (convention: {phaseId}-{FEATURE}-T{number})",
+                  "pattern": "^P\\d+-[A-Z]+-T\\d+$",
+                  "examples": ["P2-PROF-T1", "P3-TEAM-T5"]
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Brief task title (usually endpoint or feature component)",
+                  "examples": [
+                    "GET /api/users/:id - Retrieve User Profile",
+                    "POST /api/teams - Create Team with Captain"
+                  ]
+                },
+                "priority": {
+                  "type": "string",
+                  "enum": ["critical", "high", "medium", "low"],
+                  "description": "Task priority"
+                },
+                "feature": {
+                  "type": "string",
+                  "description": "Which MVP feature this task belongs to",
+                  "examples": ["User Profiles", "Team Creation & Management", "Challenge System"]
+                },
+                "scope": {
+                  "type": "string",
+                  "description": "Brief description of what needs to be built (1-3 sentences)",
+                  "examples": [
+                    "Implement user profile retrieval endpoint with sports preferences JOIN. Include authentication middleware and field-level access control.",
+                    "Create team creation endpoint with captain assignment. Handle team validation, database persistence, and initial team_members entry."
+                  ]
+                },
+                "requirements": {
+                  "type": "array",
+                  "description": "Business rules and acceptance criteria (not implementation details)",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "examples": [
+                    [
+                      "JOIN users with user_sports table to include sports preferences",
+                      "Exclude password_hash from all responses",
+                      "Filter email/phone for other users' profiles (own profile shows all)",
+                      "Return 404 for soft-deleted users (is_active=false)"
+                    ],
+                    [
+                      "Captain must be a valid registered user",
+                      "Team name must be unique per sport",
+                      "Auto-create team_members entry for captain with is_captain=true",
+                      "Support multiple sports (pickleball, paddle, basketball, etc.)"
+                    ]
+                  ]
+                },
+                "complexity": {
+                  "type": "string",
+                  "enum": ["simple", "moderate", "complex"],
+                  "description": "Estimated complexity for Task Generation Agent"
+                },
+                "dependencies": {
+                  "type": "array",
+                  "description": "Array of taskIds that must complete before this task",
+                  "items": {
+                    "type": "string"
+                  },
+                  "examples": [[], ["P2-PROF-T1"], ["P3-TEAM-T1", "P3-TEAM-T2"]]
+                },
+                "context": {
+                  "type": "object",
+                  "description": "Architectural context from TECH_SPEC for Task Generation Agent",
+                  "properties": {
+                    "architecturalGuidance": {
+                      "type": "string",
+                      "description": "Architecture style/pattern from TECH_SPEC",
+                      "examples": [
+                        "modular-monolith with clear service boundaries",
+                        "microservices with event-driven communication"
+                      ]
+                    },
+                    "technologyStack": {
+                      "type": "string",
+                      "description": "Relevant tech stack for this task",
+                      "examples": [
+                        "Node.js + Express + TypeScript + PostgreSQL",
+                        "Python + FastAPI + MongoDB"
+                      ]
+                    },
+                    "testingApproach": {
+                      "type": "string",
+                      "description": "Testing methodology from TECH_SPEC",
+                      "examples": [
+                        "TDD with 90%+ coverage (unit, integration, e2e, regression)",
+                        "BDD with Cucumber and contract testing"
+                      ]
+                    },
+                    "performanceTarget": {
+                      "type": "string",
+                      "description": "Performance requirement from TECH_SPEC NFRs",
+                      "examples": ["<100ms response time", "<500ms for complex queries"]
+                    },
+                    "securityGuidance": {
+                      "type": "string",
+                      "description": "Security requirements from TECH_SPEC",
+                      "examples": [
+                        "JWT authentication with bcrypt password hashing, input validation with Zod",
+                        "OAuth 2.0 with scoped permissions"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "executionStrategy": {
+      "type": "object",
+      "description": "Overall execution strategy for the project",
+      "required": ["recommendedStartPhase", "parallelizationGuidance", "integrationCheckpoints"],
+      "properties": {
+        "recommendedStartPhase": {
+          "type": "string",
+          "description": "Which phase to start development with",
+          "pattern": "^P\\d+$",
+          "examples": ["P1", "P2"]
+        },
+        "parallelizationGuidance": {
+          "type": "string",
+          "description": "When and how to safely parallelize development based on maturity model",
+          "examples": [
+            "Start with P1 sequentially (foundation). After P1 gate passes, P2 can proceed sequentially. Once P2 gate passes with 90%+ coverage and stable interfaces, controlled parallelization (2-3 streams) is safe for P3-P5.",
+            "P1-P2 must be sequential (critical dependencies). P3+ can be fully parallelized after P2 maturity gate."
+          ]
+        },
+        "integrationCheckpoints": {
+          "type": "array",
+          "description": "Points where cross-phase integration should be verified",
+          "items": {
+            "type": "object",
+            "required": ["afterPhase", "checkDescription"],
+            "properties": {
+              "afterPhase": {
+                "type": "string",
+                "description": "Phase ID after which to run integration check",
+                "examples": ["P1", "P2", "P3"]
+              },
+              "checkDescription": {
+                "type": "string",
+                "description": "What to verify at this checkpoint",
+                "examples": [
+                  "Verify User Service auth integration with all endpoints",
+                  "Verify Team Service integration with User Service (team members, captain validation)",
+                  "Verify Match Service integration with User and Team Services"
+                ]
+              }
+            }
+          }
+        },
+        "taskGenerationStrategy": {
+          "type": "string",
+          "description": "When and how PM Agent invokes Task Generation Agent",
+          "examples": [
+            "Generate tasks for P1 immediately. Generate P2-P3 tasks after P1 gate passes. Generate P4+ tasks on-demand.",
+            "Generate all phase tasks upfront for comprehensive planning.",
+            "Generate tasks phase-by-phase as development progresses."
+          ]
+        }
+      }
+    },
+    "unstructuredNotes": {
+      "type": "string",
+      "description": "Freeform notes from PM Agent about execution strategy, risks, trade-offs, or context for Task Generation Agent and Task Execution Agents.",
+      "examples": [
+        "Critical: User Service (P1) and Team Service (P2) are foundational - DO NOT parallelize. These must achieve 90%+ coverage before any parallelization. Match Service (P3) has complex business rules around result verification - Task Generation Agent should create comprehensive edge case tests. Stats Service (P4) can be parallelized with League/Tournament services once Match Service is stable. Watch for N+1 query problems in leaderboard calculations - may need Redis optimization."
+      ]
+    }
+  }
+}

@@ -1,0 +1,219 @@
+{
+  "id": "4",
+  "version": "1.0",
+  "changelog": [
+    {
+      "version": "1.0",
+      "timestamp": "2025-11-03T12:00:00Z",
+      "change": "Initial task definition with integration and e2e test strategy",
+      "author": "claude-sonnet-4.5"
+    }
+  ],
+  "content": "Write integration tests for auth middleware and Passport configuration",
+  "activeForm": "Writing integration tests for auth middleware and Passport configuration",
+  "description": "Create comprehensive integration tests for auth.middleware.ts and passport.config.ts to ensure authentication flow works end-to-end",
+  "status": "pending",
+  "dependencies": ["3"],
+  "testSuite": {
+    "testCases": [
+      {
+        "id": "auth-middleware.integration",
+        "category": "integration",
+        "description": "Integration tests for authentication middleware protecting routes",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/auth.middleware.test.ts",
+          "status": "not_created",
+          "testCount": 25,
+          "estimatedDuration": "45 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "authenticateJWT middleware",
+            "requireAuth middleware",
+            "optionalAuth middleware"
+          ],
+          "scenarios": [
+            "Valid token allows access",
+            "Invalid token returns 401",
+            "Missing token returns 401",
+            "Expired token returns 401",
+            "Token with valid structure but wrong signature rejected",
+            "User data attached to request object",
+            "Optional auth allows anonymous access"
+          ],
+          "edgeCases": [
+            "Token in different header formats",
+            "Multiple Authorization headers",
+            "Token with extra claims",
+            "Concurrent requests with same token"
+          ]
+        }
+      },
+      {
+        "id": "passport.integration",
+        "category": "integration",
+        "description": "Integration tests for Passport configuration and strategies",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/passport.config.test.ts",
+          "status": "not_created",
+          "testCount": 20,
+          "estimatedDuration": "40 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "Local strategy authentication",
+            "JWT strategy authentication",
+            "Passport initialization"
+          ],
+          "scenarios": [
+            "Login with valid credentials succeeds",
+            "Login with invalid credentials fails",
+            "Login with non-existent user fails",
+            "JWT strategy extracts user from token",
+            "Password comparison works correctly",
+            "User serialization/deserialization"
+          ],
+          "edgeCases": [
+            "Login with deactivated account",
+            "Login with suspended user",
+            "Case sensitivity in username/email",
+            "SQL injection attempts in credentials"
+          ]
+        }
+      },
+      {
+        "id": "auth-flow.e2e",
+        "category": "e2e",
+        "description": "End-to-end tests for complete authentication flow",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/auth-flow.test.ts",
+          "status": "not_created",
+          "testCount": 15,
+          "estimatedDuration": "60 seconds"
+        },
+        "coverage": {
+          "targetFunctions": ["Complete auth flow"],
+          "scenarios": [
+            "Register → Login → Access protected route → Logout",
+            "Login → Refresh token → Access with new token",
+            "Failed login attempts tracking",
+            "Password reset flow",
+            "Email verification flow"
+          ],
+          "edgeCases": [
+            "Token refresh before expiration",
+            "Using old token after refresh",
+            "Multiple device login"
+          ]
+        },
+        "dependsOn": ["auth-middleware.integration", "passport.integration"]
+      }
+    ],
+    "coverageRequirements": {
+      "enabled": true,
+      "minimumPercentage": 85,
+      "criticalFiles": [
+        "/Users/sibikrishnan/Documents/Gully/backend/src/shared/middleware/auth.middleware.ts",
+        "/Users/sibikrishnan/Documents/Gully/backend/src/shared/config/passport.config.ts"
+      ]
+    },
+    "successCriteria": {
+      "allTestsMustPass": true,
+      "noTypeScriptErrors": true,
+      "noLintingErrors": true,
+      "buildMustSucceed": true
+    },
+    "executionConfig": {
+      "runInOrder": ["auth-middleware.integration", "passport.integration", "auth-flow.e2e"],
+      "stopOnFirstFailure": false,
+      "parallelizable": false
+    }
+  },
+  "workflow": {
+    "subagent": {
+      "required": true,
+      "type": "Plan",
+      "description": "Analyze auth middleware and Passport implementation, design comprehensive integration test strategy"
+    },
+    "planningPhases": {
+      "phase1_gather": {
+        "description": "Understand existing auth implementation and testing patterns",
+        "objectives": [
+          "Read auth.middleware.ts to understand middleware structure",
+          "Read passport.config.ts to understand strategy configuration",
+          "Identify dependencies (passport, passport-jwt, passport-local versions)",
+          "Find existing integration test patterns in codebase",
+          "Review how routes are protected with middleware"
+        ],
+        "requiredTools": ["Read", "Grep", "Glob"],
+        "outputFormat": "Implementation overview with code structure, dependencies, and existing patterns"
+      },
+      "phase2_analyze": {
+        "description": "Identify test scenarios and coverage gaps",
+        "objectives": [
+          "Identify all middleware functions that need testing",
+          "Identify all Passport strategies that need testing",
+          "Determine integration points between components",
+          "Identify security vulnerabilities to test against",
+          "Analyze existing test helpers and fixtures availability"
+        ],
+        "outputFormat": "Test coverage matrix with scenarios, edge cases, and security considerations"
+      },
+      "phase3_design": {
+        "description": "Design comprehensive integration test suite",
+        "objectives": [
+          "Design test structure for auth.middleware.test.ts",
+          "Design test structure for passport.config.test.ts",
+          "Design test structure for auth-flow.test.ts (e2e)",
+          "Design test fixtures (mock users, tokens, requests)",
+          "Design helper functions for common test operations",
+          "Plan database setup/teardown strategy"
+        ],
+        "deliverables": [
+          "Complete test file structures with describe/it blocks",
+          "Test fixture designs",
+          "Helper function signatures",
+          "Setup/teardown strategy"
+        ],
+        "outputFormat": "Detailed test suite design with code skeletons and explanations"
+      },
+      "phase4_approve": {
+        "description": "Present complete test strategy for approval",
+        "approvalRequired": true,
+        "presentationFormat": "TEST COVERAGE MATRIX → TEST SUITE DESIGN → FIXTURES & HELPERS → EXECUTION PLAN"
+      }
+    },
+    "execution": {
+      "strategy": "TDD",
+      "iterative": true,
+      "maxAttempts": 3,
+      "rollbackOnFailure": false
+    },
+    "enforcement": {
+      "mode": "ERROR",
+      "rules": {
+        "subagentRequired": true,
+        "phaseSequence": true,
+        "approvalRequired": true,
+        "testFirst": true
+      }
+    }
+  },
+  "context": {
+    "relevantFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/shared/middleware/auth.middleware.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/shared/config/passport.config.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/shared/utils/jwt.utils.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/tests/helpers/fixtures.ts"
+    ],
+    "keyFindings": []
+  },
+  "tags": ["auth", "middleware", "passport", "integration-testing", "security"],
+  "estimatedDuration": "4-5 hours"
+}

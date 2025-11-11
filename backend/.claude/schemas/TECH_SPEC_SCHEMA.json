@@ -1,0 +1,537 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gully.dev/schemas/tech-spec.json",
+  "title": "TECH_SPEC Schema",
+  "description": "Technical specification schema for Architect Agent output. Defines architectural blueprint without prescriptive implementation details. This is the handoff contract from Architect Agent to PM Agent.",
+  "type": "object",
+  "required": [
+    "version",
+    "projectName",
+    "systemArchitecture",
+    "technologyStack",
+    "dataArchitecture",
+    "nonFunctionalRequirements",
+    "developmentStrategy"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version for the TECH_SPEC",
+      "pattern": "^\\d+\\.\\d+$",
+      "examples": ["1.0", "2.1"]
+    },
+    "projectName": {
+      "type": "string",
+      "description": "Name of the project",
+      "minLength": 1,
+      "examples": ["Gully", "TaskMaster", "ChatHub"]
+    },
+    "systemArchitecture": {
+      "type": "object",
+      "description": "High-level system architecture definition",
+      "required": ["style", "majorComponents", "communicationPattern"],
+      "properties": {
+        "style": {
+          "type": "string",
+          "description": "Architectural style/pattern",
+          "enum": [
+            "monolith",
+            "modular-monolith",
+            "microservices",
+            "serverless",
+            "event-driven",
+            "layered",
+            "hexagonal"
+          ],
+          "examples": ["modular-monolith", "microservices"]
+        },
+        "evolutionPath": {
+          "type": "string",
+          "description": "How the architecture can evolve in the future",
+          "examples": [
+            "can migrate to microservices at scale",
+            "designed for serverless migration",
+            "stable architecture, no evolution planned"
+          ]
+        },
+        "majorComponents": {
+          "type": "array",
+          "description": "Major system components or services",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "responsibility", "dependencies"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Component/service name",
+                "examples": ["User Service", "Payment Gateway", "Notification Engine"]
+              },
+              "responsibility": {
+                "type": "string",
+                "description": "What this component is responsible for",
+                "examples": [
+                  "Authentication, user profiles, sports preferences",
+                  "Payment processing and transaction management",
+                  "Real-time notifications via WebSocket and push"
+                ]
+              },
+              "dependencies": {
+                "type": "array",
+                "description": "List of other components this depends on (by name)",
+                "items": {
+                  "type": "string"
+                },
+                "examples": [["User Service"], ["User Service", "Payment Service"], []]
+              },
+              "criticalPath": {
+                "type": "boolean",
+                "description": "Whether this component is on the critical path for MVP",
+                "default": false
+              }
+            }
+          }
+        },
+        "communicationPattern": {
+          "type": "string",
+          "description": "How components communicate with each other",
+          "examples": [
+            "In-process function calls (monolith), REST-ready interfaces",
+            "Synchronous REST APIs",
+            "Asynchronous message queues (RabbitMQ)",
+            "Event-driven with Kafka",
+            "GraphQL federation"
+          ]
+        },
+        "deploymentModel": {
+          "type": "string",
+          "description": "How the system will be deployed",
+          "examples": [
+            "Single container (Docker)",
+            "Multiple containers with orchestration (Kubernetes)",
+            "Serverless functions (AWS Lambda)",
+            "Traditional VMs"
+          ]
+        }
+      }
+    },
+    "technologyStack": {
+      "type": "object",
+      "description": "Core technology choices",
+      "required": ["backend", "database"],
+      "properties": {
+        "backend": {
+          "type": "string",
+          "description": "Backend runtime and framework",
+          "examples": [
+            "Node.js + Express + TypeScript",
+            "Python + FastAPI",
+            "Go + Gin",
+            "Java + Spring Boot"
+          ]
+        },
+        "frontend": {
+          "type": "string",
+          "description": "Frontend framework (if applicable)",
+          "examples": [
+            "React + Next.js + TypeScript",
+            "Vue.js + Nuxt",
+            "React Native",
+            "Flutter"
+          ]
+        },
+        "database": {
+          "type": "object",
+          "description": "Database technologies",
+          "properties": {
+            "primary": {
+              "type": "string",
+              "description": "Primary database",
+              "examples": [
+                "PostgreSQL 15",
+                "MongoDB 6",
+                "MySQL 8",
+                "DynamoDB"
+              ]
+            },
+            "cache": {
+              "type": "string",
+              "description": "Caching layer",
+              "examples": ["Redis 7", "Memcached", "None"]
+            },
+            "search": {
+              "type": "string",
+              "description": "Search engine (if applicable)",
+              "examples": ["Elasticsearch", "Algolia", "None"]
+            }
+          }
+        },
+        "authentication": {
+          "type": "string",
+          "description": "Authentication mechanism",
+          "examples": [
+            "JWT",
+            "OAuth 2.0",
+            "Session-based",
+            "Firebase Auth",
+            "Auth0"
+          ]
+        },
+        "testing": {
+          "type": "string",
+          "description": "Testing framework and methodology",
+          "examples": [
+            "Jest with TDD workflow",
+            "PyTest with BDD",
+            "Go testing package"
+          ]
+        },
+        "infrastructure": {
+          "type": "string",
+          "description": "Infrastructure and deployment tools",
+          "examples": [
+            "Docker Compose (local), AWS ECS (production)",
+            "Kubernetes with Helm",
+            "Vercel + Railway",
+            "AWS Lambda + API Gateway"
+          ]
+        },
+        "cicd": {
+          "type": "string",
+          "description": "CI/CD pipeline",
+          "examples": [
+            "GitHub Actions",
+            "GitLab CI",
+            "Jenkins",
+            "CircleCI"
+          ]
+        }
+      }
+    },
+    "dataArchitecture": {
+      "type": "object",
+      "description": "High-level data modeling and relationships",
+      "required": ["approach", "majorEntities"],
+      "properties": {
+        "approach": {
+          "type": "string",
+          "description": "Data modeling approach",
+          "examples": [
+            "Relational with clear service boundaries",
+            "Document-based with embedded relationships",
+            "Graph-based with Neo4j",
+            "Hybrid: relational + document store"
+          ]
+        },
+        "majorEntities": {
+          "type": "array",
+          "description": "Major data entities in the system",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            ["User", "Team", "Match", "League"],
+            ["Customer", "Order", "Product", "Payment"]
+          ]
+        },
+        "relationships": {
+          "type": "string",
+          "description": "High-level description of key relationships between entities",
+          "examples": [
+            "User → Teams (many-to-many), Team → Matches (one-to-many), Match → Stats (one-to-one)",
+            "Customer → Orders (one-to-many), Order → Products (many-to-many through OrderItems)"
+          ]
+        },
+        "keyPatterns": {
+          "type": "array",
+          "description": "Important data patterns and conventions",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            ["Soft deletes", "Audit timestamps", "UUID primary keys"],
+            ["Event sourcing for orders", "CQRS pattern", "Optimistic locking"]
+          ]
+        }
+      }
+    },
+    "nonFunctionalRequirements": {
+      "type": "object",
+      "description": "Non-functional requirements that define quality attributes. These become maturity gates for the PM Agent.",
+      "required": ["performance", "security", "quality"],
+      "properties": {
+        "performance": {
+          "type": "object",
+          "description": "Performance targets",
+          "properties": {
+            "apiResponseTime": {
+              "type": "string",
+              "description": "Target API response time",
+              "examples": ["<100ms for standard queries", "<500ms p95", "<2s for complex reports"]
+            },
+            "concurrentUsers": {
+              "type": "string",
+              "description": "Target concurrent user capacity",
+              "examples": ["100+ without degradation", "10,000 concurrent connections", "1M daily active users"]
+            },
+            "scalability": {
+              "type": "string",
+              "description": "Scalability requirements",
+              "examples": [
+                "Designed for 10K+ users",
+                "Horizontal scaling to 100+ nodes",
+                "Auto-scaling based on load"
+              ]
+            },
+            "throughput": {
+              "type": "string",
+              "description": "Throughput requirements",
+              "examples": ["1000 requests/second", "100K events/minute", "10GB data ingestion/hour"]
+            }
+          }
+        },
+        "security": {
+          "type": "object",
+          "description": "Security requirements",
+          "properties": {
+            "authentication": {
+              "type": "string",
+              "description": "Authentication requirements",
+              "examples": [
+                "JWT with secure password hashing (bcrypt)",
+                "OAuth 2.0 with MFA support",
+                "Passwordless via magic links"
+              ]
+            },
+            "dataPrivacy": {
+              "type": "string",
+              "description": "Data privacy and access control",
+              "examples": [
+                "Field-level access control",
+                "GDPR-compliant data handling",
+                "Row-level security in database",
+                "End-to-end encryption for sensitive data"
+              ]
+            },
+            "apiSecurity": {
+              "type": "string",
+              "description": "API security measures",
+              "examples": [
+                "Rate limiting, input validation, CORS",
+                "API key authentication with IP whitelist",
+                "OAuth scopes with fine-grained permissions"
+              ]
+            },
+            "compliance": {
+              "type": "array",
+              "description": "Compliance requirements",
+              "items": {
+                "type": "string"
+              },
+              "examples": [
+                ["GDPR", "HIPAA"],
+                ["SOC 2", "ISO 27001"],
+                ["PCI DSS"]
+              ]
+            }
+          }
+        },
+        "quality": {
+          "type": "object",
+          "description": "Quality and testing requirements",
+          "properties": {
+            "testCoverage": {
+              "type": "string",
+              "description": "Minimum test coverage requirement",
+              "examples": ["90%+ for production code", "80% overall", "100% for critical paths"]
+            },
+            "methodology": {
+              "type": "string",
+              "description": "Development methodology",
+              "examples": ["TDD (write tests first)", "BDD with Cucumber", "Contract-first API development"]
+            },
+            "errorHandling": {
+              "type": "string",
+              "description": "Error handling strategy",
+              "examples": [
+                "Centralized error handling middleware",
+                "Circuit breakers for external services",
+                "Graceful degradation"
+              ]
+            },
+            "monitoring": {
+              "type": "string",
+              "description": "Monitoring and observability",
+              "examples": [
+                "APM with DataDog, structured logging",
+                "OpenTelemetry with Jaeger tracing",
+                "CloudWatch metrics and alarms"
+              ]
+            }
+          }
+        },
+        "availability": {
+          "type": "object",
+          "description": "Availability and reliability requirements",
+          "properties": {
+            "uptime": {
+              "type": "string",
+              "examples": ["99.9% uptime SLA", "99.99% for critical services", "Best effort"]
+            },
+            "disasterRecovery": {
+              "type": "string",
+              "examples": [
+                "Daily backups with 4-hour RPO",
+                "Active-active multi-region",
+                "Backup every 6 hours, 24-hour RTO"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "developmentStrategy": {
+      "type": "object",
+      "description": "Strategic guidance for development execution. This guides the PM Agent's phase planning.",
+      "required": ["parallelizationReadiness"],
+      "properties": {
+        "parallelizationReadiness": {
+          "type": "string",
+          "description": "Guidance on when and how to parallelize development",
+          "examples": [
+            "Design for eventual parallelization, start sequential",
+            "Immediate parallelization possible with clear service boundaries",
+            "Sequential only - tight coupling requires waterfall approach"
+          ]
+        },
+        "serviceIsolation": {
+          "type": "string",
+          "description": "How services should be isolated for independent development",
+          "examples": [
+            "Clear interfaces between services for future separation",
+            "Contract-first development with OpenAPI specs",
+            "Monorepo with workspace isolation"
+          ]
+        },
+        "testingStrategy": {
+          "type": "string",
+          "description": "Overall testing approach to enable confidence in parallel work",
+          "examples": [
+            "Comprehensive test suite to enable confident parallel work",
+            "Contract testing between services",
+            "Integration tests as smoke tests"
+          ]
+        },
+        "criticalPathGuidance": {
+          "type": "string",
+          "description": "Guidance on what must be built first (critical path)",
+          "examples": [
+            "Authentication and user management are foundational - build first",
+            "Core API gateway must be stable before feature services",
+            "Data pipeline must be operational before analytics features"
+          ]
+        },
+        "technicalDebtPolicy": {
+          "type": "string",
+          "description": "Policy for managing technical debt",
+          "examples": [
+            "Refactor immediately if it blocks parallelization",
+            "Track debt in backlog, address in dedicated sprints",
+            "Zero tolerance for security debt"
+          ]
+        }
+      }
+    },
+    "integrationPoints": {
+      "type": "array",
+      "description": "External systems and third-party integrations",
+      "items": {
+        "type": "object",
+        "required": ["name", "purpose"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Integration name",
+            "examples": ["Stripe", "Twilio", "SendGrid", "Google Maps API"]
+          },
+          "purpose": {
+            "type": "string",
+            "description": "Why this integration is needed",
+            "examples": [
+              "Payment processing",
+              "SMS notifications",
+              "Geolocation services"
+            ]
+          },
+          "criticality": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "How critical this integration is to core functionality"
+          },
+          "fallbackStrategy": {
+            "type": "string",
+            "description": "What happens if this integration fails",
+            "examples": [
+              "Queue payments for retry",
+              "Degrade to email notifications",
+              "Use cached geocoding data"
+            ]
+          }
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "description": "Known constraints that limit architectural choices",
+      "properties": {
+        "budget": {
+          "type": "string",
+          "description": "Budget constraints",
+          "examples": [
+            "$500/month infrastructure budget",
+            "Free tier only for first 6 months",
+            "Enterprise budget available"
+          ]
+        },
+        "timeline": {
+          "type": "string",
+          "description": "Timeline constraints",
+          "examples": [
+            "MVP in 12 weeks",
+            "Beta launch in Q2 2025",
+            "No hard deadline"
+          ]
+        },
+        "team": {
+          "type": "string",
+          "description": "Team size and skill constraints",
+          "examples": [
+            "Solo developer with 90 min/day",
+            "2 full-stack, 1 frontend, 1 backend developer",
+            "Team of 10+ engineers"
+          ]
+        },
+        "technical": {
+          "type": "array",
+          "description": "Technical constraints or requirements",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            ["Must use company's existing AWS account", "Must integrate with legacy LDAP"],
+            ["No external dependencies allowed", "Must run on-premise"],
+            ["Must support IE11"]
+          ]
+        }
+      }
+    },
+    "unstructuredNotes": {
+      "type": "string",
+      "description": "Freeform notes from Architect Agent to PM Agent. Use this for architectural rationale, trade-offs, warnings, or any context that doesn't fit the structured fields above.",
+      "examples": [
+        "PM Agent: This architecture prioritizes sequential foundation building first. The modular monolith structure allows services to be developed sequentially initially, then parallelized once interfaces stabilize. Key decision: chose PostgreSQL over MongoDB for data integrity and complex queries. Security is critical - implement JWT properly before moving forward. Watch out for N+1 query problems in the sports JOIN - may need optimization in Phase 2."
+      ]
+    }
+  }
+}

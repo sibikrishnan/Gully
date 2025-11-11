@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "description": "Dynamic review criteria for Claude PR reviews. Update this file to change what Claude focuses on during reviews.",
+  "criteria": "system architecture, approach to project and planning excellence, code quality",
+  "presets": {
+    "foundation": {
+      "criteria": "system architecture, approach to project and planning excellence, code quality",
+      "description": "For foundational PRs (Week 1-2): Focus on architecture decisions, planning, and code quality"
+    },
+    "feature": {
+      "criteria": "code quality, test coverage, API design, security",
+      "description": "For feature PRs: Focus on implementation quality, testing, and security"
+    },
+    "refactor": {
+      "criteria": "code maintainability, performance, technical debt reduction",
+      "description": "For refactoring PRs: Focus on code improvements and performance"
+    },
+    "bugfix": {
+      "criteria": "root cause analysis, test coverage for regression, edge cases",
+      "description": "For bug fixes: Focus on proper fixes and preventing regressions"
+    },
+    "docs": {
+      "criteria": "documentation accuracy, completeness, clarity",
+      "description": "For documentation PRs: Focus on quality of documentation"
+    },
+    "security": {
+      "criteria": "security vulnerabilities, authentication/authorization, input validation, data protection",
+      "description": "For security-focused PRs: Deep security review"
+    }
+  },
+  "instructions": {
+    "how_to_change": [
+      "To change review criteria, update the 'criteria' field above",
+      "You can use a preset by copying its 'criteria' value",
+      "Or create custom criteria as comma-separated focus areas",
+      "Commit this file to apply criteria to future PR reviews"
+    ],
+    "example_custom": "performance optimization, memory management, caching strategies"
+  },
+  "active_preset": "foundation",
+  "notes": [
+    "Claude will always check for basic code quality issues",
+    "Custom criteria adds additional focus areas on top of basics",
+    "Review criteria can be overridden per-PR using labels (future enhancement)"
+  ]
+}

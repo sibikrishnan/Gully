@@ -1,6 +1,12 @@
 # Gully - Development Roadmap
 
-## Phase 1: Foundation (Months 1-3)
+**Note:** This is a future vision roadmap. Current MVP development follows the 7-phase feature-based approach (see `.claude/context/mvp/timeline.md` and `STATUS.md`).
+
+---
+
+## Long-Term Vision
+
+### Phase 1: Foundation (Months 1-3)
 
 ### Month 1: Setup & Core Auth
 **Week 1-2:**

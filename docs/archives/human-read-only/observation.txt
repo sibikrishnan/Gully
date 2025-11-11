@@ -1,0 +1,41 @@
+# Idea
+As a human, observe the claude behaviour. You will have a certain goal in mind.
+It is immportand to make sure claude and human are in same context. Human should understand what a claude session currently has in its context.
+
+Avoid lazy prompts
+Avoid Over or irrelevent context
+Maintain Task history, summary status for session to session continuation in claude code.
+A custom command to understand what is claude's context currently without wasting too much token. a simle summary or sentenxes like "I'v read the entire project and awasre of the next tasks" would suffice.
+A review by other claude agent early on to avoid recorrecting later
+What is the ideal amount of time a seperate claude instance is needed to test the current state and progress and make early corrections rather than later.
+Ideal session time with claude code.
+An ability to make claude remeber the Anthropic Guide Best policy so whenever the session begins, claude knows it has to follow the recommended best practices.
+Ideal time to introduce subagents
+
+## Instructions to Human
+
+### Session Startup Checklist
+1. **Start Docker services** (if not already running):
+   ```bash
+   cd backend && docker compose up -d
+   ```
+
+2. **Run /verify command** (manual step - Claude cannot automate this):
+   - Type `/verify` in Claude Code
+   - Claude will run checks and report status
+   - This gives you a quick health check without wasting tokens
+
+3. **Check context** with `/status`:
+   - Shows current week, last task completed, next task
+   - Quick 3-5 sentence summary
+   - No need to explain full project history
+
+4. **Continue work** with `/continue`:
+   - Auto-loads next task from TASK_HISTORY.md
+   - Shows what will be done
+   - Asks for confirmation before starting
+
+### After Each Task Completion
+- Verify TASK_HISTORY.md was updated by Claude
+- Check that commit message follows the template
+- Optionally run `/verify` again to confirm everything still works
