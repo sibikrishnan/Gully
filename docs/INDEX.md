@@ -74,7 +74,7 @@ Use `/gullycontext [section]` to load specific sections on-demand:
 ## 📦 Service Briefs (Parallel Development)
 
 **Navigator:**
-- **[docs/parallel-development/INDEX.md](docs/parallel-development/INDEX.md)** - All service development briefs
+- **[docs/service-briefs/INDEX.md](docs/service-briefs/INDEX.md)** - All service development briefs
 
 **Available Services:**
 1. **UserService-Brief.md** (279 lines) - User authentication & profiles ✅ Week 1
@@ -103,21 +103,21 @@ Use `/gullycontext [section]` to load specific sections on-demand:
 ## 💻 Source Code
 
 **Backend:**
-- **[backend/src/](backend/src/)** - Backend services source code
+- **[services/backend/src/](services/backend/src/)** - Backend services source code
   - `services/` - Service modules (user, team, match, stats)
   - `shared/` - Shared utilities (database, middleware, types, utils)
   - `app.ts` - Main application entry point
 
 **Tests:**
-- **[backend/tests/](backend/tests/)** - Test suite
+- **[services/backend/tests/](services/backend/tests/)** - Test suite
   - `unit/` - Unit tests (JWT utils, password utils)
   - `integration/` - Integration tests (auth routes, middleware)
   - **Status:** 121 tests passing, 90%+ coverage
 
 **Tools:**
-- **[tools/tasks/](tools/tasks/)** - Task management CLI tools
-  - `src/` - TypeScript source files
-  - `definitions/` - Task definition files
+- **[tools/tracker/](tools/tracker/)** - Project tracking system
+  - `data/` - Task data, project status, bug tracking
+  - `dashboard/` - Browser dashboard
 
 **Frontend:**
 - **[frontend/](frontend/)** - Next.js frontend (Week 3+, currently placeholder)
@@ -164,11 +164,11 @@ Use `/gullycontext [section]` to load specific sections on-demand:
 - **[.claude/OPTIMIZATION_LOG.md](.claude/OPTIMIZATION_LOG.md)** - Token usage tracking
 
 **Task System:**
-- **[backend/.claude/tasks/](backend/.claude/tasks/)** - Task state machine and definitions
-  - `schema.ts` - Task schema definition
-  - `state-machine.ts` - Task state machine
-  - `index.json` - Task index
-  - Task definition files (JSON)
+- **[tools/tracker/](tools/tracker/)** - Project tracking and task management
+  - `data/PROJECT_STATUS.json` - Project state and phases
+  - `data/TASK_HISTORY.json` - Task execution history
+  - `data/BUG_TRACKER.json` - Bug tracking
+  - `schemas/` - JSON schemas for validation
 
 ---
 
@@ -195,7 +195,7 @@ Use `/gullycontext [section]` to load specific sections on-demand:
 - **Need architecture info?** → See [Architecture & Design](#-architecture--design) section above
 - **Need API docs?** → `docs/planning/API_ENDPOINTS.md`
 - **Need database schema?** → `docs/planning/DATABASE_SCHEMA.md`
-- **Need to understand a service?** → `docs/parallel-development/[Service]-Brief.md`
+- **Need to understand a service?** → `docs/service-briefs/briefs/[Service]-Brief.md`
 - **Need context files?** → `.claude/context/[section]/`
 
 ### For Development
@@ -245,25 +245,25 @@ npm run test:coverage          # Coverage report
 ## 🔍 Search by Topic
 
 **Authentication:**
-- Source: `backend/src/services/user-service/`
-- Tests: `backend/tests/integration/auth.routes.test.ts`
-- Brief: `docs/parallel-development/UserService-Brief.md`
+- Source: `services/backend/src/services/user-service/`
+- Tests: `services/backend/tests/integration/auth.routes.test.ts`
+- Brief: `docs/service-briefs/briefs/UserService-Brief.md`
 - Context: `/gullycontext arch/services`
 
 **Database:**
 - Schema: `docs/planning/DATABASE_SCHEMA.md`
-- Migrations: `backend/src/shared/database/migrations/`
+- Migrations: `services/backend/src/shared/database/migrations/`
 - Context: `/gullycontext database`
 
 **Testing:**
-- Tests: `backend/tests/`
-- Setup: `backend/tests/setup.ts`
-- Helpers: `backend/tests/helpers/`
+- Tests: `services/backend/tests/`
+- Setup: `services/backend/tests/setup.ts`
+- Helpers: `services/backend/tests/helpers/`
 
 **Task System:**
-- Design: `docs/architecture/TASK_SYSTEM_DESIGN.md`
-- Implementation: `backend/.claude/tasks/`
-- CLI Tool: `tools/tasks/`
+- Tracking: `tools/tracker/`
+- Data: `tools/tracker/data/`
+- Dashboard: `tools/tracker/dashboard/`
 
 **Workflows:**
 - Dev Workflow: `docs/WORKFLOW_GUIDE.md`
@@ -289,9 +289,9 @@ npm run test:coverage          # Coverage report
 │   │   ├── OVERVIEW.md            # System overview
 │   │   ├── TASK_SYSTEM_DESIGN.md  # Task system
 │   │   └── CONTEXT_OPTIMIZATION_REPORT.md
-│   ├── parallel-development/      # Service briefs
+│   ├── service-briefs/            # Service briefs
 │   │   ├── INDEX.md               # Service navigator
-│   │   └── [Service]-Brief.md     # 6 service briefs
+│   │   └── briefs/                # 6 service briefs
 │   ├── weekly-reviews/            # Weekly retrospectives
 │   │   └── WEEK1_REVIEW.md
 │   ├── planning/                  # Planning docs
@@ -319,12 +319,12 @@ npm run test:coverage          # Coverage report
 │   │   └── workflow/
 │   └── commands/                  # Custom commands (7 files)
 │
-├── backend/
+├── services/backend/
 │   ├── src/                       # Source code
 │   ├── tests/                     # Test suite
-│   └── .claude/tasks/             # Task system
+│   └── .claude/workflows/         # Development workflows
 │
-├── tracker/                       # 🆕 Project tracking system
+├── tools/tracker/                 # 🆕 Project tracking system
 │   ├── data/                      # Tracking data (JSON)
 │   │   ├── PROJECT_STATUS.json
 │   │   ├── TASK_HISTORY.json
@@ -335,7 +335,7 @@ npm run test:coverage          # Coverage report
 │   ├── launch-dashboard.sh        # Dashboard launcher
 │   └── README.md
 │
-└── tools/tasks/                   # Task management CLI
+└── infrastructure/                # Infrastructure setup
 ```
 
 ---

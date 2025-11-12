@@ -232,7 +232,7 @@ Each service brief contains:
 **Example workflow for Team Service (Week 2):**
 ```bash
 # 1. Read the brief
-Read docs/parallel-development/TeamService-Brief.md
+Read docs/service-briefs/briefs/TeamService-Brief.md
 
 # 2. Load relevant context
 /gullycontext arch/services      # Service patterns

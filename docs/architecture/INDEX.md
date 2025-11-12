@@ -34,8 +34,8 @@
 **When to use:** Working with task management system
 
 **Related:**
-- Implementation: `backend/.claude/tasks/`
-- CLI Tool: `tools/tasks/`
+- Implementation: `tools/tracker/`
+- CLI Tool: `tools/tracker/`
 
 ---
 
@@ -77,7 +77,7 @@
 ## 📦 Related Documentation
 
 ### Service Implementation
-- **Service Briefs:** `docs/parallel-development/` - Detailed implementation guides for each service
+- **Service Briefs:** `docs/service-briefs/` - Detailed implementation guides for each service
 - **API Docs:** `docs/planning/API_ENDPOINTS.md` - Complete API reference
 - **Database Schema:** `docs/planning/DATABASE_SCHEMA.md` - Detailed schema definitions
 
@@ -98,7 +98,7 @@
 | Question | File | Alternative |
 |----------|------|-------------|
 | What's the overall system architecture? | OVERVIEW.md | `/gullycontext arch` |
-| How does the task system work? | TASK_SYSTEM_DESIGN.md | `backend/.claude/tasks/README.md` |
+| How does the task system work? | TASK_SYSTEM_DESIGN.md | `tools/tracker/README.md` |
 | How do I optimize context loading? | CONTEXT_OPTIMIZATION_REPORT.md | `.claude/OPTIMIZATION_LOG.md` |
 | What's the database schema? | `../planning/DATABASE_SCHEMA.md` | `/gullycontext database` |
 | How do services interact? | OVERVIEW.md (Service Boundaries) | `/gullycontext arch/services` |
@@ -110,7 +110,7 @@
 
 - **Active Architecture Docs:** 3 files
 - **Context Sections:** 19 files in `.claude/context/`
-- **Service Briefs:** 6 files in `docs/parallel-development/`
+- **Service Briefs:** 6 files in `docs/service-briefs/`
 - **Planning Docs:** 5 files in `docs/planning/`
 
 **Source of Truth:** `.claude/context/` directory (always up-to-date)

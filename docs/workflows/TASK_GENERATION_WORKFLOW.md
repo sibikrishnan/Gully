@@ -25,7 +25,7 @@
 
 1. **Create condensed spec sheet**
    ```bash
-   # Example: backend/.claude/SONNET_TASK_SPECS.md
+   # Example: tools/tracker/SONNET_TASK_SPECS.md
    # Contains:
    # - 1 example task from OPUS (template)
    # - Minimal specs for remaining tasks (50-100 lines)
@@ -35,7 +35,7 @@
 
 2. **Validate example task exists**
    ```bash
-   ls backend/.claude/tasks/P*-T1.json  # First task in phase (OPUS-generated)
+   ls tools/tracker/P*-T1.json  # First task in phase (OPUS-generated)
    ```
 
 ### Phase 2: Generation (Sonnet)
@@ -52,7 +52,7 @@
 
 4. **Quick validation after each task**
    ```bash
-   jq '.testSuite.testCases | length' backend/.claude/tasks/P3-TEAM-T2.json
+   jq '.testSuite.testCases | length' tools/tracker/P3-TEAM-T2.json
    # Expect: 7-9 test cases
    ```
 
@@ -70,7 +70,7 @@
 
 6. **Run batch validation**
    ```bash
-   backend/.claude/VALIDATE_TASKS.sh "P3-TEAM-*"
+   tools/tracker/VALIDATE_TASKS.sh "P3-TEAM-*"
 
    Checks:
    - JSON valid
@@ -85,7 +85,7 @@
    ```bash
    # Single command comparison
    jq -c '{file: input_filename | split("/")[-1], tests: .testSuite.testCases | length, author: .changelog[0].author}' \
-     backend/.claude/tasks/P{2,3}-*-T{1,2}.json
+     tools/tracker/P{2,3}-*-T{1,2}.json
 
    # Expect similar test counts between OPUS and Sonnet
    ```
@@ -128,7 +128,7 @@ Savings: 65%
 
 **Validation**:
 ```bash
-backend/.claude/VALIDATE_TASKS.sh "P3-TEAM-*"
+tools/tracker/VALIDATE_TASKS.sh "P3-TEAM-*"
 
 Output:
 ✓ P3-TEAM-T1.json | Tests:9 | Phase:3 | Author:opus
@@ -159,22 +159,22 @@ Output:
 
 ```bash
 # Validate all Phase 2 tasks
-backend/.claude/VALIDATE_TASKS.sh "P2-*"
+tools/tracker/VALIDATE_TASKS.sh "P2-*"
 
 # Count total test cases across phase
-jq -s '[.[] | .testSuite.testCases | length] | add' backend/.claude/tasks/P2-*.json
+jq -s '[.[] | .testSuite.testCases | length] | add' tools/tracker/P2-*.json
 
 # Check file sizes
-wc -l backend/.claude/tasks/P*.json | tail -1
+wc -l tools/tracker/P*.json | tail -1
 
 # Find tasks by author
-jq -r 'select(.changelog[0].author | contains("opus")) | .id' backend/.claude/tasks/*.json
+jq -r 'select(.changelog[0].author | contains("opus")) | .id' tools/tracker/*.json
 
 # Verify absolute paths
-jq -r '.context.relevantFiles[]' backend/.claude/tasks/P3-TEAM-T2.json | head -3
+jq -r '.context.relevantFiles[]' tools/tracker/P3-TEAM-T2.json | head -3
 
 # Verify all workflow references are valid
-for task in backend/.claude/tasks/P*.json; do
+for task in tools/tracker/P*.json; do
   ref=$(jq -r '.workflow.workflowRef' "$task")
   file="backend/.claude/$ref"
   [ -f "$file" ] && echo "✓ $(basename $task)" || echo "✗ $(basename $task) MISSING"

@@ -73,7 +73,7 @@ docker run hello-world
 Once Docker is running, proceed:
 
 ```bash
-cd /Users/sibikrishnan/Documents/Gully/backend
+cd /Users/sibikrishnan/Documents/Gully/services/backend
 
 # Start all services
 docker compose up -d
@@ -157,7 +157,7 @@ brew install --cask redis  # This includes RedisInsight
 Create your local `.env` file:
 
 ```bash
-cd /Users/sibikrishnan/Documents/Gully/backend
+cd /Users/sibikrishnan/Documents/Gully/services/backend
 
 # Copy example to actual .env
 cp .env.example .env
@@ -247,7 +247,7 @@ docker exec -it gully-redis redis-cli PING
 ### Starting Your Dev Environment
 ```bash
 # Navigate to project
-cd /Users/sibikrishnan/Documents/Gully/backend
+cd /Users/sibikrishnan/Documents/Gully/services/backend
 
 # Start all services (PostgreSQL, Redis)
 docker compose up -d
@@ -293,13 +293,13 @@ npm run seed:run        # Re-seed test data
 ## Next Steps
 
 After infrastructure is running:
-1. Install Node.js dependencies: `cd backend && npm install`
+1. Install Node.js dependencies: `cd services/backend && npm install`
 2. Run database migrations: `npm run migrate:latest`
 3. Seed test data: `npm run seed:run`
 4. Start development server: `npm run dev`
 5. Access app: `http://localhost:3000/health`
 
-See `docs/WEEK1_TASKS.md` for Week 1 development tasks.
+See `docs/archives/tasks/WEEK1_TASKS.md` for Week 1 development tasks.
 
 ---
 

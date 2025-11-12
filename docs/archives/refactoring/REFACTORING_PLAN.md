@@ -16,7 +16,7 @@
 
 ### Problems Identified
 1. **Documentation Duplication** - 3 sets of duplicate files consuming unnecessary tokens
-2. **Missing Navigation** - No index files in major directories (architecture/, parallel-development/)
+2. **Missing Navigation** - No index files in major directories (architecture/, service-briefs/)
 3. **Oversized Files** - FULL_CONTEXT.md (1,074 lines) difficult to search/load
 4. **Unclear Archival** - Historical files not clearly marked
 5. **Undocumented Configuration** - .claude/settings.local.json lacks documentation
@@ -65,7 +65,7 @@
 │   │   ├── TASK_SYSTEM_DESIGN.md      # Existing task system
 │   │   └── CONTEXT_OPTIMIZATION_REPORT.md  # Analysis report
 │   │
-│   ├── parallel-development/          # Service briefs
+│   ├── service-briefs/          # Service briefs
 │   │   ├── INDEX.md                   # NEW: Service briefs navigator
 │   │   ├── UserService-Brief.md
 │   │   ├── TeamService-Brief.md
@@ -219,7 +219,7 @@
 - [.claude/commands/README.md](.claude/commands/README.md) - Custom commands & settings
 
 ## 📦 Service Briefs (Parallel Development)
-- [docs/parallel-development/INDEX.md](docs/parallel-development/INDEX.md) - All service briefs
+- [docs/service-briefs/INDEX.md](docs/service-briefs/INDEX.md) - All service briefs
   - UserService, TeamService, MatchService, etc.
 
 ## 📝 Planning Documents
@@ -229,9 +229,9 @@
 - [docs/planning/ROADMAP.md](docs/planning/ROADMAP.md)
 
 ## 💻 Source Code
-- [backend/src/](backend/src/) - Backend services
-- [backend/tests/](backend/tests/) - Test suite
-- [tools/tasks/](tools/tasks/) - Task management tools
+- [services/backend/src/](services/backend/src/) - Backend services
+- [services/backend/tests/](services/backend/tests/) - Test suite
+- [tools/tracker/](tools/tracker/) - Task management tools
 
 ## 🗂️ Archives
 - [docs/archives/INDEX.md](docs/archives/INDEX.md) - Historical documents
@@ -261,7 +261,7 @@
 See [architecture/INDEX.md](architecture/INDEX.md)
 
 ## Service Briefs
-See [parallel-development/INDEX.md](parallel-development/INDEX.md)
+See [service-briefs/INDEX.md](service-briefs/INDEX.md)
 
 ## Weekly Reviews
 - [WEEK1_REVIEW.md](weekly-reviews/WEEK1_REVIEW.md)
@@ -301,7 +301,7 @@ See [archives/INDEX.md](archives/INDEX.md)
 - **Task system?** → TASK_SYSTEM_DESIGN.md
 ```
 
-3. `/docs/parallel-development/INDEX.md`
+3. `/docs/service-briefs/INDEX.md`
 ```markdown
 # Service Development Briefs
 
@@ -447,7 +447,7 @@ The `.claude/settings.local.json` file controls Claude Code permissions and beha
   "permissions": {
     "bash": ["git*", "npm*", "docker*"],
     "read": ["**/*"],
-    "write": ["backend/src/**/*"],
+    "write": ["services/backend/src/**/*"],
     "edit": ["**/*.ts", "**/*.md"]
   },
   "hooks": {
@@ -487,8 +487,8 @@ Run link checker to ensure no broken references
 #### Action 4.2: Update Task System Documentation
 
 **Files:**
-- `/backend/.claude/tasks/README.md` - Add link to docs/architecture/TASK_SYSTEM_DESIGN.md
-- `/tools/tasks/README.md` - Add link to task system design
+- `/tools/tracker/README.md` - Add link to docs/architecture/TASK_SYSTEM_DESIGN.md
+- `/tools/tracker/README.md` - Add link to task system design
 - `/docs/architecture/TASK_SYSTEM_DESIGN.md` - Add links to implementation
 
 **Create Cross-Reference Flow:**
@@ -508,7 +508,7 @@ Task System Design ← → Backend Implementation ← → Tools CLI
    - Expected: Finds `/docs/architecture/DATABASE.md` via INDEX.md
 
 2. Ask Claude: "Show me the UserService brief"
-   - Expected: Finds via `/docs/parallel-development/INDEX.md`
+   - Expected: Finds via `/docs/service-briefs/INDEX.md`
 
 3. Ask Claude: "What's the current project status?"
    - Expected: Finds `STATUS.md` via `/INDEX.md`

@@ -46,7 +46,7 @@ Each module (user, team, match, etc.) is:
 
 ### Detailed Structure
 ```
-backend/
+services/backend/
   ├── src/
   │   ├── services/           # Structured like microservices
   │   │   ├── user-service/
@@ -1033,8 +1033,8 @@ import { UserModel } from './models/user.model';
 ### When Adding Features
 1. Identify which service module it belongs to
 2. Add routes, controllers, models within that service folder
-3. Use shared utilities from `backend/src/shared/`
-4. Write tests in `backend/tests/`
+3. Use shared utilities from `services/backend/src/shared/`
+4. Write tests in `services/backend/tests/`
 5. Update API documentation if adding endpoints
 6. Add to migration if database changes needed
 
