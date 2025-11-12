@@ -40,7 +40,7 @@ Transform raw IDEA (freeform text, conversation, prompt) into structured Refined
 ### Output
 - **Type:** RefinedIDEA
 - **Format:** Markdown (structured sections per schema)
-- **Schema:** `backend/.claude/schemas/REFINED_IDEA_SCHEMA.md`
+- **Schema:** `.claude/schemas/REFINED_IDEA_SCHEMA.md`
 - **Size:** 500-1500 lines
 - **Location:** `docs/planning/RefinedIDEA.md`
 
@@ -49,10 +49,10 @@ Transform raw IDEA (freeform text, conversation, prompt) into structured Refined
 **Step 1: Agent Invocation**
 ```
 Human/Claude → Refinement Agent:
-"Transform this IDEA into RefinedIDEA.md following the schema at backend/.claude/schemas/REFINED_IDEA_SCHEMA.md"
+"Transform this IDEA into RefinedIDEA.md following the schema at .claude/schemas/REFINED_IDEA_SCHEMA.md"
 
 Input: {raw_idea_text or file_reference}
-Schema: backend/.claude/schemas/REFINED_IDEA_SCHEMA.md
+Schema: .claude/schemas/REFINED_IDEA_SCHEMA.md
 Example: docs/planning/RefinedIDEA.md (Gully example)
 ```
 
@@ -97,14 +97,14 @@ Analyze RefinedIDEA.md and create TECH_SPEC.json with architectural blueprint (W
 ### Input
 - **Type:** RefinedIDEA
 - **Format:** Markdown (structured)
-- **Schema:** `backend/.claude/schemas/REFINED_IDEA_SCHEMA.md`
+- **Schema:** `.claude/schemas/REFINED_IDEA_SCHEMA.md`
 - **Location:** `docs/planning/RefinedIDEA.md`
 - **Source:** Refinement Agent output
 
 ### Output
 - **Type:** TECH_SPEC
 - **Format:** JSON (strict schema)
-- **Schema:** `backend/.claude/schemas/TECH_SPEC_SCHEMA.json`
+- **Schema:** `.claude/schemas/TECH_SPEC_SCHEMA.json`
 - **Size:** 200-400 lines (lightweight architectural blueprint)
 - **Location:** `docs/planning/TECH_SPEC.json`
 
@@ -116,8 +116,8 @@ Human/Claude → Architect Agent:
 "Create TECH_SPEC.json from RefinedIDEA.md following the schema"
 
 Input: docs/planning/RefinedIDEA.md
-Schema: backend/.claude/schemas/TECH_SPEC_SCHEMA.json
-Example: backend/.claude/schemas/TECH_SPEC_EXAMPLE_GULLY.json
+Schema: .claude/schemas/TECH_SPEC_SCHEMA.json
+Example: .claude/schemas/TECH_SPEC_EXAMPLE_GULLY.json
 ```
 
 **Step 2: Agent Processing**
@@ -170,14 +170,14 @@ Analyze TECH_SPEC.json and create PROJECT_PLAN.json with execution strategy, pha
 ### Input
 - **Type:** TECH_SPEC
 - **Format:** JSON (strict schema)
-- **Schema:** `backend/.claude/schemas/TECH_SPEC_SCHEMA.json`
+- **Schema:** `.claude/schemas/TECH_SPEC_SCHEMA.json`
 - **Location:** `docs/planning/TECH_SPEC.json`
 - **Source:** Architect Agent output
 
 ### Output (Primary)
 - **Type:** PROJECT_PLAN
 - **Format:** JSON (strict schema)
-- **Schema:** `backend/.claude/schemas/PROJECT_PLAN_SCHEMA.json`
+- **Schema:** `.claude/schemas/PROJECT_PLAN_SCHEMA.json`
 - **Size:** Variable (depends on number of phases)
 - **Location:** `docs/planning/PROJECT_PLAN.json`
 
@@ -195,8 +195,8 @@ Human/Claude → PM Agent:
 "Create PROJECT_PLAN.json from TECH_SPEC.json and orchestrate development"
 
 Input: docs/planning/TECH_SPEC.json
-Schema: backend/.claude/schemas/PROJECT_PLAN_SCHEMA.json
-Example: backend/.claude/schemas/PROJECT_PLAN_EXAMPLE_GULLY.json
+Schema: .claude/schemas/PROJECT_PLAN_SCHEMA.json
+Example: .claude/schemas/PROJECT_PLAN_EXAMPLE_GULLY.json
 ```
 
 **Step 2: Agent Processing**
@@ -254,7 +254,7 @@ Convert lightweight task skeleton from PROJECT_PLAN into comprehensive TASK_OBJE
 ### Input
 - **Type:** Task Skeleton (from PROJECT_PLAN)
 - **Format:** JSON object (lightweight)
-- **Schema:** Subset of `backend/.claude/schemas/PROJECT_PLAN_SCHEMA.json` (taskSkeletons field)
+- **Schema:** Subset of `.claude/schemas/PROJECT_PLAN_SCHEMA.json` (taskSkeletons field)
 - **Source:** PM Agent (extracted from PROJECT_PLAN.json)
 - **Context:** Full TECH_SPEC.json and phase context
 
@@ -263,7 +263,7 @@ Convert lightweight task skeleton from PROJECT_PLAN into comprehensive TASK_OBJE
 - **Format:** JSON (comprehensive task definition)
 - **Schema:** Existing task schema (see P2-PROF-T1.json, P3-TEAM-T2.json)
 - **Size:** 300-500 lines per task
-- **Location:** `backend/.claude/tasks/{taskId}.json`
+- **Location:** `tools/tracker/data/tasks/{taskId}.json`
 
 ### Handoff Protocol: Task Skeleton → TASK_OBJECT
 
@@ -332,13 +332,13 @@ Before outputting, Task Generation Agent verifies:
 Task Generation Agent → PM Agent:
 "TASK_OBJECT created for P2-PROF-T1"
 
-Output File: backend/.claude/tasks/P2-PROF-T1.json
+Output File: tools/tracker/data/tasks/P2-PROF-T1.json
 Status: READY_FOR_EXECUTION
 Next Agent: Task Execution Agent (when PM Agent delegates)
 ```
 
 **Step 5: PM Agent Updates Index**
-PM Agent updates `backend/.claude/tasks/index.json` with new task entry:
+PM Agent updates `tools/tracker/data/tasks/index.json` with new task entry:
 ```json
 {
   "id": "P2-PROF-T1",
@@ -360,7 +360,7 @@ Execute TASK_OBJECT following TDD workflow. Write tests first, then implement co
 ### Input
 - **Type:** TASK_OBJECT
 - **Format:** JSON (comprehensive task definition)
-- **Location:** `backend/.claude/tasks/{taskId}.json`
+- **Location:** `tools/tracker/data/tasks/{taskId}.json`
 - **Source:** Task Generation Agent output
 - **Assigned By:** PM Agent
 
@@ -377,7 +377,7 @@ Execute TASK_OBJECT following TDD workflow. Write tests first, then implement co
 PM Agent → Task Execution Agent:
 "Execute task P2-PROF-T1 using TDD workflow"
 
-Input: backend/.claude/tasks/P2-PROF-T1.json
+Input: tools/tracker/data/tasks/P2-PROF-T1.json
 Workflow: backend/.claude/workflows/tdd.json
 Context Files: [list from task.context.relevantFiles]
 ```
@@ -418,7 +418,7 @@ Status: COMPLETED
 ```
 
 **Step 5: PM Agent Updates Status**
-PM Agent updates `backend/.claude/tasks/index.json`:
+PM Agent updates `tools/tracker/data/tasks/index.json`:
 ```json
 {
   "id": "P2-PROF-T1",
@@ -430,7 +430,7 @@ PM Agent updates `backend/.claude/tasks/index.json`:
 }
 ```
 
-PM Agent also updates task file `backend/.claude/tasks/P2-PROF-T1.json`:
+PM Agent also updates task file `tools/tracker/data/tasks/P2-PROF-T1.json`:
 ```json
 {
   "status": "completed",  // changed from "pending"

@@ -98,11 +98,11 @@ Generate complete task objects (tasks/*.json) and test suite files (tests/*.json
 
 ### Legacy Input (Backwards Compatible)
 
-**PROJECT_PLAN Location**: `backend/.claude/schemas/PROJECT_PLAN_EXAMPLE_GULLY.json`
-**Task Schema**: `backend/.claude/schemas/TASK_OBJECT_SCHEMA.json`
-**Test Schema**: `backend/.claude/schemas/TEST_SUITE_SCHEMA.json`
-**Design Reference**: `backend/.claude/schemas/TASK_SYSTEM_DESIGN.md`
-**Example Task**: `backend/.claude/tasks/P2-PROF-T1.json` (note: uses embedded format, you'll generate separated format)
+**PROJECT_PLAN Location**: `.claude/schemas/PROJECT_PLAN_EXAMPLE_GULLY.json`
+**Task Schema**: `.claude/schemas/TASK_OBJECT_SCHEMA.json`
+**Test Schema**: `.claude/schemas/TEST_SUITE_SCHEMA.json`
+**Design Reference**: `.claude/schemas/TASK_SYSTEM_DESIGN.md`
+**Example Task**: `tools/tracker/data/tasks/P2-PROF-T1.json` (note: uses embedded format, you'll generate separated format)
 **Phase Parameter**: User specifies which phase to generate (e.g., "P2" or "P3")
 
 ## Pre-Flight Checks
@@ -116,10 +116,10 @@ Generate complete task objects (tasks/*.json) and test suite files (tests/*.json
 
 2. **Check if tasks already exist** for the specified phase/task:
    ```bash
-   ls backend/.claude/tasks/P{phase}-*.json
+   ls tools/tracker/data/tasks/P{phase}-*.json
    ```
    - If tasks exist: Stop and ask: "Tasks for Phase {phase} already exist. Archive old tasks and regenerate?"
-   - If user approves archival: Move existing tasks to `backend/.claude/tasks/archive/{timestamp}/`
+   - If user approves archival: Move existing tasks to `tools/tracker/data/tasks/archive/{timestamp}/`
    - If no tasks exist: Proceed
 
 3. **Read PM Thoughts** (Mode A/B only):
@@ -129,12 +129,12 @@ Generate complete task objects (tasks/*.json) and test suite files (tests/*.json
 
 4. **Verify Input Context**:
    - **Mode A/B**: Validate JSON structure, ensure testBudget exists (Mode A only)
-   - **Legacy**: Read `backend/.claude/schemas/PROJECT_PLAN_EXAMPLE_GULLY.json`
+   - **Legacy**: Read `.claude/schemas/PROJECT_PLAN_EXAMPLE_GULLY.json`
 
 5. **Create required directories**:
    ```bash
-   mkdir -p backend/.claude/tasks/tests
-   mkdir -p backend/.claude/tasks/archive
+   mkdir -p tools/tracker/data/tasks/tests
+   mkdir -p tools/tracker/data/tasks/archive
    ```
 
 ## Execution Steps
@@ -142,11 +142,11 @@ Generate complete task objects (tasks/*.json) and test suite files (tests/*.json
 ### Step 1: Read & Analyze
 
 Read these files in order:
-1. `backend/.claude/schemas/TASK_SYSTEM_DESIGN.md` - Understand separated architecture
-2. `backend/.claude/schemas/TASK_OBJECT_SCHEMA.json` - Task structure
-3. `backend/.claude/schemas/TEST_SUITE_SCHEMA.json` - Test suite structure
-4. `backend/.claude/schemas/PROJECT_PLAN_EXAMPLE_GULLY.json` - Extract phase tasks
-5. `backend/.claude/tasks/P2-PROF-T1.json` - Study example detail level
+1. `.claude/schemas/TASK_SYSTEM_DESIGN.md` - Understand separated architecture
+2. `.claude/schemas/TASK_OBJECT_SCHEMA.json` - Task structure
+3. `.claude/schemas/TEST_SUITE_SCHEMA.json` - Test suite structure
+4. `.claude/schemas/PROJECT_PLAN_EXAMPLE_GULLY.json` - Extract phase tasks
+5. `tools/tracker/data/tasks/P2-PROF-T1.json` - Study example detail level
 
 ### Step 2: Extract Phase Tasks
 
@@ -165,7 +165,7 @@ For each task skeleton, note:
 
 For EACH task in the phase, generate TWO files:
 
-**File 1: Task Object** (`backend/.claude/tasks/{task-id}.json`)
+**File 1: Task Object** (`tools/tracker/data/tasks/{task-id}.json`)
 
 ```json
 {
@@ -183,7 +183,7 @@ For EACH task in the phase, generate TWO files:
 }
 ```
 
-**File 2: Test Suite** (`backend/.claude/tasks/tests/{task-id}-tests.json`)
+**File 2: Test Suite** (`tools/tracker/data/tasks/tests/{task-id}-tests.json`)
 
 **Test Count Rules:**
 - **Mode A (PM-driven)**: Use testBudget from PM Agent (e.g., 60 tests = 25 repo + 15 controller + 12 route)
@@ -242,7 +242,7 @@ Assign workflow based on task type:
 For each task, create folder structure:
 
 ```
-backend/.claude/tasks/
+tools/tracker/data/tasks/
   └── P2-PROF-T1/                           # Feature folder
       ├── P2-PROF-T1.json                   # Parent task (metadata)
       ├── P2-PROF-T1.1-repo.json           # Subtask (repository layer)
@@ -257,17 +257,17 @@ backend/.claude/tasks/
 **File Creation Process:**
 
 For each task in phase:
-1. Create task folder: `backend/.claude/tasks/{task-id}/`
-2. Create tests subfolder: `backend/.claude/tasks/{task-id}/tests/`
-3. Write parent task: `backend/.claude/tasks/{task-id}/{task-id}.json`
-4. Write subtasks: `backend/.claude/tasks/{task-id}/{task-id}.{N}-{layer}.json`
-5. Write test suites: `backend/.claude/tasks/{task-id}/tests/{task-id}.{N}-{layer}-tests.json`
+1. Create task folder: `tools/tracker/data/tasks/{task-id}/`
+2. Create tests subfolder: `tools/tracker/data/tasks/{task-id}/tests/`
+3. Write parent task: `tools/tracker/data/tasks/{task-id}/{task-id}.json`
+4. Write subtasks: `tools/tracker/data/tasks/{task-id}/{task-id}.{N}-{layer}.json`
+5. Write test suites: `tools/tracker/data/tasks/{task-id}/tests/{task-id}.{N}-{layer}-tests.json`
 6. Validate JSON syntax
 7. Report progress after each task
 
 **Example Commands:**
 ```bash
-mkdir -p backend/.claude/tasks/P2-PROF-T1/tests
+mkdir -p tools/tracker/data/tasks/P2-PROF-T1/tests
 # Write parent task
 # Write 3 subtasks (repo, controller, route)
 # Write 3 test suites
@@ -275,7 +275,7 @@ mkdir -p backend/.claude/tasks/P2-PROF-T1/tests
 
 ### Step 7: Update Task Registry
 
-Update `backend/.claude/tasks/index.json`:
+Update `tools/tracker/data/tasks/index.json`:
 ```json
 {
   "phases": {
@@ -304,13 +304,13 @@ After completing all tasks for the phase:
 📁 Files Created
 
 Tasks:
-- backend/.claude/tasks/P{N}-{FEAT}-T1.json
-- backend/.claude/tasks/P{N}-{FEAT}-T2.json
+- tools/tracker/data/tasks/P{N}-{FEAT}-T1.json
+- tools/tracker/data/tasks/P{N}-{FEAT}-T2.json
 ...
 
 Test Suites:
-- backend/.claude/tasks/tests/P{N}-{FEAT}-T1-tests.json
-- backend/.claude/tasks/tests/P{N}-{FEAT}-T2-tests.json
+- tools/tracker/data/tasks/tests/P{N}-{FEAT}-T1-tests.json
+- tools/tracker/data/tasks/tests/P{N}-{FEAT}-T2-tests.json
 ...
 
 📋 Test Distribution (Actual)
@@ -321,8 +321,8 @@ Test Suites:
 - Security: {count} tests included
 
 ✅ Next Steps
-1. Review generated tasks in backend/.claude/tasks/
-2. Review test suites in backend/.claude/tasks/tests/
+1. Review generated tasks in tools/tracker/data/tasks/
+2. Review test suites in tools/tracker/data/tasks/tests/
 3. Run validation: backend/.claude/VALIDATE_TASKS.sh P{N}
 4. Ready to start implementation with TDD workflow
 ```

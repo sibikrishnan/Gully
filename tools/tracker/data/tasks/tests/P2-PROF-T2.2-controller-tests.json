@@ -1,0 +1,197 @@
+{
+  "taskId": "P2-PROF-T2.2",
+  "version": "1.0",
+  "lastModified": "2025-11-11T00:00:00Z",
+  "testCases": [
+    {
+      "id": "user-update-controller.unit.authorization",
+      "category": "unit",
+      "description": "Unit tests for authorization checks ensuring users can only update own profile",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-update-authorization.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": [
+          "updateUserProfile",
+          "checkProfileOwnership",
+          "authorizeProfileUpdate"
+        ],
+        "scenarios": [
+          "User can update own profile (req.user.id === req.params.id)",
+          "User cannot update other user's profile (403 response)",
+          "Missing JWT returns 401 (handled by middleware)",
+          "Invalid JWT returns 401 (handled by middleware)",
+          "Non-existent user ID returns 404",
+          "Soft-deleted user returns 404",
+          "Authorization check happens before field stripping"
+        ],
+        "edgeCases": [
+          "JWT user_id type mismatch (string vs number)",
+          "Negative user ID in params",
+          "User ID zero in params"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      }
+    },
+    {
+      "id": "user-update-controller.unit.field-stripping",
+      "category": "unit",
+      "description": "Unit tests for field stripping logic (remove non-updatable fields)",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-update-field-stripping.test.ts",
+        "status": "not_created",
+        "testCount": 4,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": [
+          "updateUserProfile",
+          "stripNonUpdatableFields",
+          "sanitizeUpdatePayload"
+        ],
+        "scenarios": [
+          "Strip id field from update payload",
+          "Strip created_at field from update payload",
+          "Strip updated_at field from update payload",
+          "Strip password_hash field from update payload",
+          "Strip email field from update payload (separate verification flow)",
+          "Allow valid fields (full_name, bio, avatar_url) to pass through"
+        ],
+        "edgeCases": [
+          "Empty payload after stripping (should return 200 no-op)",
+          "Payload with only non-updatable fields",
+          "Nested object field stripping attempt"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-update-controller.unit.validation",
+      "category": "unit",
+      "description": "Unit tests for Zod partial update schema validation",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-update-validation.test.ts",
+        "status": "not_created",
+        "testCount": 3,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": [
+          "updateUserSchema",
+          "validatePartialUpdate"
+        ],
+        "scenarios": [
+          "Partial schema allows missing fields",
+          "Validate phone number format (if provided)",
+          "Validate avatar_url as valid URL",
+          "Allow empty object for no-op update",
+          "Reject invalid data types"
+        ],
+        "edgeCases": [
+          "XSS attempt in bio field (should sanitize)",
+          "SQL injection attempt in string fields",
+          "Oversized payload (max field lengths)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user.schema.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-update-controller.integration.update-flow",
+      "category": "integration",
+      "description": "Integration tests for complete update flow (controller + repository)",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-controller-flow.test.ts",
+        "status": "not_created",
+        "testCount": 3,
+        "estimatedDuration": "30 seconds"
+      },
+      "coverage": {
+        "targetFunctions": [
+          "updateUserProfile"
+        ],
+        "scenarios": [
+          "Successful update of full_name returns 200 with updated user",
+          "Successful update of bio and location_city returns 200",
+          "Update with all allowed fields returns 200",
+          "Empty update payload returns 200 (no-op, user unchanged)",
+          "Non-existent user returns 404",
+          "Unauthorized update (other user) returns 403",
+          "Updated_at timestamp is automatically updated"
+        ],
+        "edgeCases": [
+          "Concurrent update attempts to same user",
+          "Update preserves unchanged fields",
+          "Update with null values for optional fields"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": [
+        "user-update-controller.unit.authorization",
+        "user-update-controller.unit.field-stripping",
+        "user-update-controller.unit.validation"
+      ]
+    }
+  ],
+  "coverageRequirements": {
+    "enabled": true,
+    "minimumPercentage": 90,
+    "criticalFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user.schema.ts"
+    ]
+  },
+  "successCriteria": {
+    "allTestsMustPass": true,
+    "noTypeScriptErrors": true,
+    "noLintingErrors": true,
+    "buildMustSucceed": true
+  },
+  "executionConfig": {
+    "runInOrder": [
+      "user-update-controller.unit.authorization",
+      "user-update-controller.unit.field-stripping",
+      "user-update-controller.unit.validation",
+      "user-update-controller.integration.update-flow"
+    ],
+    "stopOnFirstFailure": false,
+    "parallelizable": false
+  }
+}

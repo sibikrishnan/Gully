@@ -35,14 +35,15 @@ Manage ongoing development by:
 4. `tracker/data/BUG_TRACKER.json` - Bug tracking and resolution (NEW)
 5. `docs/planning/TECH_SPEC.json` - Architecture reference
 
-**Legacy Files (deprecated, but check if exist):**
-- `backend/.claude/STATUS.md` - Old status format (migrate to PROJECT_STATUS.json)
-- `backend/.claude/TASK_HISTORY.md` - Old history format (migrate to TASK_HISTORY.json)
+**Legacy Files (deprecated, removed in refactor):**
+- `services/backend/.claude/STATUS.md` - Old status format (migrated to PROJECT_STATUS.json)
+- `services/backend/.claude/TASK_HISTORY.md` - Old history format (migrated to TASK_HISTORY.json)
+- `services/backend/.claude/tasks/` - Old task location (migrated to tools/tracker/data/tasks/)
 
 **Optional Context (per phase):**
-- `backend/.claude/phases/phase-{N}/LEARNINGS_P{N}.md` - Phase learnings
-- `backend/.claude/tasks/P{N}-*.json` - Existing task objects
-- `backend/.claude/CONTEXT_SUMMARY_P{N}.md` - Phase context summary
+- `logs/phases/phase-{N}/LEARNINGS_P{N}.md` - Phase learnings
+- `tools/tracker/data/tasks/P{N}-*.json` - Existing task objects
+- `logs/phases/phase-{N}/CONTEXT_SUMMARY_P{N}.md` - Phase context summary
 
 **Human Input (optional):**
 - "Continue project" → You determine next task

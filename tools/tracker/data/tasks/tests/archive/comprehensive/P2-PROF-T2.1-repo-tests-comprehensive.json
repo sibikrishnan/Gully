@@ -1,0 +1,264 @@
+{
+  "taskId": "P2-PROF-T2.1",
+  "version": "1.0",
+  "lastModified": "2025-11-11T00:00:00Z",
+  "testCases": [
+    {
+      "id": "user-update-repo.unit.query-generation",
+      "category": "unit",
+      "description": "Unit tests for SQL UPDATE query generation with dynamic fields",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-update-query-generation.test.ts",
+        "status": "not_created",
+        "testCount": 8,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": [
+          "updateUser",
+          "buildUpdateQuery",
+          "bindUpdateParameters"
+        ],
+        "scenarios": [
+          "Generate UPDATE query for single field (full_name)",
+          "Generate UPDATE query for multiple fields (bio, location_city)",
+          "Generate UPDATE query with all allowed fields",
+          "Exclude immutable fields (id, created_at) from query",
+          "Auto-include updated_at in all updates",
+          "Validate INTEGER id parameter binding",
+          "Handle ENUM status field in query",
+          "Generate query with null values for optional fields"
+        ],
+        "edgeCases": [
+          "Empty update object (should not generate query)",
+          "Update with only excluded fields (should reject)",
+          "SQL injection attempt in string fields"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      }
+    },
+    {
+      "id": "user-update-repo.integration.single-field",
+      "category": "integration",
+      "description": "Integration tests for single field updates with database",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-single-field.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "25 seconds"
+      },
+      "coverage": {
+        "targetFunctions": [
+          "updateUser"
+        ],
+        "scenarios": [
+          "Update full_name field successfully",
+          "Update bio field successfully",
+          "Update avatar_url field successfully",
+          "Update location_city for pickleball player",
+          "Verify updated_at timestamp auto-updates"
+        ],
+        "edgeCases": [
+          "Update non-existent user returns null",
+          "Update with maximum field length",
+          "Update with special characters in text fields"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-update-repo.unit.query-generation"]
+    },
+    {
+      "id": "user-update-repo.integration.multi-field",
+      "category": "integration",
+      "description": "Integration tests for multiple field updates in single transaction",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-multi-field.test.ts",
+        "status": "not_created",
+        "testCount": 4,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": [
+          "updateUser"
+        ],
+        "scenarios": [
+          "Update multiple text fields (full_name, bio) atomically",
+          "Update location fields (location_city, location_state) together",
+          "Update avatar_url and bio together",
+          "Preserve unchanged fields during partial update"
+        ],
+        "edgeCases": [
+          "Update with mix of valid and null values",
+          "Partial update doesn't affect other user fields"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-update-repo.integration.single-field"]
+    },
+    {
+      "id": "user-update-repo.integration.constraints",
+      "category": "integration",
+      "description": "Integration tests for database constraint validation",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-constraints.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "25 seconds"
+      },
+      "coverage": {
+        "targetFunctions": [
+          "updateUser",
+          "validateUniqueConstraints"
+        ],
+        "scenarios": [
+          "Reject username update with duplicate value (unique constraint)",
+          "Reject invalid ENUM status value",
+          "Accept valid status ENUM value update",
+          "Validate email format if email update attempted (should be excluded)",
+          "Validate phone number format if updated"
+        ],
+        "edgeCases": [
+          "Concurrent username update attempts",
+          "Case-insensitive username uniqueness",
+          "Username with special characters"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-update-repo.integration.single-field"]
+    },
+    {
+      "id": "user-update-repo.integration.transactions",
+      "category": "integration",
+      "description": "Integration tests for transaction handling and rollback",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-transactions.test.ts",
+        "status": "not_created",
+        "testCount": 6,
+        "estimatedDuration": "30 seconds"
+      },
+      "coverage": {
+        "targetFunctions": [
+          "updateUser",
+          "executeUpdateTransaction"
+        ],
+        "scenarios": [
+          "Rollback on constraint violation (no partial update)",
+          "Commit successful multi-field update atomically",
+          "Handle database connection loss during update",
+          "Retry on deadlock detection",
+          "Verify no changes persisted after rollback",
+          "Transaction isolation prevents dirty reads"
+        ],
+        "edgeCases": [
+          "Nested transaction handling",
+          "Long-running transaction timeout",
+          "Concurrent update with optimistic locking"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-update-repo.integration.constraints"]
+    },
+    {
+      "id": "user-update-repo.integration.security",
+      "category": "integration",
+      "description": "Integration tests for security constraints and field exclusions",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-security.test.ts",
+        "status": "not_created",
+        "testCount": 4,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": [
+          "updateUser",
+          "stripImmutableFields"
+        ],
+        "scenarios": [
+          "Reject password_hash update attempt (security)",
+          "Reject id field update attempt (immutable)",
+          "Reject created_at update attempt (immutable)",
+          "Verify excluded fields remain unchanged after update"
+        ],
+        "edgeCases": [
+          "Attempt to update password_hash via nested object",
+          "Verify email updates rejected (separate verification flow required)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-update-repo.unit.query-generation"]
+    }
+  ],
+  "coverageRequirements": {
+    "enabled": true,
+    "minimumPercentage": 90,
+    "criticalFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+    ]
+  },
+  "successCriteria": {
+    "allTestsMustPass": true,
+    "noTypeScriptErrors": true,
+    "noLintingErrors": true,
+    "buildMustSucceed": true
+  },
+  "executionConfig": {
+    "runInOrder": [
+      "user-update-repo.unit.query-generation",
+      "user-update-repo.integration.single-field",
+      "user-update-repo.integration.multi-field",
+      "user-update-repo.integration.constraints",
+      "user-update-repo.integration.transactions",
+      "user-update-repo.integration.security"
+    ],
+    "stopOnFirstFailure": false,
+    "parallelizable": false
+  }
+}
