@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-11-11T20:00:00Z",
+  "project": {
+    "name": "Gully",
+    "techSpecRef": "docs/planning/TECH_SPEC.json",
+    "projectPlanRef": "docs/planning/PROJECT_PLAN.json"
+  },
+  "currentPhase": {
+    "id": "P2",
+    "name": "User Profiles",
+    "status": "in_progress",
+    "startDate": "2025-11-10",
+    "progress": {
+      "tasksComplete": 1,
+      "tasksTotal": 5,
+      "percentComplete": 20
+    }
+  },
+  "currentTask": {
+    "id": "P2-PROF-T2",
+    "title": "PATCH /api/users/:id - Update User Profile",
+    "status": "pending",
+    "dependencies": [
+      "P2-PROF-T1"
+    ],
+    "allDependenciesComplete": true,
+    "blockers": []
+  }
+}

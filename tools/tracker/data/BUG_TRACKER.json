@@ -31,7 +31,13 @@
       "relatedBugs": [],
       "workaround": "Use integration tests instead of unit tests with mocks",
       "prevention": "Document in learnings: Prefer integration-style tests for layered architecture to avoid Jest mocking complexity",
-      "tags": ["testing", "jest", "mocking", "integration-tests", "controller"]
+      "tags": [
+        "testing",
+        "jest",
+        "mocking",
+        "integration-tests",
+        "controller"
+      ]
     },
     {
       "id": "BUG-002",
@@ -62,7 +68,13 @@
       "relatedBugs": [],
       "workaround": "Type assertion in wrapper function",
       "prevention": "Document: Use wrapper pattern for Express routes with custom request types. Standard pattern for auth middleware integration.",
-      "tags": ["typescript", "express", "types", "auth", "middleware"]
+      "tags": [
+        "typescript",
+        "express",
+        "types",
+        "auth",
+        "middleware"
+      ]
     }
   ],
   "stats": {
@@ -81,5 +93,23 @@
     },
     "avgResolutionTime": "15 min",
     "totalTokenCost": 7000
+  },
+  "_deprecated": {
+    "_deprecated": true,
+    "_message": "This file is deprecated. Use the fragmented structure instead.",
+    "_migration_date": "2025-11-13T03:39:00.455Z",
+    "_new_locations": {
+      "PROJECT_STATUS.json": [
+        "status/current.json",
+        "status/phases/{phaseId}.json"
+      ],
+      "BUG_TRACKER.json": [
+        "bugs/index.json",
+        "bugs/{bugId}.json"
+      ],
+      "TASK_HISTORY.json": [
+        "history/active.json"
+      ]
+    }
   }
 }

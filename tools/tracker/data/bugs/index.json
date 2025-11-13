@@ -1,0 +1,43 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-11-11T20:00:00Z",
+  "bugs": [
+    {
+      "id": "BUG-001",
+      "title": "Jest mocking fails with circular dependencies",
+      "severity": "medium",
+      "priority": "P2",
+      "status": "resolved",
+      "category": "testing",
+      "discoveredDate": "2025-11-11T10:30:00Z",
+      "file": "bugs/BUG-001.json"
+    },
+    {
+      "id": "BUG-002",
+      "title": "TypeScript type error with Express Request and AuthenticatedRequest",
+      "severity": "low",
+      "priority": "P3",
+      "status": "resolved",
+      "category": "types",
+      "discoveredDate": "2025-11-11T13:00:00Z",
+      "file": "bugs/BUG-002.json"
+    }
+  ],
+  "stats": {
+    "total": 2,
+    "open": 0,
+    "resolved": 2,
+    "bySeverity": {
+      "critical": 0,
+      "high": 0,
+      "medium": 1,
+      "low": 1
+    },
+    "byCategory": {
+      "testing": 1,
+      "types": 1
+    },
+    "avgResolutionTime": "15 min",
+    "totalTokenCost": 7000
+  }
+}

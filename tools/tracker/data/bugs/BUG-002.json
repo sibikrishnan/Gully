@@ -1,0 +1,37 @@
+{
+  "id": "BUG-002",
+  "title": "TypeScript type error with Express Request and AuthenticatedRequest",
+  "description": "Controller expects AuthenticatedRequest (custom type with user property) but Express route handlers expect standard Request type. Type mismatch causes compilation error when wiring controller to route.",
+  "severity": "low",
+  "priority": "P3",
+  "status": "resolved",
+  "category": "types",
+  "discoveredIn": {
+    "taskId": "P2-PROF-T1.3-route",
+    "phaseId": "P2",
+    "date": "2025-11-11T13:00:00Z"
+  },
+  "resolution": {
+    "approach": "Use wrapper function pattern: (req, res) => controller(req as AuthenticatedRequest, res)",
+    "rationale": "Maintains type safety without Express type conflicts. Wrapper function allows type assertion at the boundary.",
+    "resolvedDate": "2025-11-11T13:15:00Z",
+    "resolvedBy": "direct-execution",
+    "tokenCost": 2000,
+    "timeCost": "10 min"
+  },
+  "impact": {
+    "blocksTask": false,
+    "blocksPhase": false,
+    "affectedTests": 0
+  },
+  "relatedBugs": [],
+  "workaround": "Type assertion in wrapper function",
+  "prevention": "Document: Use wrapper pattern for Express routes with custom request types. Standard pattern for auth middleware integration.",
+  "tags": [
+    "typescript",
+    "express",
+    "types",
+    "auth",
+    "middleware"
+  ]
+}

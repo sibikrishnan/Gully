@@ -21,7 +21,9 @@
     "id": "P2-PROF-T2",
     "title": "PATCH /api/users/:id - Update User Profile",
     "status": "pending",
-    "dependencies": ["P2-PROF-T1"],
+    "dependencies": [
+      "P2-PROF-T1"
+    ],
     "allDependenciesComplete": true,
     "blockers": []
   },
@@ -166,5 +168,23 @@
         "verifiedDate": null
       }
     }
-  ]
+  ],
+  "_deprecated": {
+    "_deprecated": true,
+    "_message": "This file is deprecated. Use the fragmented structure instead.",
+    "_migration_date": "2025-11-13T03:39:00.455Z",
+    "_new_locations": {
+      "PROJECT_STATUS.json": [
+        "status/current.json",
+        "status/phases/{phaseId}.json"
+      ],
+      "BUG_TRACKER.json": [
+        "bugs/index.json",
+        "bugs/{bugId}.json"
+      ],
+      "TASK_HISTORY.json": [
+        "history/active.json"
+      ]
+    }
+  }
 }
