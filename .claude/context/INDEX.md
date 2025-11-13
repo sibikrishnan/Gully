@@ -10,8 +10,9 @@ Use `/gullycontext [section]` to load specific sections only when needed.
 
 **Token Optimization Strategy:**
 - Load only the context you need for current task
-- Avoid loading large comprehensive files
-- Target: 30-40% token reduction vs loading full context
+- Behavioral rules consolidated in `.claude/.claude.md` (loaded automatically)
+- Reference docs loaded on-demand only
+- **Achievement:** 61.6% token reduction (4,871 → 1,871 lines at startup)
 
 **Usage:**
 ```bash
@@ -20,6 +21,28 @@ Use `/gullycontext [section]` to load specific sections only when needed.
 /gullycontext database       # Load all database files
 /gullycontext mvp/in-scope   # Load MVP scope only
 ```
+
+---
+
+## 📦 Context Loading Strategy
+
+### ✅ **Loaded by Default** (1,841 lines)
+These sections are available as reference docs, load when needed:
+- **arch/** (558 lines) - Architecture, services, stack
+- **database/** (721 lines) - Schema, indexes, Redis
+- **mvp/** (256 lines) - Scope, timeline, metrics
+- **INDEX.md** (306 lines) - This navigation file
+
+### 📦 **On-Demand Only** (3,030 lines - NOT loaded by default)
+Load these **only when specifically needed** for your current task:
+- **commands/** (1,519 lines) - Git, Docker, Database, Dev commands
+- **workflow/** (1,140 lines) - Detailed communication, review, principles
+- **learnings.md** (371 lines) - Phase 1 patterns and mistakes
+
+**Rationale:**
+- Sonnet 4.5 has strong built-in knowledge of git, docker, npm, TypeScript
+- Behavioral rules now consolidated in `.claude/.claude.md` (30 lines vs 1,140 lines)
+- Commands/workflow available when needed via `/gullycontext`
 
 ---
 
@@ -59,8 +82,8 @@ Use `/gullycontext [section]` to load specific sections only when needed.
 
 ---
 
-### Commands (commands/)
-**Load with:** `/gullycontext commands`
+### Commands (commands/) 📦 **ON-DEMAND ONLY**
+**Load with:** `/gullycontext commands/[git|docker|database|dev]`
 
 **Files:**
 - **[dev.md](commands/dev.md)** (340 lines) - Development commands
@@ -84,12 +107,11 @@ Use `/gullycontext [section]` to load specific sections only when needed.
   - Database debugging
 
 **When to load:**
-- Need specific command reference
-- Setting up local environment
-- Debugging infrastructure issues
-- Running migrations or seeds
+- **Only when performing specific operations** (migrations, git workflows, container debugging)
+- Sonnet 4.5 has built-in knowledge of these tools
+- Load specific file (e.g., `/gullycontext commands/git`) not entire section
 
-**Total:** 1,519 lines across 4 files
+**Total:** 1,519 lines across 4 files | **Status:** Not loaded by default
 
 ---
 
@@ -158,8 +180,8 @@ Use `/gullycontext [section]` to load specific sections only when needed.
 
 ---
 
-### Workflow (workflow/)
-**Load with:** `/gullycontext workflow`
+### Workflow (workflow/) 📦 **ON-DEMAND ONLY**
+**Load with:** `/gullycontext workflow/[communication|review|principles|antipatterns]`
 
 **Files:**
 - **[communication.md](workflow/communication.md)** (395 lines) - Communication protocols
@@ -172,7 +194,7 @@ Use `/gullycontext [section]` to load specific sections only when needed.
   - Quality checklist
   - Approval process
 
-- **[principles.md](workflow/principles.md)** (182 lines) - Development principles
+- **[principles.md](workflow/principles.md)** (183 lines) - Development principles
   - Code quality standards
   - Testing approach
   - Documentation standards
@@ -183,60 +205,89 @@ Use `/gullycontext [section]` to load specific sections only when needed.
   - Testing mistakes
 
 **When to load:**
-- Starting new development session
-- Reviewing code
-- Understanding quality standards
-- Avoiding common mistakes
+- **Deep dive into process details** (rare)
+- Core behavioral rules now in `.claude/.claude.md` (30 lines)
+- Load specific file only when needed for detailed reference
 
-**Total:** 1,139 lines across 4 files
-
----
-
-## 📊 Context Statistics
-
-| Section | Files | Total Lines | Typical Use |
-|---------|-------|-------------|-------------|
-| Architecture | 4 | 558 | Service implementation |
-| Commands | 4 | 1,519 | Environment setup |
-| Database | 3 | 721 | Database work |
-| MVP | 4 | 248 | Feature planning |
-| Workflow | 4 | 1,139 | Code quality |
-| **Total** | **19** | **4,185** | **All contexts** |
+**Total:** 1,140 lines across 4 files | **Status:** Not loaded by default
 
 ---
 
-## 🎯 Loading Strategy
+### Learnings (learnings.md) 📦 **ON-DEMAND ONLY**
+**Load with:** `/gullycontext learnings`
 
-### Task-Based Loading
+**File:**
+- **[learnings.md](learnings.md)** (371 lines) - Phase 1 learnings & patterns
+  - Mistakes encountered and prevention strategies
+  - Proven patterns from Phase 1
+  - Redis config issues
+  - Test isolation patterns
+  - TypeScript type guard examples
 
-**Implementing a new service:**
+**When to load:**
+- Debugging issues similar to Phase 1 problems
+- Reviewing historical patterns
+- Understanding past architectural decisions
+- Rarely needed for current work
+
+**Total:** 371 lines | **Status:** Not loaded by default
+
+---
+
+## 📊 Context Statistics & Token Optimization
+
+### Before Optimization (Historical)
+| Section | Files | Lines | Status |
+|---------|-------|-------|--------|
+| Architecture | 4 | 558 | ✅ Reference (available) |
+| Database | 3 | 721 | ✅ Reference (available) |
+| MVP | 4 | 256 | ✅ Reference (available) |
+| INDEX.md | 1 | 306 | ✅ Reference (available) |
+| **Commands** | 4 | 1,519 | 📦 On-demand only |
+| **Workflow** | 4 | 1,140 | 📦 On-demand only |
+| **Learnings** | 1 | 371 | 📦 On-demand only |
+| **Previous Total** | **21** | **4,871** | **Old baseline** |
+
+### After Optimization (Current)
+| Category | Lines | Notes |
+|----------|-------|-------|
+| **Default Load** | **1,871** | Reference docs available when needed |
+| **On-Demand Library** | **3,030** | Load via `/gullycontext` when needed |
+| **Token Reduction** | **-61.6%** | 3,000 lines saved at startup |
+
+**Behavioral Rules:** Consolidated from 1,140 lines (workflow/*) → 30 lines in `.claude/.claude.md`
+
+---
+
+## 🎯 Recommended Loading Strategy
+
+### Implementing a new service:
 ```bash
 /gullycontext arch/services    # Service boundaries
-/gullycontext database         # Schema patterns
-/gullycontext workflow/review  # Quality standards
+/gullycontext database/tables  # Schema patterns
 ```
-**Token cost:** ~1,500 lines vs 4,185 lines (64% reduction)
+**Token cost:** ~359 lines (reference docs already available)
 
-**Database migration work:**
+### Database migration work:
 ```bash
-/gullycontext database/tables  # Table schemas
-/gullycontext commands/database # Migration commands
+/gullycontext database/tables    # Table schemas
+/gullycontext commands/database  # Migration commands (on-demand)
 ```
-**Token cost:** ~667 lines vs 4,185 lines (84% reduction)
+**Token cost:** ~667 lines (load commands only when needed)
 
-**Planning features:**
+### Planning features:
 ```bash
-/gullycontext mvp              # Scope and timeline
+/gullycontext mvp/in-scope     # MVP scope
 /gullycontext arch/services    # Service architecture
 ```
-**Token cost:** ~806 lines vs 4,185 lines (81% reduction)
+**Token cost:** ~189 lines
 
-**Code review:**
+### Code review or process deep-dive:
 ```bash
-/gullycontext workflow/review     # Review standards
-/gullycontext workflow/antipatterns # Common mistakes
+/gullycontext workflow/review       # Detailed review standards (rare)
+/gullycontext workflow/antipatterns # Detailed antipatterns (rare)
 ```
-**Token cost:** ~562 lines vs 4,185 lines (87% reduction)
+**Note:** Core quality rules now in `.claude/.claude.md` (loaded by default)
 
 ---
 
@@ -300,7 +351,7 @@ Use `/gullycontext [section]` to load specific sections only when needed.
 
 ---
 
-**Last Updated:** 2025-11-06
-**Total Context Lines:** 4,185 lines across 19 files
-**Purpose:** Token-efficient context loading for Claude Code
-**Optimization:** 30-85% token reduction through targeted loading
+**Last Updated:** 2025-11-12 (Token Optimization: 61.6% reduction achieved)
+**Default Load:** 1,871 lines (reference docs available as needed)
+**On-Demand Library:** 3,030 lines (commands/*, workflow/*, learnings.md)
+**Purpose:** Peak token efficiency through behavioral consolidation + on-demand reference loading
