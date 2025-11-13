@@ -6,7 +6,7 @@
 echo "🚀 Launching Gully Project Dashboard..."
 echo ""
 echo "Dashboard will be available at:"
-echo "  → http://localhost:8080"
+echo "  → http://localhost:8080/dashboard/"
 echo ""
 echo "Press Ctrl+C to stop the server"
 echo ""
