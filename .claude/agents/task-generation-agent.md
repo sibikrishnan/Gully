@@ -254,24 +254,54 @@ tools/tracker/data/tasks/
           └── P2-PROF-T1.3-route-tests.json
 ```
 
-**File Creation Process:**
+**File Creation Process (Hierarchical Structure v3.0):**
+
+⚠️ **IMPORTANT**: Tasks now use hierarchical directory structure. Each task ID gets its own folder.
 
 For each task in phase:
-1. Create task folder: `tools/tracker/data/tasks/{task-id}/`
-2. Create tests subfolder: `tools/tracker/data/tasks/{task-id}/tests/`
-3. Write parent task: `tools/tracker/data/tasks/{task-id}/{task-id}.json`
-4. Write subtasks: `tools/tracker/data/tasks/{task-id}/{task-id}.{N}-{layer}.json`
-5. Write test suites: `tools/tracker/data/tasks/{task-id}/tests/{task-id}.{N}-{layer}-tests.json`
-6. Validate JSON syntax
-7. Report progress after each task
+1. **Create parent task directory**: `tools/tracker/data/tasks/{TASK_ID}/`
+2. **Write parent task file**: `tools/tracker/data/tasks/{TASK_ID}/task.json` (if needed)
+3. **Write subtask files**: `tools/tracker/data/tasks/{TASK_ID}/{TASK_ID}.{N}-{layer}.json`
+4. **Write test suites** (in separate tests/ directory at project level):
+   - `tools/tracker/data/tasks/tests/{TASK_ID}.{N}-{layer}-tests.json`
+5. **Validate JSON syntax**
+6. **Update index.json** with new paths
+7. **Report progress** after each task
+
+**Directory Structure:**
+```
+tools/tracker/data/tasks/
+├── P2-PROF-T1/                    # Task directory
+│   ├── task.json                  # Parent task (optional)
+│   ├── P2-PROF-T1.1-repo.json    # Subtask 1
+│   └── P2-PROF-T1.2-controller.json  # Subtask 2
+├── P2-PROF-T2/                    # Another task
+│   └── task.json                  # Standalone task (no subtasks)
+└── tests/                         # Test suites (separate)
+    ├── P2-PROF-T1.1-repo-tests.json
+    └── P2-PROF-T1.2-controller-tests.json
+```
 
 **Example Commands:**
 ```bash
-mkdir -p tools/tracker/data/tasks/P2-PROF-T1/tests
-# Write parent task
-# Write 3 subtasks (repo, controller, route)
-# Write 3 test suites
+# Create task directory
+mkdir -p tools/tracker/data/tasks/P2-PROF-T1
+
+# Write subtasks (no parent task.json needed if purely organizational)
+# Write: tools/tracker/data/tasks/P2-PROF-T1/P2-PROF-T1.1-repo.json
+# Write: tools/tracker/data/tasks/P2-PROF-T1/P2-PROF-T1.2-controller.json
+# Write: tools/tracker/data/tasks/P2-PROF-T1/P2-PROF-T1.3-route.json
+
+# Write test suites (separate tests/ directory)
+# Write: tools/tracker/data/tasks/tests/P2-PROF-T1.1-repo-tests.json
+# Write: tools/tracker/data/tasks/tests/P2-PROF-T1.2-controller-tests.json
+# Write: tools/tracker/data/tasks/tests/P2-PROF-T1.3-route-tests.json
 ```
+
+**Path Convention:**
+- Parent/standalone task: `{TASK_ID}/task.json`
+- Subtask: `{TASK_ID}/{TASK_ID}.{N}.json` or `{TASK_ID}/{TASK_ID}.{N}-{descriptor}.json`
+- Test suite: `tests/{TASK_ID}.{N}-{descriptor}-tests.json` (separate from task files)
 
 ### Step 7: Update Task Registry
 

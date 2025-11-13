@@ -99,6 +99,15 @@ docs/                            # ✅ All documentation lives here
 ```
 tools/tracker/                   # ✅ CORRECT - Project tracking system
 ├── data/                        # Tracking data (JSON)
+│   ├── tasks/                   # ✅ Task definitions (HIERARCHICAL STRUCTURE v3.0)
+│   │   ├── index.json           # Task registry with paths
+│   │   ├── README.md            # Task structure documentation
+│   │   ├── {TASK_ID}/           # Parent task directory
+│   │   │   ├── task.json        # Parent task definition
+│   │   │   ├── {TASK_ID}.1.json # Subtask 1
+│   │   │   └── {TASK_ID}.2.json # Subtask 2
+│   │   ├── archive/             # Archived tasks
+│   │   └── tests/               # Test suite definitions (separated)
 │   ├── PROJECT_STATUS.json      # Project state (phases, tasks)
 │   ├── TASK_HISTORY.json        # Task execution history
 │   └── BUG_TRACKER.json         # Bug tracking
@@ -114,6 +123,7 @@ tools/tracker/                   # ✅ CORRECT - Project tracking system
 
 ❌ DEPRECATED: tools/tasks/ (replaced by tools/tracker/)
 ❌ DEPRECATED: backend/.claude/tasks/ (migrated to tools/tracker/)
+❌ DEPRECATED: Flat task structure (v2.0) - Use hierarchical structure (v3.0)
 ```
 
 ### **Infrastructure**

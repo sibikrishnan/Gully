@@ -1,0 +1,373 @@
+{
+  "id": "P3-TEAM-T5",
+  "version": "1.0",
+  "changelog": [
+    {
+      "version": "1.0",
+      "timestamp": "2025-11-09T05:59:00Z",
+      "change": "Initial task definition for POST /api/teams/:id/members endpoint",
+      "author": "claude-sonnet-4-5"
+    }
+  ],
+  "content": "Implement POST /api/teams/:id/members endpoint to add team members",
+  "activeForm": "Implementing POST /api/teams/:id/members endpoint to add team members",
+  "description": "Create controller method, route handler, and Zod validation for adding members to teams. Implements captain-only authorization, enforces max_members limit, prevents duplicate members, validates user existence, and returns updated team with members array.",
+  "status": "pending",
+  "dependencies": ["P3-TEAM-T2"],
+  "testSuite": {
+    "testCases": [
+      {
+        "id": "team-members-add.unit.controller",
+        "category": "unit",
+        "description": "Unit tests for addTeamMember controller with validation logic",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/team-members-add-controller.test.ts",
+          "status": "not_created",
+          "testCount": 15,
+          "estimatedDuration": "30 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "addTeamMember",
+            "checkMaxMembersLimit",
+            "checkDuplicateMember",
+            "validateUserExists",
+            "checkCaptainAuthorization"
+          ],
+          "scenarios": [
+            "Captain adds member successfully",
+            "Non-captain add returns 403",
+            "Add member to pickleball team",
+            "Add member to paddle team",
+            "Duplicate member returns 400",
+            "Max members limit enforced (returns 400)",
+            "Non-existent user returns 404",
+            "Non-existent team returns 404",
+            "Member added with role='member'",
+            "Returns updated team with members array"
+          ],
+          "edgeCases": [
+            "Add captain as member (should fail)",
+            "Add soft-deleted user (should fail)",
+            "Add to soft-deleted team (should fail)",
+            "Add when at max_members - 1 (should succeed)",
+            "Add when at max_members (should fail)"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/controllers/team-members.controller.ts"
+          ]
+        }
+      },
+      {
+        "id": "team-members-add.unit.validation",
+        "category": "unit",
+        "description": "Unit tests for Zod validation schema for add member request",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/team-members-add-validation.test.ts",
+          "status": "not_created",
+          "testCount": 10,
+          "estimatedDuration": "20 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "addMemberSchema",
+            "validateUserId",
+            "validateTeamId"
+          ],
+          "scenarios": [
+            "Valid user_id UUID passes",
+            "Invalid user_id UUID fails",
+            "Missing user_id fails",
+            "Valid team_id UUID in params passes",
+            "Invalid team_id UUID fails",
+            "Extra fields stripped"
+          ],
+          "edgeCases": [
+            "Null user_id handling",
+            "Empty string user_id",
+            "user_id as number instead of string",
+            "Nested object in body"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/schemas/team-members.schema.ts"
+          ]
+        }
+      },
+      {
+        "id": "team-members-add.unit.authorization",
+        "category": "unit",
+        "description": "Unit tests for captain-only add member authorization",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/team-members-add-authorization.test.ts",
+          "status": "not_created",
+          "testCount": 8,
+          "estimatedDuration": "15 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "checkCaptainAuthorization",
+            "requireCaptain"
+          ],
+          "scenarios": [
+            "Captain can add member",
+            "Non-captain member cannot add (403)",
+            "Non-member cannot add (403)",
+            "Missing auth token returns 401",
+            "User not in team returns 403"
+          ],
+          "edgeCases": [
+            "req.user undefined handling",
+            "Captain transferred mid-request",
+            "Multiple captains edge case"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/controllers/team-members.controller.ts"
+          ]
+        }
+      },
+      {
+        "id": "team-members-add.integration.database",
+        "category": "integration",
+        "description": "Integration tests with PostgreSQL for member addition",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/team-members-add-database.test.ts",
+          "status": "not_created",
+          "testCount": 14,
+          "estimatedDuration": "45 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "insertTeamMember",
+            "checkTeamMemberExists",
+            "countTeamMembers",
+            "getTeamMaxMembers"
+          ],
+          "scenarios": [
+            "Insert team_member record with role='member'",
+            "joined_at timestamp auto-set",
+            "Unique constraint enforced (user_id, team_id)",
+            "Foreign key to users validated",
+            "Foreign key to teams validated",
+            "Member count incremented",
+            "Max members limit checked before insert",
+            "Add member to pickleball team",
+            "Add member to paddle team",
+            "Transaction atomicity on constraint violation",
+            "Verify GET team includes new member"
+          ],
+          "edgeCases": [
+            "Concurrent member additions",
+            "Add member during team update",
+            "Database connection failure handling"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/repositories/team-members.repository.ts"
+          ]
+        },
+        "dependsOn": []
+      },
+      {
+        "id": "team-members-add.integration.route",
+        "category": "integration",
+        "description": "Integration tests for Express POST route with middleware",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/team-members-add-route.test.ts",
+          "status": "not_created",
+          "testCount": 12,
+          "estimatedDuration": "35 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "POST /api/teams/:id/members route",
+            "asyncHandler wrapper",
+            "validateRequest middleware"
+          ],
+          "scenarios": [
+            "Successful member add returns 200 with updated team",
+            "Invalid team UUID returns 400",
+            "Invalid user_id UUID returns 400",
+            "Non-existent team returns 404",
+            "Non-existent user returns 404",
+            "Unauthorized (no token) returns 401",
+            "Forbidden (non-captain) returns 403",
+            "Duplicate member returns 400",
+            "Max members exceeded returns 400",
+            "Response includes members array with new member"
+          ],
+          "edgeCases": [
+            "Malformed JSON body returns 400",
+            "Missing user_id in body returns 400"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/routes/team.routes.ts"
+          ]
+        },
+        "dependsOn": ["team-members-add.unit.authorization"]
+      },
+      {
+        "id": "team-members-add.e2e",
+        "category": "e2e",
+        "description": "End-to-end tests for complete add member flow",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/team-members-add-flow.test.ts",
+          "status": "not_created",
+          "testCount": 11,
+          "estimatedDuration": "60 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "Complete add member flow"
+          ],
+          "scenarios": [
+            "Create pickleball team → Add member → GET team → Verify member in roster",
+            "Create paddle team → Add 3 members → Verify all in roster",
+            "Create team (max_members=5) → Add 4 members → Verify success",
+            "Create team (max_members=5) → Add 4 members → Attempt 5th → Verify 400",
+            "Captain adds member → Non-captain attempts add → Verify 403",
+            "Add member → Verify joined_at timestamp set",
+            "Add member → Attempt duplicate → Verify 400",
+            "Register 2 users → Create team → Add both → Verify roster count"
+          ],
+          "edgeCases": [
+            "Add member during team update",
+            "Rapid successive member additions",
+            "Add member with stale JWT token"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/"
+          ]
+        },
+        "dependsOn": ["team-members-add.integration.route", "team-members-add.integration.database"]
+      },
+      {
+        "id": "team-members-add.regression",
+        "category": "regression",
+        "description": "Regression tests for member addition compatibility",
+        "required": true,
+        "priority": "medium",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/regression/team-members-add-regression.test.ts",
+          "status": "not_created",
+          "testCount": 5,
+          "estimatedDuration": "25 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "Existing team operations compatibility"
+          ],
+          "scenarios": [
+            "GET team reflects new members",
+            "Team search results unaffected",
+            "Captain status preserved",
+            "Member count accurate in team list"
+          ],
+          "edgeCases": [
+            "Legacy client compatibility"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/"
+          ]
+        },
+        "dependsOn": ["team-members-add.e2e"]
+      }
+    ],
+    "coverageRequirements": {
+      "enabled": true,
+      "minimumPercentage": 90,
+      "criticalFiles": [
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/controllers/team-members.controller.ts",
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/repositories/team-members.repository.ts",
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/routes/team.routes.ts",
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/schemas/team-members.schema.ts"
+      ]
+    },
+    "successCriteria": {
+      "allTestsMustPass": true,
+      "noTypeScriptErrors": true,
+      "noLintingErrors": true,
+      "buildMustSucceed": true
+    },
+    "executionConfig": {
+      "runInOrder": [
+        "team-members-add.unit.controller",
+        "team-members-add.unit.validation",
+        "team-members-add.unit.authorization",
+        "team-members-add.integration.database",
+        "team-members-add.integration.route",
+        "team-members-add.e2e",
+        "team-members-add.regression"
+      ],
+      "stopOnFirstFailure": false,
+      "parallelizable": false
+    }
+  },
+  "workflow": {
+    "type": "TDD",
+    "workflowRef": "workflows/tdd.json",
+    "planningRequired": false
+  },
+  "context": {
+    "relevantFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/controllers/team-members.controller.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/routes/team.routes.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/repositories/team-members.repository.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/schemas/team-members.schema.ts"
+    ],
+    "keyFindings": [
+      "Only captain can add members (403 for others)",
+      "Max members limit enforced (check before insert)",
+      "Unique constraint: (user_id, team_id) prevents duplicates",
+      "Member role always 'member' (not captain)",
+      "joined_at timestamp auto-set on insert",
+      "Return updated team with full members array",
+      "Include pickleball and paddle team examples"
+    ],
+    "previousAttempts": []
+  },
+  "metadata": {
+    "phase": 3,
+    "feature": "Team Management",
+    "estimatedDuration": "90-120 min",
+    "tags": ["team-service", "teams", "members", "POST", "authorization", "pickleball", "paddle"]
+  }
+}
