@@ -103,6 +103,11 @@ const server = http.createServer((req, res) => {
   // Remove query parameters
   urlPath = urlPath.split('?')[0];
 
+  // Handle /dashboard/ -> /dashboard/index.html
+  if (urlPath === '/dashboard' || urlPath === '/dashboard/') {
+    urlPath = '/dashboard/index.html';
+  }
+
   console.log(`${req.method} ${urlPath}`);
 
   // Handle API requests (backward compatibility)

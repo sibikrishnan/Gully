@@ -102,3 +102,4 @@ echo "  1. cd services/backend"
 echo "  2. npm install"
 echo "  3. npm run dev"
 echo ""
+
