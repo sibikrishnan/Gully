@@ -1,14 +1,21 @@
-Read STATUS.md and provide a concise summary for quick session startup.
+Query the task tracking system and provide a concise status summary for quick session startup.
 
-**CRITICAL:** Read ONLY `STATUS.md` (not TASK_HISTORY.md). STATUS.md contains all current session info.
+**CRITICAL:** Read `tools/tracker/data/tasks/index.json` to get current project status.
+
+**Workflow:**
+1. Read `tools/tracker/data/tasks/index.json`
+2. Identify current phase (group tasks by phase number)
+3. Find last completed task (status: "completed")
+4. Find next pending task (status: "pending")
+5. Check for any in-progress tasks (status: "in_progress")
 
 Format the output as:
 ```
-📍 Status: Week X, [Phase Name]
-✅ Last: Task X.Y - [Name] (commit: abc1234)
-⏸️ Paused: Task X.Y - [Name] (reason: ...)  # Only if tasks are paused
-⏭️ Next: Task X.Y - [Name]
-💡 Notes: [any blockers or important context]
+📍 Status: Phase X - [Phase Name based on task titles]
+✅ Last Completed: [task-id] - [title]
+🔄 In Progress: [task-id] - [title]  # Only if any tasks have this status
+⏭️ Next: [task-id] - [title]
+💡 Notes: [X tasks completed in phase, Y remaining]
 ```
 
 Keep it concise - 3-5 sentences max.

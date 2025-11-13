@@ -1,47 +1,48 @@
-**CRITICAL OPTIMIZATION:** Parse task info from conversation history, NOT by reading full files.
+**CRITICAL OPTIMIZATION:** Load task info from tracker JSON files efficiently.
 
 ## Usage:
-- `/gullycontinue` - Auto-detect next task from `/gullystatus` output or STATUS.md
-- `/gullycontinue 3.1` - Explicitly load Task 3.1 (bypasses auto-detection)
+- `/gullycontinue` - Auto-detect next task from `/gullystatus` output or index.json
+- `/gullycontinue P2-PROF-T1.1` - Explicitly load specific task/subtask
 
 ## Workflow:
 
-1. **Parse command arguments**
-   - If task number provided (e.g., "3.1"), use that directly
+1. **Determine task to load**
+   - If task ID provided (e.g., "P2-PROF-T1.1"), use that directly
    - Otherwise, check for `/gullystatus` output in conversation history
-   - Look for the most recent message containing "⏭️ Next: Task X.Y"
-   - Extract the task number (e.g., "3.1") from that line
+   - Look for the most recent message containing "⏭️ Next: [task-id]"
+   - Extract the task ID from that line
 
-2. **Targeted file read of ONLY that task section**
-   - Search TASK_HISTORY.md for the heading `### ⏳ Task X.Y:` or `### ⏸️ Task X.Y:`
-   - Read ONLY that task section (not the entire file)
-   - Use Grep to find the line number, then Read with offset+limit
+2. **Read task registry**
+   - Read `tools/tracker/data/tasks/index.json`
+   - Find task entry by ID
+   - Check if task has subtasks (hasSubtasks: true)
 
-3. **Extract and display task info**
-   - Commit message template
-   - Planned work bullets
-   - Files to create
-   - Duration estimate
+3. **Load specific task JSON file**
+   - For parent tasks: `tools/tracker/data/tasks/{TASK_ID}/task.json`
+   - For subtasks: `tools/tracker/data/tasks/{PARENT_ID}/{SUBTASK_ID}.json`
+   - Parse task JSON structure (id, description, workflow, dependencies, etc.)
 
-4. **Ask for confirmation**
+4. **Extract and display task info**
+   - Task description and activeForm
+   - Workflow phases and actions
+   - Dependencies and blockers
+   - Test suite reference
+   - Estimated duration
+   - Checkpoints
+
+5. **Ask for confirmation**
 
 ## Fallback Behavior:
 
-If no task number provided AND no `/gullystatus` output found in conversation history:
-- Read STATUS.md to get the next task number (lightweight read)
-- Then proceed with targeted TASK_HISTORY.md read for that specific task
+If no task ID provided AND no `/gullystatus` output found in conversation history:
+- Read `tools/tracker/data/tasks/index.json` to find next pending task
+- Then proceed with loading that specific task JSON file
 
 **Token Optimization:**
-- Primary path: ~200 tokens (targeted task section only)
-- Fallback path: ~500 tokens (STATUS.md + targeted task section)
-- OLD approach: ~2,500 tokens (entire 402-line TASK_HISTORY.md)
-- NEW architecture: ~500 tokens (streamlined 86-line TASK_HISTORY.md)
-- **Savings: 80-92% reduction**
-
-**Archive Structure (2025-11-04):**
-- TASK_HISTORY.md contains ONLY pending/active tasks (86 lines, ~500 tokens)
-- Completed tasks archived by week in `docs/archives/tasks/WEEKN_TASKS.md`
-- Week 1 archive: `docs/archives/tasks/WEEK1_TASKS.md` (303 lines, never loaded unless needed)
+- Primary path: ~1,500 tokens (task JSON file only)
+- Fallback path: ~2,000 tokens (index.json + task JSON)
+- Efficient: Direct file access, no searching required
+- **Benefit: 100% accurate, structured data from source of truth**
 
 Format:
 ```
