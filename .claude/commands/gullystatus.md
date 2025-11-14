@@ -26,8 +26,3 @@ Format the output as:
 - **Savings: 85% reduction**
 
 Keep it concise - 3-5 sentences max.
-
-**After completing the command, print token expenditure:**
-```
-🔢 Tokens: X,XXX used | XXX,XXX remaining (X.X% of budget)
-```
