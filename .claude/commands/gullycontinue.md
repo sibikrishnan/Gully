@@ -1,28 +1,25 @@
-**CRITICAL OPTIMIZATION:** Load task info from tracker JSON files efficiently.
+**CRITICAL OPTIMIZATION:** Load task info from CSV tracker and task JSON files efficiently.
 
 ## Usage:
-- `/gullycontinue` - Auto-detect next task from `/gullystatus` output or index.json
-- `/gullycontinue P2-PROF-T1.1` - Explicitly load specific task/subtask
+- `/gullycontinue` - Auto-detect next task from CSV tracker
+- `/gullycontinue P2-PROF-T2.2` - Explicitly load specific subtask
 
 ## Workflow:
 
 1. **Determine task to load**
-   - If task ID provided (e.g., "P2-PROF-T1.1"), use that directly
-   - Otherwise, check for `/gullystatus` output in conversation history
-   - Look for the most recent message containing "⏭️ Next: [task-id]"
-   - Extract the task ID from that line
+   - If subtask ID provided (e.g., "P2-PROF-T2.2"), use that directly
+   - Otherwise, read `tools/tracker/data/TASK_TRACKER.csv`
+   - Find first row with `status=pending` (this is the next task)
+   - Extract parent_id and subtask_file from CSV row
 
-2. **Read task registry**
-   - Read `tools/tracker/data/tasks/index.json`
-   - Find task entry by ID
-   - Check if task has subtasks (hasSubtasks: true)
-
-3. **Load specific task JSON file**
-   - For parent tasks: `tools/tracker/data/tasks/{TASK_ID}/task.json`
-   - For subtasks: `tools/tracker/data/tasks/{PARENT_ID}/{SUBTASK_ID}.json`
+2. **Load task JSON file**
+   - CSV column `subtask_file` contains the JSON filename (e.g., "P2-PROF-T2.2-controller.json")
+   - CSV column `parent_id` contains parent task ID (e.g., "P2-PROF-T2")
+   - File path: `tools/tracker/data/tasks/{parent_id}/{subtask_file}`
+   - Example: `tools/tracker/data/tasks/P2-PROF-T2/P2-PROF-T2.2-controller.json`
    - Parse task JSON structure (id, description, workflow, dependencies, etc.)
 
-4. **Extract and display task info**
+3. **Extract and display task info**
    - Task description and activeForm
    - Workflow phases and actions
    - Dependencies and blockers
@@ -30,19 +27,21 @@
    - Estimated duration
    - Checkpoints
 
-5. **Ask for confirmation**
+4. **Ask for confirmation to proceed**
 
-## Fallback Behavior:
+## CSV Integration:
 
-If no task ID provided AND no `/gullystatus` output found in conversation history:
-- Read `tools/tracker/data/tasks/index.json` to find next pending task
-- Then proceed with loading that specific task JSON file
+The CSV tracker (`TASK_TRACKER.csv`) is the single source of truth for:
+- Which tasks are pending/in_progress/completed
+- Task order and dependencies
+- Location of task JSON files (subtask_file column)
+
+The JSON files contain detailed implementation instructions but don't track status.
 
 **Token Optimization:**
-- Primary path: ~1,500 tokens (task JSON file only)
-- Fallback path: ~2,000 tokens (index.json + task JSON)
-- Efficient: Direct file access, no searching required
-- **Benefit: 100% accurate, structured data from source of truth**
+- Primary path: ~1,500 tokens (CSV scan + task JSON file)
+- Efficient: Direct file access from CSV reference
+- **Benefit: 100% accurate, CSV is single source of truth for status**
 
 Format:
 ```
