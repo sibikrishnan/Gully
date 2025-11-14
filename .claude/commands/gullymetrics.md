@@ -1,85 +1,142 @@
-**PURPOSE:** Track and report token usage metrics to validate optimization estimates.
+**PURPOSE:** Log and analyze token usage metrics over time to validate optimization effectiveness.
 
 ## Usage:
-- `/gullymetrics` - Show current session token usage summary
-- `/gullymetrics log` - Log current usage to OPTIMIZATION_LOG.md for historical tracking
+- `/gullymetrics log [note]` - Log current session metrics to OPTIMIZATION_LOG.md with optional note
+- `/gullymetrics compare` - Compare current session against historical averages
 
-## Workflow:
+**Note:** For real-time token breakdown, use `/context` instead. This command focuses on historical tracking and trend analysis.
 
-1. **Extract current token usage**
-   - Parse the conversation for `<system_warning>Token usage:` messages
-   - Find the MOST RECENT token usage warning
-   - Extract: tokens used, total budget, remaining tokens
-   - Calculate: percentage used, tokens per message (approximate)
+---
 
-2. **Analyze command efficiency** (if available in history)
-   - Look for `/gullystatus`, `/gullycontinue`, `/gullypause` invocations
-   - Estimate token cost for each based on files read
-   - Compare against optimization estimates in OPTIMIZATION_LOG.md
+## Command: `/gullymetrics log [note]`
 
-3. **Display summary**
-   ```
-   📊 Token Usage Metrics - Current Session
+**What it does:**
+Captures current session state and appends it to `docs/OPTIMIZATION_LOG.md` for long-term tracking.
 
-   Total Used: X,XXX / 200,000 (X.X%)
-   Remaining: XXX,XXX tokens
+**Workflow:**
 
-   Command Usage (estimated):
-   - /gullystatus: ~XXX tokens (expected: 400)
-   - /gullycontinue: ~XXX tokens (expected: 200)
-   - /gullypause: ~XXX tokens (expected: 500)
-
-   Efficiency:
-   ✅ On track / ⚠️ Higher than expected / 🎉 Better than expected
-
-   Recent operations:
-   - [timestamp]: File read (XXX tokens)
-   - [timestamp]: Command execution (XXX tokens)
+1. **Get current token metrics via /context**
+   ```bash
+   # Run /context and capture output
+   # Parse the line: "XXk/200k tokens (XX%)"
+   # Extract breakdown: System (X.Xk), Tools (X.Xk), Messages (X.Xk), etc.
    ```
 
-4. **If "log" argument provided**
-   - Append metrics to docs/OPTIMIZATION_LOG.md under new "Session Metrics" section
-   - Include: date, session duration, total tokens, commands used, efficiency notes
+2. **Calculate session metrics**
+   - Total tokens used
+   - Conversation tokens (Messages only)
+   - System overhead (System + Tools + MCP + Agents + Memory)
+   - Autocompact buffer
+   - Efficiency ratio: Conversation / Total (excluding autocompact)
 
-## Token Optimization:
-- This command uses ~50 tokens (no file reads, just conversation parsing)
-- Helps validate that optimizations are working as expected
+3. **Identify work completed (from git)**
+   ```bash
+   # Count commits in current session (rough estimate)
+   # List files modified in recent commits
+   # Extract task info from commit messages
+   ```
 
-## What to Look For:
+4. **Append to OPTIMIZATION_LOG.md**
+   ```markdown
+   ### Session Log - YYYY-MM-DD HH:MM
 
-**Expected Token Costs (Post-Optimization with STATUS.md):**
-- `/gullystatus`: ~500 tokens (STATUS.md read)
-- `/gullycontinue`: ~200 tokens (targeted task section read from TASK_HISTORY.md)
-- `/gullypause`: ~800 tokens (read + update STATUS.md + TASK_HISTORY.md)
-- File reads: ~5 tokens per line
+   **Branch:** phase2-prof-t1
+   **Total Tokens:** 92,000 / 200,000 (46%)
+   **Conversation:** 28,400 tokens (30.9% of total)
+   **System Overhead:** 19,600 tokens (21.3% of total)
+   **Autocompact Buffer:** 45,000 tokens (48.9% of total)
 
-**Red Flags:**
-- Commands using 2-3x expected tokens → investigate redundant reads
-- Session hitting 50% token budget before significant progress → optimize workflow
-- Multiple full-file reads of same file → cache or parse from conversation
+   **Efficiency Ratio:** 0.59 (conversation / used tokens excl. buffer)
 
-## Example Output:
-```
-📊 Token Usage Metrics - Current Session
+   **Work Completed:**
+   - 3 commits
+   - Files: .claude/hooks/pre-tool-use.sh, .claude/settings.local.json
+   - Tasks: Security fix, settings optimization
 
-Total Used: 23,784 / 200,000 (11.9%)
-Remaining: 176,216 tokens
+   **Command Usage:** (if tracked)
+   - /gullystatus: N/A
+   - /gullycontinue: N/A
+   - /gullypause: N/A
 
-Command Usage (estimated):
-- /gullystatus: ~480 tokens (expected: 500) ✅
-- /gullycontinue: ~190 tokens (expected: 200) ✅
+   **Notes:** [user-provided note if any]
 
-Efficiency: 🎉 Better than expected
+   ---
+   ```
 
-Recent operations:
-- Read TASK_HISTORY.md (lines 1-50): ~250 tokens
-- Read gullycontinue.md: ~200 tokens
-- Edit operations: ~150 tokens each
+5. **Display summary to user**
+   ```
+   ✅ Session logged to docs/OPTIMIZATION_LOG.md
 
-Session is healthy. Optimizations are working as expected.
-```
+   📊 Session Summary:
+   - Tokens: 92k/200k (46%)
+   - Conversation: 28.4k (efficiency: 0.59)
+   - Work: 3 commits, 2 files modified
+   ```
 
-**After completing the command, print token expenditure:**
-```
-🔢 Tokens: X,XXX used | XXX,XXX remaining (X.X% of budget)
-```
+---
+
+## Command: `/gullymetrics compare`
+
+**What it does:**
+Compares current session against historical averages from OPTIMIZATION_LOG.md.
+
+**Workflow:**
+
+1. **Get current session metrics** (same as log)
+
+2. **Parse OPTIMIZATION_LOG.md**
+   - Extract all previous "Session Log" entries
+   - Calculate averages:
+     - Avg total tokens used
+     - Avg conversation tokens
+     - Avg efficiency ratio
+     - Avg commits per session
+
+3. **Compare and display**
+   ```
+   📊 Session Comparison
+
+   Current Session:
+   - Tokens: 92k (46%)
+   - Conversation: 28.4k
+   - Efficiency: 0.59
+   - Commits: 3
+
+   Historical Average (last 10 sessions):
+   - Tokens: 78k (39%)
+   - Conversation: 24k
+   - Efficiency: 0.62
+   - Commits: 2.5
+
+   Analysis:
+   ⚠️  Higher token usage (+18% vs avg)
+   ⚠️  Lower efficiency (-5% vs avg)
+   ✅ More commits (+20% vs avg)
+
+   Recommendation: Session is productive but using more tokens than average.
+   Consider if current task complexity justifies the overhead.
+   ```
+
+4. **Trend detection**
+   - If last 3 sessions show increasing token usage: "📈 Token usage trending up"
+   - If efficiency dropping: "⚠️ Efficiency declining over last N sessions"
+   - If stable: "✅ Metrics stable and consistent"
+
+---
+
+## Implementation Notes:
+
+**For accurate tracking, this command should:**
+1. Parse `/context` output (not `<system_warning>` messages)
+2. Store timestamps for session duration calculation
+3. Avoid reading large files - focus on git metadata
+4. Keep log entries concise (~10-15 lines each)
+
+**Token Cost:**
+- `/gullymetrics log`: ~800 tokens (read OPTIMIZATION_LOG.md, append, git status)
+- `/gullymetrics compare`: ~1,200 tokens (parse all historical entries)
+
+**Best Practices:**
+- Run `/gullymetrics log` at natural breakpoints: end of phase, before switching tasks, before closing session
+- Run `/gullymetrics compare` weekly or when you suspect efficiency issues
+- Add notes to log entries to capture context (e.g., "large refactor", "many test iterations")
