@@ -62,39 +62,39 @@ Extract section and subsection from command:
 
 ```
 /gullycontext mvp
-  → Read all files in .claude/context/mvp/
+  → Read all files in docs/context/mvp/
   → in-scope.md, out-of-scope.md, timeline.md, metrics.md
 
 /gullycontext mvp/in-scope
-  → Read .claude/context/mvp/in-scope.md
+  → Read docs/context/mvp/in-scope.md
 
 /gullycontext arch
-  → Read all files in .claude/context/arch/
+  → Read all files in docs/context/arch/
   → structure.md, services.md, migration.md, stack.md
 
 /gullycontext arch/services
-  → Read .claude/context/arch/services.md
+  → Read docs/context/arch/services.md
 
 /gullycontext database
-  → Read all files in .claude/context/database/
+  → Read all files in docs/context/database/
   → tables.md, redis.md, indexes.md
 
 /gullycontext database/tables
-  → Read .claude/context/database/tables.md
+  → Read docs/context/database/tables.md
 
 /gullycontext commands
-  → Read all files in .claude/context/commands/
+  → Read all files in docs/context/commands/
   → docker.md, database.md, dev.md, git.md
 
 /gullycontext commands/docker
-  → Read .claude/context/commands/docker.md
+  → Read docs/context/commands/docker.md
 
 /gullycontext workflow
-  → Read all files in .claude/context/workflow/
+  → Read all files in docs/context/workflow/
   → principles.md, antipatterns.md, review.md, communication.md
 
 /gullycontext workflow/principles
-  → Read .claude/context/workflow/principles.md
+  → Read docs/context/workflow/principles.md
 
 /gullycontext full
   → Read .claude/FULL_CONTEXT.md (reference only, not up-to-date)

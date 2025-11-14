@@ -60,7 +60,7 @@
 
 ### Claude Code Setup
 - **Claude Config:** [.claude/.claude.md](.claude/.claude.md)
-- **Context Sections:** [.claude/context/INDEX.md](.claude/context/INDEX.md)
+- **Context Sections:** [docs/context/INDEX.md](docs/context/INDEX.md)
 - **Agents:** [.claude/agents/](.claude/agents/)
 - **Commands:** [.claude/commands/](.claude/commands/)
 - **Hooks:** [.claude/hooks/](.claude/hooks/)
