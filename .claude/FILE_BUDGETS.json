@@ -1,9 +1,9 @@
 {
   "budgets": {
     ".claude/agents/*.md": {
-      "max_lines": 200,
-      "purpose": "Agent prompts - instructions only",
-      "tokens": 600
+      "max_lines": 150,
+      "purpose": "Agent prompts - operational instructions ONLY (move verbose docs to docs/agents/)",
+      "tokens": 450
     },
     ".claude/commands/*.md": {
       "max_lines": 30,
@@ -61,7 +61,12 @@
   },
   "total_claude_budget": {
     "max_tokens": 5000,
-    "current_estimate": 19000,
-    "target": "Reduce .claude/ from 19k to 5k tokens"
+    "current_estimate": 3500,
+    "target": "ACHIEVED: Reduced .claude/ from 19k to ~3.5k tokens (82% reduction)"
+  },
+  "cost_awareness": {
+    "warning": "Every file in .claude/ loads at EVERY session startup",
+    "calculation": "1,000 lines = ~3k tokens × N sessions = significant cost",
+    "rule": "Ask: Does this NEED to be in .claude/? If NO → move to docs/"
   }
 }
