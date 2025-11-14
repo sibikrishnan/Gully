@@ -1,28 +1,33 @@
 Query the task tracking system and provide a concise status summary for quick session startup.
 
-**CRITICAL:** Read `tools/tracker/data/status/current.json` for lightweight status (~300 tokens).
+**CRITICAL:** Read `tools/tracker/data/TASK_TRACKER.csv` as the single source of truth for all task status.
 
 **Workflow:**
-1. Read `tools/tracker/data/status/current.json` (hot data only)
-2. Extract currentPhase and currentTask information
-3. Format a concise status summary
+1. Read `tools/tracker/data/TASK_TRACKER.csv`
+2. Find the first task with `status=pending` (this is the current task to work on)
+3. Count completed vs total tasks for the current phase
+4. Extract phase information from task IDs (e.g., P2 = Phase 2)
 
-**Optional (if more detail needed):**
-- Read `tools/tracker/data/tasks/index.json` for full task list
-- Read specific phase file: `tools/tracker/data/status/phases/{phaseId}.json`
+**CSV Columns:**
+- phase, parent_id, subtask_file, title, status, created, started, completed, test_count, notes
+
+**Status Values:**
+- `pending`: Not started yet
+- `in_progress`: Currently being worked on (should be rare, usually tasks complete in one session)
+- `completed`: Finished and tested
 
 Format the output as:
 ```
-📍 Status: Phase X - [Phase Name]
-⏳ Current: [task-id] - [title]
+📍 Status: Phase X - [Phase Name from parent_id pattern]
+⏳ Current: [parent_id] - [title] (subtask: [subtask_file])
 📊 Progress: X/Y tasks (Z%)
-💡 Notes: [any blockers or important context]
+💡 Notes: [extract from notes column if relevant]
 ```
 
-**Token Optimization:**
-- Primary path: ~300 tokens (status/current.json only)
-- With details: ~800 tokens (current.json + tasks/index.json)
-- OLD approach: ~2,000 tokens (monolithic PROJECT_STATUS.json)
-- **Savings: 85% reduction**
+**Phase Mapping:**
+- P2 = User Profiles
+- P3 = Team Management
+- P4 = Booking System
+- P5 = Venue Management
 
 Keep it concise - 3-5 sentences max.
