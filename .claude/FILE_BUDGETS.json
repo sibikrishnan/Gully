@@ -1,0 +1,67 @@
+{
+  "budgets": {
+    ".claude/agents/*.md": {
+      "max_lines": 200,
+      "purpose": "Agent prompts - instructions only",
+      "tokens": 600
+    },
+    ".claude/commands/*.md": {
+      "max_lines": 30,
+      "purpose": "Slash commands - logic + brief help",
+      "tokens": 90
+    },
+    ".claude/.claude.md": {
+      "max_lines": 200,
+      "purpose": "Core project context",
+      "tokens": 600
+    },
+    ".claude/hooks/*.md": {
+      "max_lines": 100,
+      "purpose": "Hook documentation",
+      "tokens": 300
+    },
+    "docs/schemas/*.md": {
+      "max_lines": 150,
+      "purpose": "Schema definition + validation rules",
+      "tokens": 450
+    },
+    "docs/context/arch/*.md": {
+      "max_lines": 300,
+      "purpose": "Architecture guides (on-demand)",
+      "tokens": 900
+    },
+    "docs/protocols/*.md": {
+      "max_lines": 150,
+      "purpose": "Process definitions",
+      "tokens": 450
+    },
+    "docs/context/**/*.md": {
+      "max_lines": 200,
+      "purpose": "Context sections (on-demand)",
+      "tokens": 600
+    },
+    "docs/agents/*.md": {
+      "max_lines": 500,
+      "purpose": "Agent examples & extended documentation",
+      "tokens": 1500
+    }
+  },
+  "path_rules": {
+    "forbidden_patterns": [
+      "/backend/docs/",
+      "/backend/.claude/",
+      "/.claude/schemas/",
+      "/.claude/context/"
+    ],
+    "required_locations": {
+      "docs": "/Users/sibikrishnan/Documents/Gully/docs/",
+      "context": "/Users/sibikrishnan/Documents/Gully/docs/context/",
+      "claude": "/Users/sibikrishnan/Documents/Gully/.claude/"
+    }
+  },
+  "total_claude_budget": {
+    "max_tokens": 5000,
+    "current_estimate": 19000,
+    "target": "Reduce .claude/ from 19k to 5k tokens"
+  }
+}
