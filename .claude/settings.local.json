@@ -93,7 +93,8 @@
       "Bash(git config:*)",
       "Bash(for file in .claude/agents/*.md .claude/schemas/*.md .claude/commands/*.md .claude/hooks/*.md .claude/requirements/*.md)",
       "Bash(do:*)",
-      "Bash(for file in .claude/agents/*.md .claude/commands/*.md .claude/hooks/*.md)"
+      "Bash(for file in .claude/agents/*.md .claude/commands/*.md .claude/hooks/*.md)",
+      "Bash(.claude/hooks/pre-tool-use.sh)"
     ],
     "deny": [],
     "ask": []

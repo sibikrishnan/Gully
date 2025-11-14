@@ -138,15 +138,28 @@ color: blue
 - Acceptance criteria clear ✅
 
 ### 5. Write Output (2 min)
+**🔒 MANDATORY: Use absolute paths for tracker writes**
 ```bash
-# Task object
-tools/tracker/data/tasks/P2-PROF-T1.json
+# Task object (ABSOLUTE PATH)
+/Users/sibikrishnan/Documents/Gully/tools/tracker/data/tasks/P2-PROF-T1.json
 
-# Test suites
-tools/tracker/data/tests/P2-PROF-T1.1.test.json
-tools/tracker/data/tests/P2-PROF-T1.2.test.json
-tools/tracker/data/tests/P2-PROF-T1.3.test.json
+# Test suites (ABSOLUTE PATH)
+/Users/sibikrishnan/Documents/Gully/tools/tracker/data/tests/P2-PROF-T1.1.test.json
+/Users/sibikrishnan/Documents/Gully/tools/tracker/data/tests/P2-PROF-T1.2.test.json
+/Users/sibikrishnan/Documents/Gully/tools/tracker/data/tests/P2-PROF-T1.3.test.json
 ```
+
+**VERIFICATION REQUIRED:**
+```bash
+# Verify files written successfully
+ls -la /Users/sibikrishnan/Documents/Gully/tools/tracker/data/tasks/P2-PROF-T1.json
+cat /Users/sibikrishnan/Documents/Gully/tools/tracker/data/tasks/P2-PROF-T1.json | jq '.taskId'
+```
+
+**NEVER write to:**
+- ❌ `backend/.claude/tasks/` (deprecated location)
+- ❌ Relative paths (causes confusion)
+- ✅ **ONLY:** `/Users/sibikrishnan/Documents/Gully/tools/tracker/data/tasks/`
 
 ## Test Case Quality
 

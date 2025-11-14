@@ -75,6 +75,26 @@ If missing: Error → suggest `/pm-initialize`
 - Update completion → `current.json` status: "completed"
 - Log to `active.json` with timestamps, metrics
 
+**🔒 TRACKER UPDATE CHECKLIST (MANDATORY):**
+```bash
+# BEFORE task execution
+cd /Users/sibikrishnan/Documents/Gully/tools/tracker/data
+jq '.currentTask.status = "in_progress"' status/current.json > tmp && mv tmp status/current.json
+
+# AFTER task execution
+jq '.currentTask.status = "completed"' status/current.json > tmp && mv tmp status/current.json
+jq '.currentPhase.progress.tasksComplete += 1' status/current.json > tmp && mv tmp status/current.json
+
+# Append to history/active.json
+jq '.tasks += [TASK_COMPLETION_ENTRY]' history/active.json > tmp && mv tmp history/active.json
+
+# VERIFY updates
+cat status/current.json | jq '.currentTask.status'  # Should show "completed"
+cat history/active.json | jq '.tasks | length'       # Should be +1
+```
+
+**NEVER skip tracker updates. Human relies on this data.**
+
 ### 5. Track Progress (continuous)
 **After each task completion:**
 ```json
