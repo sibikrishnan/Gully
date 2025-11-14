@@ -71,6 +71,10 @@ if [[ -n "$CONTENT" && "$CONTENT" != "null" ]]; then
   # Match file path against budget patterns
   BUDGETS=$(jq -c '.budgets | to_entries[]' "$BUDGET_FILE")
 
+  # Escape special regex characters in FILE_PATH to prevent regex injection
+  # This prevents malicious paths from manipulating the regex engine
+  ESCAPED_FILE_PATH=$(printf '%s\n' "$FILE_PATH" | sed -e 's/\\/\\\\/g' -e 's/\./\\./g' -e 's/\*/\\*/g' -e 's/\[/\\[/g' -e 's/\]/\\]/g' -e 's/\^/\\^/g' -e 's/\$/\\$/g' -e 's/|/\\|/g' -e 's/(/\\(/g' -e 's/)/\\)/g' -e 's/+/\\+/g' -e 's/?/\\?/g' -e 's/{/\\{/g' -e 's/}/\\}/g')
+
   MATCHED=false
   while IFS= read -r budget_entry; do
     PATTERN=$(echo "$budget_entry" | jq -r '.key')
@@ -82,7 +86,7 @@ if [[ -n "$CONTENT" && "$CONTENT" != "null" ]]; then
     # * -> [^/]* (match any characters except /)
     REGEX_PATTERN=$(echo "$PATTERN" | sed 's|\*\*|DOUBLE_STAR|g' | sed 's|\*|[^/]*|g' | sed 's|DOUBLE_STAR|.*|g')
 
-    if [[ "$FILE_PATH" =~ $REGEX_PATTERN ]]; then
+    if [[ "$ESCAPED_FILE_PATH" =~ $REGEX_PATTERN ]]; then
       MATCHED=true
       if (( LINE_COUNT > MAX_LINES )); then
         echo "❌ BLOCKED: File exceeds token budget" >&2
