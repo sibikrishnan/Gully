@@ -5,7 +5,7 @@ P2,P2-PROF-T2,P2-PROF-T2.1-repo.json,Repository - updateUser with constraints,co
 P2,P2-PROF-T2,P2-PROF-T2.2-controller.json,Controller - PATCH handler,completed,2025-11-11,2025-11-14,2025-11-14,34,Controller + validation schema + 34 tests passing
 P2,P2-PROF-T2,P2-PROF-T2.3-route.json,Route - PATCH endpoint integration,completed,2025-11-11,2025-11-14,2025-11-14,19,Route + middleware chain + 19 tests passing (4+7+3+3+2)
 P2,P2-PROF-T3,task.json,DELETE /api/users/:id - Soft Delete User,completed,2025-11-11,2025-11-14,2025-11-15,75,Implemented with controller + cascade service + cleanup service
-P2,P2-PROF-T4,P2-PROF-T4.1-repo-validation.json,Repository & Validation - user_sports junction table,pending,2025-11-15,,,8,Repository methods + Zod schemas + 8 MVP tests
+P2,P2-PROF-T4,P2-PROF-T4.1-repo-validation.json,Repository & Validation - user_sports junction table,completed,2025-11-15,2025-11-15,2025-11-15,10,Repository (3 methods) + Zod schemas + 10 tests passing (6 unit + 4 integration)
 P2,P2-PROF-T4,P2-PROF-T4.2-controllers.json,Controllers - addUserSport & removeUserSport,pending,2025-11-15,,,8,Authorization + error handling + 8 MVP tests
 P2,P2-PROF-T4,P2-PROF-T4.3-routes.json,Routes - POST/DELETE sports endpoints with E2E,pending,2025-11-15,,,4,Middleware chain + 4 MVP tests (total 20 tests for T4)
 P2,P2-PROF-T5,task.json,GET /api/users/search - Search Users with Filters,pending,2025-11-11,,,0,Single task - no subtasks
