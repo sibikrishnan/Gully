@@ -1,0 +1,86 @@
+{
+  "id": "P2-PROF-T3.4",
+  "version": "1.0",
+  "content": "Implement controller and authorization for DELETE /api/users/:id with orchestration logic",
+  "activeForm": "Implementing controller and authorization for DELETE /api/users/:id with orchestration logic",
+  "description": "Implement user.controller.ts with deleteUserProfile method that handles DELETE /api/users/:id endpoint. Implements authorization checks (users can only delete own account, 403 for others), orchestrates cascade → cleanup → soft delete flow, and returns proper status codes. Uses services from T3.1, T3.2, T3.3. Write 5 MVP-tier tests (unit tests for authorization, orchestration logic, and error handling). This subtask will be integrated with routes in T3.5.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-PROF-T3.4-controller-tests.json",
+  "workflowRef": "workflows/tdd.json",
+  "planningResultRef": null,
+  "dependencies": ["P2-PROF-T3.1", "P2-PROF-T3.2", "P2-PROF-T3.3"],
+  "blockers": [],
+  "tags": ["user-service", "controller", "authorization", "DELETE", "orchestration", "phase-2"],
+  "estimatedDuration": "30-40 min",
+  "metadata": {
+    "phase": 2,
+    "feature": "User Profiles",
+    "parentTask": "P2-PROF-T3",
+    "subtaskIndex": "3.4",
+    "estimatedTokens": 19000,
+    "testTier": "mvp",
+    "testCount": 5,
+    "parallelizable": false
+  },
+  "workflow": {
+    "planningRequired": true,
+    "checkpoints": [
+      {
+        "name": "Authorization Logic Complete",
+        "tokenLimit": 8000,
+        "requirement": "Controller deleteUserProfile method created with authorization checks (req.user.id === req.params.id)",
+        "askHuman": false,
+        "exitIfFail": false
+      },
+      {
+        "name": "Orchestration and MVP Tests Passing",
+        "tokenLimit": 19000,
+        "requirement": "Controller implementation complete with all 5 tests passing (authorization, orchestration, error handling verified)",
+        "askHuman": true,
+        "exitIfFail": false
+      }
+    ],
+    "phases": [
+      {
+        "phase": 1,
+        "name": "Controller Method and Authorization",
+        "required": true,
+        "actions": [
+          "Update: src/services/user-service/controllers/user.controller.ts",
+          "Implement: deleteUserProfile(req: AuthenticatedRequest, res: Response)",
+          "Check: Authorization - verify req.user.id === parseInt(req.params.id) (403 if mismatch)",
+          "Check: User exists and is not already deleted (404 if not found)",
+          "Return: 403 if user tries to delete another user's account",
+          "Return: 404 if user not found or already deleted"
+        ],
+        "gate": "Authorization check must be first step before any deletion logic"
+      },
+      {
+        "phase": 2,
+        "name": "Orchestration Logic",
+        "actions": [
+          "Inject: UserCascadeService from T3.2",
+          "Inject: UserCleanupService from T3.3",
+          "Inject: UserRepository from T3.1",
+          "Execute: Step 1 - await cascadeService.handleUserDeletionCascade(userId)",
+          "Execute: Step 2 - await cleanupService.cleanupUserSessions(userId)",
+          "Execute: Step 3 - await userRepository.softDeleteUser(userId)",
+          "Handle: Errors at each step with proper rollback",
+          "Return: 204 No Content on successful deletion"
+        ]
+      },
+      {
+        "phase": 3,
+        "name": "MVP Test Suite (5 tests)",
+        "actions": [
+          "Write: Test 1 - Successful deletion returns 204",
+          "Write: Test 2 - User cannot delete other user's account (403)",
+          "Write: Test 3 - Non-existent user returns 404",
+          "Write: Test 4 - Orchestration calls cascade → cleanup → delete in order",
+          "Write: Test 5 - Error in cascade step prevents soft delete",
+          "Verify: All 5 tests passing with 90%+ coverage of controller layer"
+        ]
+      }
+    ]
+  }
+}
