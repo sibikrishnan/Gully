@@ -1,0 +1,92 @@
+{
+  "id": "P2-PROF-T4.3",
+  "version": "1.0",
+  "content": "Implement routes for POST/DELETE /api/users/:id/sports with middleware chain and E2E flow",
+  "activeForm": "Implementing routes for POST/DELETE /api/users/:id/sports with middleware chain and E2E flow",
+  "description": "Implement route definitions for POST /api/users/:id/sports and DELETE /api/users/:id/sports/:sport endpoints with complete middleware chain (auth, validation, audit). Integrate controllers from T4.2 with proper request/response flow. Write 4 MVP-tier tests (2 integration tests for middleware chain and status codes, 2 E2E tests for complete user flow). This subtask completes P2-PROF-T4 by wiring together repository, validation, controllers, and routes.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-PROF-T4.3-routes-tests.json",
+  "workflowRef": "workflows/tdd.json",
+  "planningResultRef": null,
+  "dependencies": ["P2-PROF-T4.2"],
+  "blockers": [],
+  "tags": ["user-service", "routes", "middleware", "sports", "e2e", "phase-2"],
+  "estimatedDuration": "25-35 min",
+  "metadata": {
+    "phase": 2,
+    "feature": "User Profiles",
+    "parentTask": "P2-PROF-T4",
+    "subtaskIndex": "4.3",
+    "estimatedTokens": 18000,
+    "testTier": "mvp",
+    "testCount": 4,
+    "parallelizable": false
+  },
+  "workflow": {
+    "planningRequired": true,
+    "checkpoints": [
+      {
+        "name": "Route Definitions Complete",
+        "tokenLimit": 8000,
+        "requirement": "POST and DELETE routes defined with middleware chain (auth, validation, audit)",
+        "askHuman": false,
+        "exitIfFail": false
+      },
+      {
+        "name": "Integration and E2E Tests Passing",
+        "tokenLimit": 18000,
+        "requirement": "Route integration complete with all 4 tests passing (middleware chain and full user flow verified)",
+        "askHuman": true,
+        "exitIfFail": false
+      }
+    ],
+    "phases": [
+      {
+        "phase": 1,
+        "name": "Route Implementation",
+        "required": true,
+        "actions": [
+          "Update: src/services/user-service/routes/user.routes.ts OR Create: user-sports.routes.ts",
+          "Decision: Add to existing user.routes.ts (recommended) or create separate file",
+          "Implement: POST /api/users/:id/sports route",
+          "Middleware: authenticateToken (JWT validation)",
+          "Middleware: validateRequest(addSportSchema) (payload validation)",
+          "Middleware: auditMiddleware (optional - log sport additions)",
+          "Handler: addUserSport controller from T4.2",
+          "Implement: DELETE /api/users/:id/sports/:sport route",
+          "Middleware: authenticateToken (JWT validation)",
+          "Middleware: auditMiddleware (optional - log sport removals)",
+          "Handler: removeUserSport controller from T4.2",
+          "Mount: Routes to Express app (app.use('/api/users', userRoutes))"
+        ],
+        "gate": "Both routes must be defined with complete middleware chain before proceeding"
+      },
+      {
+        "phase": 2,
+        "name": "Middleware Chain Verification",
+        "actions": [
+          "Verify: authenticateToken runs before controller (401 if no JWT)",
+          "Verify: validateRequest rejects invalid payloads (400 before controller)",
+          "Verify: Controller receives AuthenticatedRequest with user property",
+          "Verify: Audit middleware logs sport management actions (if implemented)",
+          "Verify: Error handling middleware catches controller errors",
+          "Verify: Proper status codes returned (201, 204, 400, 401, 403, 404, 409)"
+        ]
+      },
+      {
+        "phase": 3,
+        "name": "MVP Test Suite (4 tests)",
+        "actions": [
+          "Write: 2 integration tests for route middleware chain",
+          "Test: POST route - missing JWT returns 401",
+          "Test: POST route - invalid payload returns 400 (validation middleware)",
+          "Write: 2 E2E tests for complete user flow",
+          "Test: E2E - Login → POST pickleball → GET profile → Verify sport in array",
+          "Test: E2E - Login → POST paddle → DELETE paddle → GET profile → Verify removed",
+          "Verify: All 4 tests passing with complete request/response cycle",
+          "Verify: Integration with existing user profile GET endpoint (sports array populated)"
+        ]
+      }
+    ]
+  }
+}
