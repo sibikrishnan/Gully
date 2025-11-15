@@ -7,8 +7,12 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../../../shared/types/auth.types';
 import { UserRepository } from '../repositories/user.repository';
 import { stripNonUpdatableFields, updateUserSchema } from '../schemas/user.schema';
+import { UserCascadeService } from '../services/user-cascade.service';
+import { UserCleanupService } from '../services/user-cleanup.service';
 
 const userRepository = new UserRepository();
+const cascadeService = new UserCascadeService();
+const cleanupService = new UserCleanupService();
 
 /**
  * GET /api/users/:id - Retrieve user profile
@@ -125,6 +129,58 @@ export async function updateUserProfile(
     }
 
     console.error('Error in updateUserProfile:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+/**
+ * DELETE /api/users/:id - Delete user profile
+ * Implements authorization and deletion orchestration:
+ * - Only allows users to delete their own profile (403 for others)
+ * - Orchestrates: cascade → cleanup → soft delete
+ * - Returns 204 No Content on successful deletion
+ * - Returns 404 if user not found or already deleted
+ * - Returns 403 if unauthorized
+ */
+export async function deleteUserProfile(
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> {
+  try {
+    const userId = parseInt(req.params.id, 10);
+
+    // Authorization check: users can only delete their own profile
+    if (!req.user || req.user.id !== userId) {
+      res.status(403).json({ error: 'Forbidden: You can only delete your own profile' });
+      return;
+    }
+
+    // Check if user exists and is active (not already deleted)
+    const user = await userRepository.findById(userId);
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    // Orchestrate deletion flow: cascade → cleanup → soft delete
+    // Step 1: Handle cascade effects (team removal, captain transfer, etc.)
+    await cascadeService.handleUserDeletionCascade(userId);
+
+    // Step 2: Cleanup sessions, tokens, cache
+    await cleanupService.cleanupUserSessions(userId);
+
+    // Step 3: Soft delete the user
+    const deleted = await userRepository.softDeleteUser(userId);
+
+    if (!deleted) {
+      res.status(500).json({ error: 'Failed to delete user' });
+      return;
+    }
+
+    // Success: return 204 No Content
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error in deleteUserProfile:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
