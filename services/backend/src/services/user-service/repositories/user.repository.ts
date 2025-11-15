@@ -96,6 +96,63 @@ export class UserRepository {
   }
 
   /**
+   * Soft delete user by setting status to 'inactive'
+   * Creates audit trail record in deletion_audit table
+   * Uses transaction for atomic operation
+   * Idempotent - returns true if user already deleted
+   * @param id - User ID (integer)
+   * @returns true if user found and deleted/already deleted, false if user not found
+   */
+  async softDeleteUser(id: number): Promise<boolean> {
+    // Validate ID
+    if (!id || id <= 0) {
+      return false;
+    }
+
+    try {
+      // Use transaction for atomic soft delete + audit
+      const result = await db.transaction(async (trx) => {
+        // Check if user exists
+        const existingUser = await trx('users')
+          .select('id', 'status')
+          .where({ id })
+          .first();
+
+        if (!existingUser) {
+          return false;
+        }
+
+        // Idempotent - if already inactive, return true
+        if (existingUser.status === 'inactive') {
+          return true;
+        }
+
+        // Perform soft delete by setting status to inactive
+        await trx('users')
+          .update({
+            status: 'inactive'
+            // updated_at is managed by database trigger
+          })
+          .where({ id });
+
+        // Create audit trail record
+        await trx('deletion_audit').insert({
+          user_id: id,
+          deleted_at: trx.fn.now(),
+          deleted_by: null, // TODO: Add authenticated user ID when available
+        });
+
+        return true;
+      });
+
+      return result;
+    } catch (error) {
+      console.error('Error in UserRepository.softDeleteUser:', error);
+      return false;
+    }
+  }
+
+  /**
    * Update user profile (PATCH operation - partial updates)
    * Only allows updating mutable fields, excludes id, password_hash, created_at
    * Enforces unique constraints on username
