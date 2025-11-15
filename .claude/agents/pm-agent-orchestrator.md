@@ -11,30 +11,34 @@ color: purple
 
 ## Core Protocol
 
-1. **Read State** → `tools/tracker/data/status/current.json`, `tools/tracker/data/history/active.json`
-2. **Identify Next Task** → Based on dependencies, phase, current status
+1. **Read State** → `tools/tracker/data/TASK_TRACKER.csv` (single source of truth)
+2. **Identify Next Task** → Find first `status=pending` in current phase from CSV
 3. **Generate Tasks** → Invoke `task-generation-agent` if task objects missing
 4. **Review Quality** → Validate generated tasks autonomously
-5. **Assign/Execute** → Coordinate execution agents
-6. **Track Progress** → Update tracker JSON files
-7. **Validate Gates** → Check maturity before phase transitions
-8. **STOP at Phase Boundaries** → Human advances phases
+5. **Curate Context** → Build focused context for task (schemas, dependencies, patterns)
+6. **Select Model** → Choose haiku/sonnet/opus based on task complexity
+7. **Invoke Executor** → Spawn `task-executor-agent` with curated context
+8. **Receive Report** → Process structured completion report from executor
+9. **Update Tracker** → Update TASK_TRACKER.csv with results
+10. **Validate Gates** → Check maturity before phase transitions
+11. **STOP at Phase Boundaries** → Human advances phases
 
 ## Required Files
 
 - `docs/planning/PROJECT_PLAN.json` - Master plan with phase skeletons
-- `tools/tracker/data/status/current.json` - Current state (phase, task, progress)
-- `tools/tracker/data/history/active.json` - Completed task log
+- `tools/tracker/data/TASK_TRACKER.csv` - Task status tracking (single source of truth)
+- `tools/tracker/data/tasks/{PARENT_ID}/{SUBTASK_FILE}.json` - Task workflow definitions
 - `tools/tracker/data/bugs/` - Bug tracking
 - `docs/planning/TECH_SPEC.json` - Architecture reference
+- `docs/context/learnings/phase{N}-tdd-patterns.md` - Phase-specific test patterns
 
 ## Pre-Flight Checks
 
 **MUST verify before work:**
 ```bash
-cat tools/tracker/data/status/current.json
-cat tools/tracker/data/history/active.json
+cat tools/tracker/data/TASK_TRACKER.csv
 cat docs/planning/PROJECT_PLAN.json
+ls tools/tracker/data/tasks/  # Verify task JSON files exist
 ```
 
 If missing: Error → suggest `/pm-initialize`
@@ -42,10 +46,11 @@ If missing: Error → suggest `/pm-initialize`
 ## Execution Workflow
 
 ### 1. Analyze State (5 min)
-- Current phase/task from `current.json`
-- Dependencies from `PROJECT_PLAN.json`
-- Completed tasks from `active.json`
-- Phase progress percentage
+- Read `TASK_TRACKER.csv` → current phase, completed vs total tasks
+- Find first row with `status=pending` → this is next task
+- Extract: `parent_id`, `subtask_file`, `title`, `notes`
+- Check dependencies: verify all deps have `status=completed`
+- Calculate phase progress: completed_count / total_in_phase
 
 ### 2. Determine Next Action (2 min)
 **Decision Tree:**
@@ -67,48 +72,141 @@ If missing: Error → suggest `/pm-initialize`
 - Dependencies: Correctly mapped in `dependencies[]`
 - Acceptance: Clear, testable criteria
 
-### 4. Execute Task (60-90 min)
-**For each task:**
-- Update `current.json` → `status: "in_progress"`
-- Execute implementation
-- Run tests (`npm test`)
-- Update completion → `current.json` status: "completed"
-- Log to `active.json` with timestamps, metrics
+### 4. Curate Context (5 min)
 
-**🔒 TRACKER UPDATE CHECKLIST (MANDATORY):**
+**Build focused context for task-executor:**
+
+1. **Load Task JSON:**
+   ```bash
+   cat tools/tracker/data/tasks/{parent_id}/{subtask_file}
+   ```
+
+2. **Identify Required Schemas:**
+   - Parse task JSON for schema references
+   - Example: User task → need `user.schema.ts`, `database.schema.ts`
+   - Build full file paths: `/Users/sibikrishnan/Documents/Gully/src/...`
+
+3. **Load Dependencies:**
+   - Check task.dependencies array
+   - Load previous subtask JSONs (for context on what was built)
+   - Example: T2.2 depends on T2.1 → load T2.1 task file
+
+4. **Phase-Specific Test Patterns:**
+   - Determine current phase from CSV
+   - Load: `docs/context/learnings/phase{N}-tdd-patterns.md`
+
+### 5. Select Model (2 min)
+
+**Decision Logic:**
+
+```
+READ task JSON → check:
+- estimatedTokens
+- testCount
+- tags (contains "complex", "security", "architecture")
+- metadata.testTier
+
+IF testCount < 25 AND no "complex" tags AND estimatedTokens < 30000:
+  → model = "haiku"  (cost-effective)
+
+ELSE IF testCount < 50 AND estimatedTokens < 60000:
+  → model = "sonnet"  (balanced)
+
+ELSE:
+  → model = "opus"  (maximum capability)
+```
+
+**Override Rules:**
+- Tags contain "security" or "auth" → always `sonnet` minimum
+- Tags contain "architecture" or "refactor" → always `sonnet` minimum
+- Human can override in CSV notes field: `notes="use:opus"`
+
+### 6. Invoke Task Executor (60-90 min)
+
+**Build execution payload:**
+```json
+{
+  "taskId": "P2-PROF-T2.2",
+  "taskFile": "tools/tracker/data/tasks/P2-PROF-T2/P2-PROF-T2.2-controller.json",
+  "model": "haiku",
+  "context": {
+    "schemas": [
+      "/Users/sibikrishnan/Documents/Gully/src/services/user-service/schemas/user.schema.ts"
+    ],
+    "dependencies": {
+      "P2-PROF-T2.1": "tools/tracker/data/tasks/P2-PROF-T2/P2-PROF-T2.1-repo.json"
+    },
+    "testPatterns": "docs/context/learnings/phase2-tdd-patterns.md"
+  },
+  "executionBudget": {
+    "maxTokens": 30000,
+    "estimatedDuration": "60 min"
+  },
+  "reportBack": {
+    "onCheckpoint": true,
+    "onCompletion": true,
+    "onError": true
+  }
+}
+```
+
+**Invoke:**
+```
+Use Task tool with:
+  subagent_type: "task-executor-agent"
+  model: <selected_model>
+  prompt: <JSON payload above>
+```
+
+### 7. Process Completion Report
+
+**Receive structured JSON from task-executor:**
+```json
+{
+  "status": "completed | partial | failed",
+  "taskId": "P2-PROF-T2.2",
+  "execution": { "tokensUsed": 28500, ... },
+  "results": { "testsPassing": 15, "coverage": "94%", ... },
+  "blockers": [],
+  "summary": "...",
+  "nextSteps": []
+}
+```
+
+**Validation:**
+- Check `status` field
+- If `completed` → proceed to tracker update
+- If `partial` → review blockers, decide: retry or escalate to human
+- If `failed` → escalate to human immediately
+
+### 8. Update CSV Tracker (MANDATORY)
+
+**🔒 AFTER receiving completion report:**
+
 ```bash
-# BEFORE task execution
 cd /Users/sibikrishnan/Documents/Gully/tools/tracker/data
-jq '.currentTask.status = "in_progress"' status/current.json > tmp && mv tmp status/current.json
 
-# AFTER task execution
-jq '.currentTask.status = "completed"' status/current.json > tmp && mv tmp status/current.json
-jq '.currentPhase.progress.tasksComplete += 1' status/current.json > tmp && mv tmp status/current.json
+# Update CSV for completed task
+# Find row by taskId, update:
+# - status=completed
+# - completed=YYYY-MM-DD
+# - test_count=<from completion report>
+# - notes=<summary from report>
 
-# Append to history/active.json
-jq '.tasks += [TASK_COMPLETION_ENTRY]' history/active.json > tmp && mv tmp history/active.json
+# Example using sed or manual edit:
+# Row: P2,P2-PROF-T2,P2-PROF-T2.2-controller.json,Controller - PATCH handler,pending,...
+# →    P2,P2-PROF-T2,P2-PROF-T2.2-controller.json,Controller - PATCH handler,completed,2025-11-14,2025-11-14,2025-11-14,15,"Auth checks + validation tests passing"
+```
 
-# VERIFY updates
-cat status/current.json | jq '.currentTask.status'  # Should show "completed"
-cat history/active.json | jq '.tasks | length'       # Should be +1
+**Commit tracker update:**
+```bash
+git add TASK_TRACKER.csv
+git commit -m "chore: mark P2-PROF-T2.2 complete - 15 tests passing"
 ```
 
 **NEVER skip tracker updates. Human relies on this data.**
 
-### 5. Track Progress (continuous)
-**After each task completion:**
-```json
-// tools/tracker/data/history/active.json
-{
-  "taskId": "P2-PROF-T1",
-  "completedAt": "2025-11-13T...",
-  "duration": "87 min",
-  "testsPassed": 121,
-  "coverage": "92%"
-}
-```
-
-### 6. Validate Phase Completion
+### 9. Validate Phase Completion
 **Before STOP:**
 - All tasks completed? ✅
 - Maturity gate passed? (tests, build, coverage)
