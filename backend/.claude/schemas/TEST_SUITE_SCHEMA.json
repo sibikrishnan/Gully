@@ -1,0 +1,217 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Test Suite Schema (Separated Architecture)",
+  "description": "Test suite stored in separate file, referenced by task via testSuiteRef",
+  "type": "object",
+  "required": ["taskId", "version", "lastModified", "testCases", "coverageRequirements", "successCriteria", "executionConfig"],
+  "properties": {
+    "taskId": {
+      "type": "string",
+      "pattern": "^P\\d+-[A-Z]+-T\\d+$",
+      "description": "Back-reference to parent task ID, e.g., P2-PROF-T1"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "Test suite version, e.g., 1.0, 1.1, 2.0"
+    },
+    "lastModified": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of last modification"
+    },
+    "testCases": {
+      "type": "array",
+      "minItems": 15,
+      "description": "Array of 20-25 test cases (30% unit, 40% integration, 20% edge, 10% e2e/security)",
+      "items": {
+        "type": "object",
+        "required": ["id", "category", "description", "required", "priority", "testFile", "coverage", "trust", "skipConditions"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+\\.[a-z0-9]+\\.[a-z0-9-]+$",
+            "description": "Test case ID: feature.category.detail, e.g., 'jwt-utils.unit.token-generation'"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["unit", "integration", "e2e", "regression", "performance"],
+            "description": "Test category"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10,
+            "description": "Human-readable description of test case"
+          },
+          "required": {
+            "type": "boolean",
+            "description": "Whether this test must pass for task completion"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Test priority level"
+          },
+          "testFile": {
+            "type": "object",
+            "required": ["path", "status"],
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Absolute path to test file"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_created", "created", "passing", "failing", "blocked"],
+                "description": "Current test file status"
+              },
+              "testCount": {
+                "type": "number",
+                "minimum": 1,
+                "description": "Number of individual test assertions in file"
+              },
+              "estimatedDuration": {
+                "type": "string",
+                "description": "Human-readable duration, e.g., '25 seconds'"
+              }
+            }
+          },
+          "coverage": {
+            "type": "object",
+            "required": ["targetFunctions", "scenarios", "edgeCases"],
+            "properties": {
+              "targetFunctions": {
+                "type": "array",
+                "items": {"type": "string"},
+                "minItems": 1,
+                "description": "Functions/methods under test"
+              },
+              "scenarios": {
+                "type": "array",
+                "items": {"type": "string"},
+                "minItems": 1,
+                "description": "Concrete test scenarios (not placeholders)"
+              },
+              "edgeCases": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Edge cases and boundary conditions"
+              }
+            }
+          },
+          "trust": {
+            "type": "boolean",
+            "default": false,
+            "description": "True = test is known to pass, can skip unless watched files change"
+          },
+          "skipConditions": {
+            "type": "object",
+            "required": ["ifTrusted", "unlessFileChanged"],
+            "properties": {
+              "ifTrusted": {
+                "type": "boolean",
+                "description": "Skip this test if trust=true"
+              },
+              "unlessFileChanged": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "File watch list - re-run test if any of these files change"
+              }
+            }
+          },
+          "dependsOn": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Test case IDs that must run/pass before this one"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Blocker descriptions preventing test execution"
+          }
+        }
+      }
+    },
+    "coverageRequirements": {
+      "type": "object",
+      "required": ["enabled", "criticalFiles"],
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether code coverage tracking is enabled"
+        },
+        "minimumPercentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Minimum coverage percentage required (recommend 90)"
+        },
+        "criticalFiles": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Files that MUST have high coverage"
+        }
+      }
+    },
+    "successCriteria": {
+      "type": "object",
+      "required": ["allTestsMustPass", "noTypeScriptErrors", "buildMustSucceed"],
+      "properties": {
+        "allTestsMustPass": {
+          "type": "boolean",
+          "description": "All required tests must pass for task completion"
+        },
+        "noTypeScriptErrors": {
+          "type": "boolean",
+          "description": "No TypeScript compilation errors allowed"
+        },
+        "noLintingErrors": {
+          "type": "boolean",
+          "description": "No linting errors allowed"
+        },
+        "buildMustSucceed": {
+          "type": "boolean",
+          "description": "Production build must succeed"
+        }
+      }
+    },
+    "executionConfig": {
+      "type": "object",
+      "required": ["runInOrder", "stopOnFirstFailure", "parallelizable"],
+      "properties": {
+        "runInOrder": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Test case IDs in execution order"
+        },
+        "stopOnFirstFailure": {
+          "type": "boolean",
+          "description": "Stop execution on first test failure"
+        },
+        "parallelizable": {
+          "type": "boolean",
+          "description": "Whether tests can run in parallel"
+        }
+      }
+    },
+    "previousVersion": {
+      "type": "object",
+      "properties": {
+        "archivedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When previous version was archived"
+        },
+        "archivePath": {
+          "type": "string",
+          "pattern": "^tests/archive/[a-zA-Z0-9-]+\\.json$",
+          "description": "Path to archived version, e.g., 'tests/archive/task-3-tests-v1.json'"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Why this version was created/updated"
+        }
+      }
+    }
+  }
+}

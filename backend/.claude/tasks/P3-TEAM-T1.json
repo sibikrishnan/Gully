@@ -1,0 +1,403 @@
+{
+  "id": "P3-TEAM-T1",
+  "version": "1.0",
+  "changelog": [
+    {
+      "version": "1.0", 
+      "timestamp": "2025-11-08T19:35:00Z",
+      "change": "Initial task definition for POST /api/teams endpoint",
+      "author": "claude-opus-4"
+    }
+  ],
+  "content": "Implement POST /api/teams endpoint for team creation with captain assignment",
+  "activeForm": "Implementing POST /api/teams endpoint for team creation with captain assignment",
+  "description": "Create controller method, route handler, Zod validation schema, and comprehensive tests for team creation endpoint. Automatically assigns the creating user as team captain in the team_members table, validates team data, and ensures unique team names per sport.",
+  "status": "pending",
+  "dependencies": ["P2-PROF-T5"],
+  "testSuite": {
+    "testCases": [
+      {
+        "id": "team-create.unit.controller",
+        "category": "unit",
+        "description": "Unit tests for createTeam controller with captain assignment",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/team-create-controller.test.ts",
+          "status": "not_created",
+          "testCount": 14,
+          "estimatedDuration": "30 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "createTeam",
+            "assignTeamCaptain",
+            "validateTeamData",
+            "generateTeamId"
+          ],
+          "scenarios": [
+            "Create pickleball team successfully",
+            "Create paddle team successfully",
+            "Auto-assign creator as captain",
+            "Set team as public by default",
+            "Set team as private when specified",
+            "Handle optional description field",
+            "Handle optional logo_url field",
+            "Validate team name uniqueness",
+            "Validate sport_name exists"
+          ],
+          "edgeCases": [
+            "Team name with special characters",
+            "Maximum field length validation",
+            "Concurrent team creation",
+            "Creator without sport preference",
+            "Duplicate team name per sport"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/controllers/team.controller.ts"
+          ]
+        }
+      },
+      {
+        "id": "team-create.unit.validation",
+        "category": "unit",
+        "description": "Unit tests for team creation Zod schema",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/team-create-validation.test.ts",
+          "status": "not_created",
+          "testCount": 11,
+          "estimatedDuration": "20 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "createTeamSchema",
+            "validateTeamPayload",
+            "sanitizeTeamData"
+          ],
+          "scenarios": [
+            "Valid team data passes validation",
+            "Team name required and non-empty",
+            "Sport name required and valid",
+            "Logo URL must be valid format",
+            "Description maximum length 500",
+            "Location city optional",
+            "Is_public defaults to true",
+            "Strip non-allowed fields"
+          ],
+          "edgeCases": [
+            "SQL injection in team name",
+            "XSS attempt in description",
+            "Invalid URL in logo_url"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/schemas/team.schema.ts"
+          ]
+        }
+      },
+      {
+        "id": "team-create.unit.captain",
+        "category": "unit",
+        "description": "Unit tests for captain assignment logic",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/team-captain-assignment.test.ts",
+          "status": "not_created",
+          "testCount": 9,
+          "estimatedDuration": "20 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "addTeamCaptain",
+            "createTeamMemberEntry",
+            "setMemberRole"
+          ],
+          "scenarios": [
+            "Captain role assigned correctly",
+            "Captain added to team_members",
+            "Captain joined_at timestamp set",
+            "Captain is_active set to true",
+            "Only one captain per team"
+          ],
+          "edgeCases": [
+            "User already captain of another team",
+            "Captain assignment transaction rollback",
+            "Concurrent captain assignments",
+            "Captain with no user_sports entry"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/services/team-member.service.ts"
+          ]
+        }
+      },
+      {
+        "id": "team-create.unit.authorization",
+        "category": "unit",
+        "description": "Unit tests for team creation authorization",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/team-create-authorization.test.ts",
+          "status": "not_created",
+          "testCount": 8,
+          "estimatedDuration": "20 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "authorizeTeamCreation",
+            "checkUserEligibility"
+          ],
+          "scenarios": [
+            "Authenticated user can create team (201)",
+            "Unauthenticated request returns 401",
+            "Invalid JWT returns 401",
+            "Expired JWT returns 401",
+            "Soft-deleted user returns 403"
+          ],
+          "edgeCases": [
+            "User team limit checking (future)",
+            "Subscription tier limits (future)",
+            "Rate limiting per user"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/middleware/team-auth.middleware.ts"
+          ]
+        }
+      },
+      {
+        "id": "team-create.integration.database",
+        "category": "integration",
+        "description": "Integration tests for team creation database operations",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/team-create-database.test.ts",
+          "status": "not_created",
+          "testCount": 12,
+          "estimatedDuration": "45 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "insertTeam",
+            "insertTeamMember",
+            "beginTransaction",
+            "commitTransaction"
+          ],
+          "scenarios": [
+            "Team record created successfully",
+            "Team member record created",
+            "Transaction commits on success",
+            "Transaction rollback on error",
+            "Unique constraint on team name",
+            "Foreign key constraint on captain_id",
+            "Create pickleball team with location",
+            "Create paddle team without location"
+          ],
+          "edgeCases": [
+            "Deadlock during concurrent creation",
+            "Connection loss mid-transaction",
+            "Constraint violation handling",
+            "UUID generation collision"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/repositories/team.repository.ts"
+          ]
+        },
+        "dependsOn": []
+      },
+      {
+        "id": "team-create.integration.route",
+        "category": "integration",
+        "description": "Integration tests for POST /api/teams route",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/team-create-route.test.ts",
+          "status": "not_created",
+          "testCount": 10,
+          "estimatedDuration": "35 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "POST /api/teams route",
+            "teamValidationMiddleware",
+            "authMiddleware"
+          ],
+          "scenarios": [
+            "Successful creation returns 201",
+            "Returns created team with ID",
+            "Invalid payload returns 400",
+            "Missing auth returns 401",
+            "Duplicate team returns 409",
+            "Response includes captain info"
+          ],
+          "edgeCases": [
+            "Content-Type validation",
+            "Request size limits",
+            "CORS headers present",
+            "Rate limiting enforcement"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/routes/team.routes.ts"
+          ]
+        },
+        "dependsOn": ["team-create.unit.authorization"]
+      },
+      {
+        "id": "team-create.e2e",
+        "category": "e2e",
+        "description": "End-to-end tests for complete team creation flow",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/team-create-flow.test.ts",
+          "status": "not_created",
+          "testCount": 8,
+          "estimatedDuration": "50 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "Complete team creation flow"
+          ],
+          "scenarios": [
+            "Login → Create pickleball team → Verify captain",
+            "Create paddle team → GET team → Verify details",
+            "Create team → Check team_members table",
+            "Create private team → Verify visibility",
+            "Create team → Add members (future test)"
+          ],
+          "edgeCases": [
+            "Create team during user update",
+            "Create multiple teams rapidly",
+            "Team creation affects user stats"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/"
+          ]
+        },
+        "dependsOn": ["team-create.integration.route", "team-create.integration.database"]
+      },
+      {
+        "id": "team-create.regression",
+        "category": "regression",
+        "description": "Regression tests for team creation impact",
+        "required": true,
+        "priority": "medium",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/regression/team-create-regression.test.ts",
+          "status": "not_created",
+          "testCount": 5,
+          "estimatedDuration": "25 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "System compatibility"
+          ],
+          "scenarios": [
+            "User profile shows team membership",
+            "Team appears in search results",
+            "Captain privileges work correctly",
+            "Team stats initialized properly"
+          ],
+          "edgeCases": [
+            "Legacy API compatibility"
+          ]
+        },
+        "trust": false,
+        "skipConditions": {
+          "ifTrusted": false,
+          "unlessFileChanged": [
+            "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/"
+          ]
+        },
+        "dependsOn": ["team-create.e2e"]
+      }
+    ],
+    "coverageRequirements": {
+      "enabled": true,
+      "minimumPercentage": 90,
+      "criticalFiles": [
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/controllers/team.controller.ts",
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/repositories/team.repository.ts",
+        "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/services/team-member.service.ts"
+      ]
+    },
+    "successCriteria": {
+      "allTestsMustPass": true,
+      "noTypeScriptErrors": true,
+      "noLintingErrors": true,
+      "buildMustSucceed": true
+    },
+    "executionConfig": {
+      "runInOrder": [
+        "team-create.unit.controller",
+        "team-create.unit.validation",
+        "team-create.unit.captain",
+        "team-create.unit.authorization",
+        "team-create.integration.database",
+        "team-create.integration.route",
+        "team-create.e2e",
+        "team-create.regression"
+      ],
+      "stopOnFirstFailure": false,
+      "parallelizable": false
+    }
+  },
+  "workflow": {
+    "type": "TDD",
+    "workflowRef": "workflows/tdd.json",
+    "planningRequired": false
+  },
+  "context": {
+    "relevantFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/controllers/team.controller.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/repositories/team.repository.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/schemas/team.schema.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/team-service/services/team-member.service.ts"
+    ],
+    "keyFindings": [
+      "Creator automatically becomes team captain",
+      "Team and team_member records created in transaction",
+      "Teams are public by default (is_public=true)",
+      "Captain role stored in team_members.role field",
+      "Pickleball and paddle are primary sports"
+    ],
+    "previousAttempts": []
+  },
+  "metadata": {
+    "phase": 3,
+    "feature": "Team Management",
+    "estimatedDuration": "120-150 min",
+    "tags": ["team-service", "teams", "crud", "POST", "captain", "pickleball", "paddle"]
+  }
+}

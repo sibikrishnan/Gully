@@ -1,0 +1,562 @@
+{
+  "version": "1.0",
+  "projectName": "Gully",
+  "projectContext": {
+    "techSpecRef": "docs/planning/TECH_SPEC.json",
+    "architectureSummary": "Modular monolith with Node.js 20+/Express/TypeScript, PostgreSQL 15 database, Redis 7 cache, JWT authentication, REST APIs with clear service boundaries designed for future microservices migration at scale (100K+ users).",
+    "maturityModel": {
+      "levels": [
+        {
+          "level": "sequential",
+          "description": "Foundation building phase - User Service and Team Service are critical dependencies with high interdependency. Sequential development only to ensure stability.",
+          "parallelizationCapacity": "1 stream (sequential only)"
+        },
+        {
+          "level": "controlled-parallel",
+          "description": "Stable base established - User and Team services have 90%+ coverage with stable interfaces. Match Service and supporting features can be developed in 2-3 parallel streams.",
+          "parallelizationCapacity": "2-3 streams"
+        },
+        {
+          "level": "full-parallel",
+          "description": "Mature system - Core services stable with comprehensive test coverage. Stats, League, Tournament services can be developed independently by multiple agents in parallel.",
+          "parallelizationCapacity": "unlimited streams"
+        }
+      ],
+      "currentLevel": "sequential"
+    },
+    "technologyStack": {
+      "backend": "Node.js 20+ with Express.js and TypeScript",
+      "database": "PostgreSQL 15 with Redis 7 cache",
+      "testing": "Jest with TDD workflow, 90%+ coverage target"
+    }
+  },
+  "phases": [
+    {
+      "phaseId": "P1",
+      "phaseName": "User Service Foundation",
+      "features": ["User Authentication"],
+      "maturityLevel": "sequential",
+      "dependencies": [],
+      "criticalPath": true,
+      "maturityGate": {
+        "nfrChecks": {
+          "testCoverageTarget": "90%+ for all User Service production code",
+          "performanceTarget": "<100ms for auth endpoints (register, login, token refresh)",
+          "securityChecks": [
+            "JWT authentication working with 7-day expiration",
+            "Password hashing with bcrypt (12 rounds)",
+            "No authentication vulnerabilities (tested for SQL injection, XSS, token leakage)",
+            "Refresh token support implemented"
+          ]
+        },
+        "phaseSpecificChecks": [
+          "User registration endpoint complete and tested",
+          "User login endpoint complete and tested",
+          "JWT token generation and validation working",
+          "Password reset flow implemented",
+          "All auth middleware integration tests passing",
+          "No TypeScript errors in User Service",
+          "Build succeeds for User Service"
+        ],
+        "integrationTestsPassing": true,
+        "buildSuccessful": true
+      },
+      "taskSkeletons": [
+        {
+          "taskId": "P1-AUTH-T1",
+          "title": "POST /api/auth/register - User Registration",
+          "priority": "critical",
+          "feature": "User Authentication",
+          "scope": "Implement user registration endpoint with email/password validation, bcrypt password hashing, and automatic JWT token generation upon successful registration.",
+          "requirements": [
+            "Accept email, password, name, location in request body",
+            "Validate email format and uniqueness",
+            "Hash password with bcrypt (12 rounds)",
+            "Generate UUID for user_id",
+            "Store user in PostgreSQL users table",
+            "Return JWT token and user object (excluding password_hash)",
+            "Handle duplicate email registration gracefully (409 Conflict)"
+          ],
+          "complexity": "moderate",
+          "dependencies": [],
+          "context": {
+            "architecturalGuidance": "modular-monolith with clear service boundaries in services/user-service/",
+            "technologyStack": "Node.js + Express + TypeScript + PostgreSQL + bcrypt + jsonwebtoken",
+            "testingApproach": "TDD with 90%+ coverage (unit tests for controller/repository, integration tests for route/auth flow, e2e for complete registration flow)",
+            "performanceTarget": "<100ms response time",
+            "securityGuidance": "JWT with bcrypt password hashing, Zod input validation, prevent SQL injection with parameterized queries"
+          }
+        },
+        {
+          "taskId": "P1-AUTH-T2",
+          "title": "POST /api/auth/login - User Login",
+          "priority": "critical",
+          "feature": "User Authentication",
+          "scope": "Implement user login endpoint with email/password verification, JWT token generation, and proper error handling for invalid credentials.",
+          "requirements": [
+            "Accept email and password in request body",
+            "Validate email format",
+            "Retrieve user from database by email",
+            "Verify password using bcrypt.compare",
+            "Generate JWT token with 7-day expiration",
+            "Return JWT token and user object (excluding password_hash)",
+            "Return 401 for invalid credentials with generic error message",
+            "Skip soft-deleted users (is_active=false)"
+          ],
+          "complexity": "moderate",
+          "dependencies": ["P1-AUTH-T1"],
+          "context": {
+            "architecturalGuidance": "modular-monolith with clear service boundaries in services/user-service/",
+            "technologyStack": "Node.js + Express + TypeScript + PostgreSQL + bcrypt + jsonwebtoken",
+            "testingApproach": "TDD with 90%+ coverage (unit, integration, e2e, security tests for timing attacks)",
+            "performanceTarget": "<100ms response time",
+            "securityGuidance": "JWT with bcrypt password verification, prevent timing attacks with constant-time comparison, generic error messages"
+          }
+        },
+        {
+          "taskId": "P1-AUTH-T3",
+          "title": "POST /api/auth/refresh - Token Refresh",
+          "priority": "high",
+          "feature": "User Authentication",
+          "scope": "Implement token refresh endpoint to allow users to obtain new JWT tokens before expiration without re-authenticating.",
+          "requirements": [
+            "Accept valid JWT token in Authorization header",
+            "Verify token signature and expiration",
+            "Generate new JWT token with fresh 7-day expiration",
+            "Return new token and updated user object",
+            "Return 401 for expired or invalid tokens"
+          ],
+          "complexity": "simple",
+          "dependencies": ["P1-AUTH-T2"],
+          "context": {
+            "architecturalGuidance": "modular-monolith with auth middleware reuse",
+            "technologyStack": "Node.js + Express + TypeScript + jsonwebtoken",
+            "testingApproach": "TDD with 90%+ coverage (unit, integration, e2e)",
+            "performanceTarget": "<100ms response time",
+            "securityGuidance": "JWT verification with proper error handling for expired/invalid tokens"
+          }
+        },
+        {
+          "taskId": "P1-AUTH-T4",
+          "title": "POST /api/auth/password-reset - Password Reset Flow",
+          "priority": "high",
+          "feature": "User Authentication",
+          "scope": "Implement password reset flow with email-based token verification. Includes reset token generation, email sending, and password update with token validation.",
+          "requirements": [
+            "Accept email in request body for reset initiation",
+            "Generate secure reset token (UUID or crypto-random)",
+            "Store reset token with expiration (1 hour) in database",
+            "Send reset email with token (via SendGrid/Mailgun)",
+            "Verify reset token on password update request",
+            "Update password with bcrypt hashing",
+            "Invalidate reset token after successful update",
+            "Return 400 for expired or invalid tokens"
+          ],
+          "complexity": "complex",
+          "dependencies": ["P1-AUTH-T1"],
+          "context": {
+            "architecturalGuidance": "modular-monolith with email service integration",
+            "technologyStack": "Node.js + Express + TypeScript + PostgreSQL + SendGrid/Mailgun",
+            "testingApproach": "TDD with 90%+ coverage (unit, integration, e2e, edge cases for token expiration)",
+            "performanceTarget": "<200ms for token generation, <500ms for email sending",
+            "securityGuidance": "Secure token generation, token expiration, prevent token reuse, generic error messages"
+          }
+        }
+      ]
+    },
+    {
+      "phaseId": "P2",
+      "phaseName": "User Profiles & Sports Preferences",
+      "features": ["User Profiles"],
+      "maturityLevel": "sequential",
+      "dependencies": ["P1"],
+      "criticalPath": true,
+      "maturityGate": {
+        "nfrChecks": {
+          "testCoverageTarget": "90%+ for all User Service production code (including profiles)",
+          "performanceTarget": "<100ms for profile CRUD operations, <500ms for user search with filters",
+          "securityChecks": [
+            "Field-level access control working (own profile shows all fields, other profiles hide email/phone)",
+            "Password hash never exposed in API responses",
+            "Input validation with Zod on all profile endpoints"
+          ]
+        },
+        "phaseSpecificChecks": [
+          "User profile retrieval (GET /api/users/:id) complete and tested",
+          "User profile update (PATCH /api/users/:id) complete and tested",
+          "User soft delete (DELETE /api/users/:id) complete and tested",
+          "Sports preferences management (POST/DELETE /api/users/:id/sports) complete and tested",
+          "User search with filters (GET /api/users/search) complete and tested",
+          "Integration tests with User Service auth passing",
+          "user_sports JOIN query optimized (<100ms)",
+          "No TypeScript errors in User Service",
+          "Build succeeds for User Service"
+        ],
+        "integrationTestsPassing": true,
+        "buildSuccessful": true
+      },
+      "taskSkeletons": [
+        {
+          "taskId": "P2-PROF-T1",
+          "title": "GET /api/users/:id - Retrieve User Profile",
+          "priority": "critical",
+          "feature": "User Profiles",
+          "scope": "Implement user profile retrieval endpoint with sports preferences JOIN. Include authentication middleware and field-level access control (own profile shows all fields, other profiles hide email/phone).",
+          "requirements": [
+            "JOIN users with user_sports table to include sports preferences",
+            "Exclude password_hash from all responses",
+            "Filter email/phone for other users' profiles (own profile shows all)",
+            "Return 404 for soft-deleted users (is_active=false)",
+            "Include sports array with sport_name, skill_level, years_experience, preferred_position",
+            "Support multiple sports (pickleball, paddle, basketball, soccer, cricket)"
+          ],
+          "complexity": "moderate",
+          "dependencies": [],
+          "context": {
+            "architecturalGuidance": "modular-monolith with clear service boundaries",
+            "technologyStack": "Node.js + Express + TypeScript + PostgreSQL",
+            "testingApproach": "TDD with 90%+ coverage (unit, integration, e2e, regression)",
+            "performanceTarget": "<100ms response time for profile retrieval with sports JOIN",
+            "securityGuidance": "JWT authentication, field-level access control, Zod validation"
+          }
+        },
+        {
+          "taskId": "P2-PROF-T2",
+          "title": "PATCH /api/users/:id - Update User Profile",
+          "priority": "critical",
+          "feature": "User Profiles",
+          "scope": "Implement user profile update endpoint with partial updates support. Users can only update their own profiles. Supports updating name, bio, avatar_url, location.",
+          "requirements": [
+            "Accept partial updates (only provided fields are updated)",
+            "Validate user can only update own profile (user_id from JWT matches :id param)",
+            "Support updating: name, bio, avatar_url, location",
+            "Do NOT allow updating: email, password_hash, is_active, created_at",
+            "Return updated user object with sports preferences",
+            "Return 403 if user tries to update another user's profile",
+            "Return 404 for soft-deleted users"
+          ],
+          "complexity": "moderate",
+          "dependencies": ["P2-PROF-T1"],
+          "context": {
+            "architecturalGuidance": "modular-monolith with service boundaries",
+            "technologyStack": "Node.js + Express + TypeScript + PostgreSQL",
+            "testingApproach": "TDD with 90%+ coverage (unit, integration, e2e, authorization tests)",
+            "performanceTarget": "<100ms response time",
+            "securityGuidance": "JWT authentication, authorization checks, Zod validation for allowed fields only"
+          }
+        },
+        {
+          "taskId": "P2-PROF-T3",
+          "title": "DELETE /api/users/:id - Soft Delete User",
+          "priority": "critical",
+          "feature": "User Profiles",
+          "scope": "Implement user soft delete endpoint. Sets is_active=false instead of hard delete to preserve match history and team memberships.",
+          "requirements": [
+            "Validate user can only delete own profile",
+            "Set is_active=false (soft delete)",
+            "Preserve all user data (do NOT delete from database)",
+            "Invalidate user's JWT tokens (optional: maintain token blacklist in Redis)",
+            "Return 204 No Content on successful deletion",
+            "Return 403 if user tries to delete another user",
+            "Return 404 if user already soft-deleted"
+          ],
+          "complexity": "simple",
+          "dependencies": ["P2-PROF-T1"],
+          "context": {
+            "architecturalGuidance": "modular-monolith with soft delete pattern",
+            "technologyStack": "Node.js + Express + TypeScript + PostgreSQL + Redis (optional for token blacklist)",
+            "testingApproach": "TDD with 90%+ coverage (unit, integration, e2e, edge cases for already-deleted users)",
+            "performanceTarget": "<100ms response time",
+            "securityGuidance": "JWT authentication, authorization checks, token invalidation strategy"
+          }
+        },
+        {
+          "taskId": "P2-PROF-T4",
+          "title": "POST/DELETE /api/users/:id/sports - Manage Sport Preferences",
+          "priority": "critical",
+          "feature": "User Profiles",
+          "scope": "Implement endpoints to add and remove sports preferences for users. POST adds a sport with skill level and optional metadata. DELETE removes a sport preference.",
+          "requirements": [
+            "POST: Add sport to user_sports table with sport_name, skill_level, years_experience, preferred_position",
+            "DELETE: Remove sport from user_sports table",
+            "Validate user can only manage own sports preferences",
+            "Support sports: pickleball, paddle, basketball, soccer, cricket",
+            "Validate skill_level enum: beginner, intermediate, advanced, expert",
+            "Prevent duplicate sport entries for same user",
+            "Return updated user object with sports array after operation"
+          ],
+          "complexity": "moderate",
+          "dependencies": ["P2-PROF-T1"],
+          "context": {
+            "architecturalGuidance": "modular-monolith with service boundaries",
+            "technologyStack": "Node.js + Express + TypeScript + PostgreSQL",
+            "testingApproach": "TDD with 90%+ coverage (unit, integration, e2e, duplicate prevention tests)",
+            "performanceTarget": "<100ms response time",
+            "securityGuidance": "JWT authentication, authorization checks, Zod validation for sport_name and skill_level enums"
+          }
+        },
+        {
+          "taskId": "P2-PROF-T5",
+          "title": "GET /api/users/search - Search Users with Filters",
+          "priority": "high",
+          "feature": "User Profiles",
+          "scope": "Implement user search endpoint with filters for sport, skill level, location. Supports pagination and returns user profiles excluding sensitive data.",
+          "requirements": [
+            "Accept query params: sport, skill_level, location, page, limit",
+            "Filter users by sport (JOIN with user_sports)",
+            "Filter users by skill_level",
+            "Filter users by location (case-insensitive partial match)",
+            "Support pagination with page and limit (default limit=20, max=100)",
+            "Exclude soft-deleted users (is_active=false)",
+            "Return user profiles with sports preferences (excluding email/phone/password_hash)",
+            "Return total count for pagination"
+          ],
+          "complexity": "complex",
+          "dependencies": ["P2-PROF-T1"],
+          "context": {
+            "architecturalGuidance": "modular-monolith with optimized queries",
+            "technologyStack": "Node.js + Express + TypeScript + PostgreSQL",
+            "testingApproach": "TDD with 90%+ coverage (unit, integration, e2e, performance tests for N+1 queries)",
+            "performanceTarget": "<500ms for search with filters, optimize for N+1 query problem",
+            "securityGuidance": "JWT authentication, Zod validation for query params, rate limiting (100 req/min per IP)"
+          }
+        }
+      ]
+    },
+    {
+      "phaseId": "P3",
+      "phaseName": "Team Creation & Management",
+      "features": ["Team Creation & Management"],
+      "maturityLevel": "sequential",
+      "dependencies": ["P1", "P2"],
+      "criticalPath": true,
+      "maturityGate": {
+        "nfrChecks": {
+          "testCoverageTarget": "90%+ for all Team Service production code",
+          "performanceTarget": "<100ms for team CRUD operations, <500ms for team search with members JOIN",
+          "securityChecks": [
+            "Team captain authorization checks working",
+            "Only captains can update/delete teams",
+            "Only captains can add/remove members",
+            "Input validation with Zod on all team endpoints"
+          ]
+        },
+        "phaseSpecificChecks": [
+          "Team creation (POST /api/teams) complete and tested",
+          "Team retrieval with members (GET /api/teams/:id) complete and tested",
+          "Team update (PATCH /api/teams/:id) complete and tested",
+          "Team soft delete (DELETE /api/teams/:id) complete and tested",
+          "Add team member (POST /api/teams/:id/members) complete and tested",
+          "Remove team member (DELETE /api/teams/:id/members/:userId) complete and tested",
+          "Team search (GET /api/teams) complete and tested",
+          "Integration tests with User Service passing (captain validation, member validation)",
+          "team_members JOIN query optimized (<100ms)",
+          "No TypeScript errors in Team Service",
+          "Build succeeds for Team Service"
+        ],
+        "integrationTestsPassing": true,
+        "buildSuccessful": true
+      },
+      "taskSkeletons": [
+        {
+          "taskId": "P3-TEAM-T1",
+          "title": "POST /api/teams - Create Team with Captain",
+          "priority": "critical",
+          "feature": "Team Creation & Management",
+          "scope": "Create team creation endpoint with captain assignment. Handle team validation, database persistence, and initial team_members entry for captain.",
+          "requirements": [
+            "Captain must be a valid registered user (JWT user_id)",
+            "Team name must be unique per sport",
+            "Accept: team_name, sport, description, logo_url in request body",
+            "Auto-create team_members entry for captain with is_captain=true",
+            "Support multiple sports (pickleball, paddle, basketball, soccer, cricket)",
+            "Generate UUID for team_id",
+            "Return team object with captain details"
+          ],
+          "complexity": "moderate",
+          "dependencies": [],
+          "context": {
+            "architecturalGuidance": "modular-monolith with clear service boundaries in services/team-service/",
+            "technologyStack": "Node.js + Express + TypeScript + PostgreSQL",
+            "testingApproach": "TDD with 90%+ coverage (unit, integration, e2e, uniqueness constraint tests)",
+            "performanceTarget": "<100ms response time",
+            "securityGuidance": "JWT authentication, captain validation against User Service, Zod validation for sport enum"
+          }
+        },
+        {
+          "taskId": "P3-TEAM-T2",
+          "title": "GET /api/teams/:id - Retrieve Team Details",
+          "priority": "critical",
+          "feature": "Team Creation & Management",
+          "scope": "Retrieve team details with complete roster. JOIN team_members and users tables to include captain and all members with their profile information.",
+          "requirements": [
+            "JOIN teams with team_members and users tables",
+            "Include captain information (identified by is_captain=true)",
+            "Include all active members array (exclude left_at not null)",
+            "Sort members by joined_at ASC (captain always first)",
+            "Exclude password_hash from member details",
+            "Return 404 for soft-deleted teams (is_active=false)",
+            "Include team fields: team_name, sport, description, logo_url, created_at"
+          ],
+          "complexity": "moderate",
+          "dependencies": ["P3-TEAM-T1"],
+          "context": {
+            "architecturalGuidance": "modular-monolith with optimized JOIN queries",
+            "technologyStack": "Node.js + Express + TypeScript + PostgreSQL",
+            "testingApproach": "TDD with 90%+ coverage (unit, integration, e2e, performance tests)",
+            "performanceTarget": "<100ms for team retrieval with members JOIN",
+            "securityGuidance": "JWT authentication, Zod validation for team UUID"
+          }
+        },
+        {
+          "taskId": "P3-TEAM-T3",
+          "title": "PATCH /api/teams/:id - Update Team Details",
+          "priority": "critical",
+          "feature": "Team Creation & Management",
+          "scope": "Update team details endpoint. Only team captain can update team information. Supports partial updates for team_name, description, logo_url.",
+          "requirements": [
+            "Validate requester is team captain (is_captain=true in team_members)",
+            "Support partial updates: team_name, description, logo_url",
+            "Do NOT allow updating: sport, captain_id, is_active, created_at",
+            "Validate team_name uniqueness per sport (if updated)",
+            "Return updated team object with members",
+            "Return 403 if non-captain tries to update",
+            "Return 404 for soft-deleted teams"
+          ],
+          "complexity": "moderate",
+          "dependencies": ["P3-TEAM-T2"],
+          "context": {
+            "architecturalGuidance": "modular-monolith with authorization checks",
+            "technologyStack": "Node.js + Express + TypeScript + PostgreSQL",
+            "testingApproach": "TDD with 90%+ coverage (unit, integration, e2e, authorization tests)",
+            "performanceTarget": "<100ms response time",
+            "securityGuidance": "JWT authentication, captain authorization checks, Zod validation for allowed fields only"
+          }
+        },
+        {
+          "taskId": "P3-TEAM-T4",
+          "title": "DELETE /api/teams/:id - Soft Delete Team",
+          "priority": "critical",
+          "feature": "Team Creation & Management",
+          "scope": "Soft delete team endpoint. Only captain can delete team. Sets is_active=false to preserve match history.",
+          "requirements": [
+            "Validate requester is team captain",
+            "Set is_active=false (soft delete)",
+            "Preserve all team data and team_members entries",
+            "Return 204 No Content on successful deletion",
+            "Return 403 if non-captain tries to delete",
+            "Return 404 if team already soft-deleted"
+          ],
+          "complexity": "simple",
+          "dependencies": ["P3-TEAM-T2"],
+          "context": {
+            "architecturalGuidance": "modular-monolith with soft delete pattern",
+            "technologyStack": "Node.js + Express + TypeScript + PostgreSQL",
+            "testingApproach": "TDD with 90%+ coverage (unit, integration, e2e, authorization tests)",
+            "performanceTarget": "<100ms response time",
+            "securityGuidance": "JWT authentication, captain authorization checks"
+          }
+        },
+        {
+          "taskId": "P3-TEAM-T5",
+          "title": "POST /api/teams/:id/members - Add Team Member",
+          "priority": "critical",
+          "feature": "Team Creation & Management",
+          "scope": "Add member to team endpoint. Only captain can add members. Validates member exists and is not already in team.",
+          "requirements": [
+            "Validate requester is team captain",
+            "Validate user_id exists in users table and is_active=true",
+            "Prevent duplicate membership (user already in team)",
+            "Create team_members entry with is_captain=false",
+            "Optional: role field (player, substitute, coach)",
+            "Return updated team object with members array",
+            "Return 403 if non-captain tries to add member",
+            "Return 400 if user already in team",
+            "Return 404 if user not found"
+          ],
+          "complexity": "moderate",
+          "dependencies": ["P3-TEAM-T2"],
+          "context": {
+            "architecturalGuidance": "modular-monolith with cross-service validation (User Service)",
+            "technologyStack": "Node.js + Express + TypeScript + PostgreSQL",
+            "testingApproach": "TDD with 90%+ coverage (unit, integration, e2e, duplicate prevention tests)",
+            "performanceTarget": "<100ms response time",
+            "securityGuidance": "JWT authentication, captain authorization, user validation against User Service"
+          }
+        },
+        {
+          "taskId": "P3-TEAM-T6",
+          "title": "DELETE /api/teams/:id/members/:userId - Remove Team Member",
+          "priority": "critical",
+          "feature": "Team Creation & Management",
+          "scope": "Remove member from team endpoint. Only captain can remove members. Sets left_at timestamp instead of hard delete.",
+          "requirements": [
+            "Validate requester is team captain",
+            "Prevent captain from removing themselves",
+            "Set left_at=NOW() in team_members (soft delete)",
+            "Preserve team_members entry for historical record",
+            "Return updated team object with active members only",
+            "Return 403 if non-captain tries to remove member",
+            "Return 400 if captain tries to remove themselves",
+            "Return 404 if member not found in team"
+          ],
+          "complexity": "simple",
+          "dependencies": ["P3-TEAM-T5"],
+          "context": {
+            "architecturalGuidance": "modular-monolith with soft delete pattern",
+            "technologyStack": "Node.js + Express + TypeScript + PostgreSQL",
+            "testingApproach": "TDD with 90%+ coverage (unit, integration, e2e, edge cases for captain self-removal)",
+            "performanceTarget": "<100ms response time",
+            "securityGuidance": "JWT authentication, captain authorization, prevent captain self-removal"
+          }
+        },
+        {
+          "taskId": "P3-TEAM-T7",
+          "title": "GET /api/teams - Search and List Teams",
+          "priority": "high",
+          "feature": "Team Creation & Management",
+          "scope": "Search and list teams endpoint with filters for sport, location. Supports pagination and returns teams with member count.",
+          "requirements": [
+            "Accept query params: sport, location, page, limit",
+            "Filter teams by sport",
+            "Filter teams by location (case-insensitive partial match)",
+            "Support pagination (default limit=20, max=100)",
+            "Exclude soft-deleted teams (is_active=false)",
+            "Return teams with member_count (aggregate from team_members where left_at is null)",
+            "Return captain information for each team",
+            "Return total count for pagination"
+          ],
+          "complexity": "complex",
+          "dependencies": ["P3-TEAM-T2"],
+          "context": {
+            "architecturalGuidance": "modular-monolith with optimized aggregation queries",
+            "technologyStack": "Node.js + Express + TypeScript + PostgreSQL",
+            "testingApproach": "TDD with 90%+ coverage (unit, integration, e2e, performance tests)",
+            "performanceTarget": "<500ms for search with aggregations",
+            "securityGuidance": "JWT authentication, Zod validation for query params, rate limiting"
+          }
+        }
+      ]
+    }
+  ],
+  "executionStrategy": {
+    "recommendedStartPhase": "P1",
+    "parallelizationGuidance": "Start with P1 (User Service Foundation) sequentially - this is the critical foundation with auth that everything depends on. After P1 maturity gate passes (90%+ coverage, JWT working, all tests passing), proceed to P2 (User Profiles) sequentially to establish stable User Service. After P2 maturity gate passes with 90%+ coverage and stable interfaces, P3 (Team Management) can proceed sequentially. Once P3 is complete and stable, controlled parallelization (2-3 streams) becomes safe for Match Service, Stats Service, and other features. Full parallelization is possible after core services (User, Team, Match) achieve maturity gates.",
+    "integrationCheckpoints": [
+      {
+        "afterPhase": "P1",
+        "checkDescription": "Verify User Service auth integration - JWT generation, validation, and refresh token flow all working. Run integration tests against auth middleware with sample protected endpoints."
+      },
+      {
+        "afterPhase": "P2",
+        "checkDescription": "Verify User Service completeness - all profile CRUD operations working, sports preferences management stable, user search performing well. Run full User Service integration test suite."
+      },
+      {
+        "afterPhase": "P3",
+        "checkDescription": "Verify Team Service integration with User Service - captain validation working, member validation working, team_members JOIN queries optimized. Run cross-service integration tests (team creation with user validation, member addition with user lookup)."
+      }
+    ],
+    "taskGenerationStrategy": "Generate tasks for P1 immediately to start development. After P1 maturity gate passes, generate tasks for P2. After P2 maturity gate passes, generate tasks for P3. This phased task generation allows PM Agent to adjust strategy based on actual maturity progression and learnings from previous phases."
+  },
+  "unstructuredNotes": "CRITICAL GUIDANCE FOR TASK GENERATION AGENT AND TASK EXECUTION AGENTS:\n\n1. SEQUENTIAL FOUNDATION IS NON-NEGOTIABLE: P1 and P2 MUST be completed sequentially with 90%+ test coverage before ANY parallelization. User Service is the foundation that everything depends on - do not rush this phase.\n\n2. SPORTS FOCUS: All examples and tests should include pickleball and paddle as primary sports (these are the POC focus). Other sports (basketball, soccer, cricket) should be supported but less emphasized in test scenarios.\n\n3. SOFT DELETE PATTERN: User Service and Team Service use soft deletes (is_active=false, left_at timestamp) to preserve historical data for match integrity. Task Generation Agent should create comprehensive tests for soft delete scenarios.\n\n4. PERFORMANCE WATCH: The user_sports JOIN in profile retrieval and the team_members JOIN in team retrieval are potential N+1 query problems. Task Generation Agent should include performance tests to verify <100ms response times. If performance degrades, consider eager loading or dataloader pattern.\n\n5. SECURITY PRIORITY: Auth vulnerabilities are ZERO TOLERANCE. Task Generation Agent should create comprehensive security tests including SQL injection attempts, XSS attempts, token leakage, timing attacks on password comparison, and authorization bypass attempts.\n\n6. MATURITY GATE ENFORCEMENT: PM Agent will verify maturity gates before proceeding to next phase. If any gate criteria fail, development stays in current phase until all criteria pass. Do not proceed to P2 until P1 gate fully passes.\n\n7. INTEGRATION CHECKPOINTS: After each phase, run cross-service integration tests to verify service boundaries are clean and dependencies are working correctly. This prevents integration issues from accumulating.\n\n8. TASK EXECUTION WORKFLOW: All tasks use TDD workflow (write tests first, then implementation). Task Execution Agents should follow the workflow ref in each task (workflows/tdd.json).\n\n9. FUTURE PHASES: After P3 maturity gate passes, PM Agent will assess readiness for controlled parallelization. Match Service (P4), Stats Service (P5), League Service (P6), and Tournament Service (P7) can potentially be developed in 2-3 parallel streams by specialized Task Execution Agents.\n\n10. HUMAN-IN-LOOP: PM Agent should report phase completion and maturity gate results to Human/Claude for approval before proceeding to next phase. This ensures human oversight of critical progression decisions."
+}

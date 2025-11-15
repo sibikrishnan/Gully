@@ -1,0 +1,213 @@
+{
+  "id": "3",
+  "version": "1.0",
+  "changelog": [
+    {
+      "version": "1.0",
+      "timestamp": "2025-11-03T12:00:00Z",
+      "change": "Initial task definition with comprehensive test suite and Plan workflow",
+      "author": "claude-sonnet-4.5"
+    }
+  ],
+  "content": "Complete JWT utils implementation and testing",
+  "activeForm": "Completing JWT utils implementation and testing",
+  "description": "Fix TypeScript compilation errors in jwt.utils.ts and ensure comprehensive test coverage with unit and regression tests",
+  "status": "pending",
+  "dependencies": ["2"],
+  "testSuite": {
+    "testCases": [
+      {
+        "id": "jwt-utils.unit",
+        "category": "unit",
+        "description": "Unit tests for all JWT utility functions with positive, negative, and edge cases",
+        "required": true,
+        "priority": "critical",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/jwt.utils.test.ts",
+          "status": "created",
+          "testCount": 40,
+          "estimatedDuration": "30 seconds"
+        },
+        "coverage": {
+          "targetFunctions": [
+            "generateAccessToken",
+            "generateRefreshToken",
+            "generateTokenPair",
+            "verifyAccessToken",
+            "verifyRefreshToken",
+            "extractTokenFromHeader"
+          ],
+          "scenarios": [
+            "Valid token generation",
+            "Valid token verification",
+            "Invalid token rejection",
+            "Expired token handling",
+            "Wrong secret detection",
+            "Token extraction from headers"
+          ],
+          "edgeCases": [
+            "Empty strings",
+            "Undefined values",
+            "Malformed tokens",
+            "Missing Bearer prefix",
+            "Extra whitespace",
+            "Case sensitivity"
+          ]
+        }
+      },
+      {
+        "id": "jwt-utils.regression",
+        "category": "regression",
+        "description": "Regression tests to ensure JWT fixes don't break existing authentication flow",
+        "required": true,
+        "priority": "high",
+        "testFile": {
+          "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/regression/jwt-auth-flow.test.ts",
+          "status": "not_created",
+          "testCount": 8,
+          "estimatedDuration": "20 seconds"
+        },
+        "coverage": {
+          "targetFunctions": ["Full auth flow integration"],
+          "scenarios": [
+            "Login → Token generation → API access",
+            "Token refresh flow",
+            "Token expiration handling",
+            "Multiple concurrent sessions"
+          ],
+          "edgeCases": [
+            "Rapid successive token generation",
+            "Token reuse after logout"
+          ]
+        },
+        "dependsOn": ["jwt-utils.unit"]
+      }
+    ],
+    "coverageRequirements": {
+      "enabled": true,
+      "minimumPercentage": 90,
+      "criticalFiles": [
+        "/Users/sibikrishnan/Documents/Gully/backend/src/shared/utils/jwt.utils.ts"
+      ]
+    },
+    "successCriteria": {
+      "allTestsMustPass": true,
+      "noTypeScriptErrors": true,
+      "noLintingErrors": true,
+      "buildMustSucceed": true
+    },
+    "executionConfig": {
+      "runInOrder": ["jwt-utils.unit", "jwt-utils.regression"],
+      "stopOnFirstFailure": true,
+      "parallelizable": false
+    }
+  },
+  "workflow": {
+    "subagent": {
+      "required": true,
+      "type": "Plan",
+      "description": "Analyze JWT TypeScript compilation error, understand jsonwebtoken v9 type system, and design correct type-safe solution"
+    },
+    "planningPhases": {
+      "phase1_gather": {
+        "description": "Gather type definitions, package versions, and existing patterns",
+        "objectives": [
+          "Read @types/jsonwebtoken type definitions for jwt.sign() method signature",
+          "Understand what StringValue type represents in jsonwebtoken v9",
+          "Confirm exact package versions (jsonwebtoken@9.0.2, @types/jsonwebtoken@9.0.10)",
+          "Search for similar expiresIn usage patterns in codebase or online examples",
+          "Review jsonwebtoken v8→v9 migration guide if available"
+        ],
+        "requiredTools": ["Read", "Grep", "WebFetch"],
+        "outputFormat": "Structured findings: exact type signatures, version info, code examples with explanations"
+      },
+      "phase2_analyze": {
+        "description": "Perform root cause analysis of TypeScript error",
+        "objectives": [
+          "Explain WHY TypeScript rejects 'string' type for expiresIn parameter",
+          "Explain WHAT StringValue type is and how it differs from regular string",
+          "Identify WHY previous type assertions ('as string | number') failed",
+          "Determine if there are breaking changes in jsonwebtoken v9 type definitions",
+          "Analyze type compatibility between string literals and StringValue"
+        ],
+        "outputFormat": "Root cause explanation with type theory details and TypeScript behavior analysis"
+      },
+      "phase3_design": {
+        "description": "Design type-safe solution that satisfies TypeScript compiler",
+        "objectives": [
+          "Design correct type declaration for JWT_EXPIRES_IN constant",
+          "Design correct way to pass expiresIn to jwt.sign() options",
+          "Ensure solution supports environment variable overrides",
+          "Maintain type safety throughout",
+          "Plan verification steps to confirm fix works"
+        ],
+        "deliverables": [
+          "Complete fixed code for jwt.utils.ts",
+          "Type annotations and explanations",
+          "Verification command to run",
+          "Expected test output"
+        ],
+        "outputFormat": "Code solution with inline comments explaining type decisions + verification plan"
+      },
+      "phase4_approve": {
+        "description": "Present complete analysis and solution for user approval before implementation",
+        "approvalRequired": true,
+        "presentationFormat": "ROOT CAUSE → SOLUTION CODE → TYPE EXPLANATION → VERIFICATION PLAN"
+      }
+    },
+    "execution": {
+      "strategy": "test-after",
+      "iterative": false,
+      "maxAttempts": 1,
+      "rollbackOnFailure": false
+    },
+    "enforcement": {
+      "mode": "ERROR",
+      "rules": {
+        "subagentRequired": true,
+        "phaseSequence": true,
+        "approvalRequired": true,
+        "testFirst": false
+      }
+    }
+  },
+  "context": {
+    "relevantFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/shared/utils/jwt.utils.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/jwt.utils.test.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/package.json"
+    ],
+    "keyFindings": [
+      "TypeScript error at lines 28 and 45 in jwt.utils.ts",
+      "Package versions: jsonwebtoken@9.0.2, @types/jsonwebtoken@9.0.10",
+      "Current failing code: expiresIn: JWT_EXPIRES_IN as string | number",
+      "Error message: Type 'string' not assignable to 'number | StringValue | undefined'",
+      "Test file already created with ~40 tests but cannot run due to compilation error"
+    ],
+    "previousAttempts": [
+      {
+        "attemptNumber": 1,
+        "approach": "Added explicit ': string' type annotation to JWT_EXPIRES_IN constant",
+        "outcome": "failed",
+        "reason": "Type assertion didn't resolve the StringValue incompatibility",
+        "timestamp": "2025-11-03T10:15:00Z"
+      },
+      {
+        "attemptNumber": 2,
+        "approach": "Added 'as string | number' type assertion to expiresIn parameter",
+        "outcome": "failed",
+        "reason": "TypeScript still rejected string type for StringValue",
+        "timestamp": "2025-11-03T10:18:00Z"
+      },
+      {
+        "attemptNumber": 3,
+        "approach": "Imported SignOptions type from jsonwebtoken",
+        "outcome": "failed",
+        "reason": "Did not address fundamental type incompatibility",
+        "timestamp": "2025-11-03T10:20:00Z"
+      }
+    ]
+  },
+  "tags": ["auth", "jwt", "typescript", "testing", "security"],
+  "estimatedDuration": "2-3 hours"
+}

@@ -1,0 +1,151 @@
+{
+  "version": "1.0",
+  "projectName": "Gully",
+  "systemArchitecture": {
+    "style": "modular-monolith",
+    "evolutionPath": "can migrate to microservices at scale (100K+ users)",
+    "majorComponents": [
+      {
+        "name": "User Service",
+        "responsibility": "Authentication, user profiles, sports preferences, account management",
+        "dependencies": [],
+        "criticalPath": true
+      },
+      {
+        "name": "Team Service",
+        "responsibility": "Team creation, membership management, invitations, roster coordination",
+        "dependencies": ["User Service"],
+        "criticalPath": true
+      },
+      {
+        "name": "Match Service",
+        "responsibility": "Challenge creation, match scheduling, score tracking, result verification",
+        "dependencies": ["User Service", "Team Service"],
+        "criticalPath": true
+      },
+      {
+        "name": "Stats Service",
+        "responsibility": "Statistics aggregation, leaderboards, performance analytics, rankings",
+        "dependencies": ["User Service", "Team Service", "Match Service"],
+        "criticalPath": false
+      },
+      {
+        "name": "League Service",
+        "responsibility": "League creation, season management, standings calculation",
+        "dependencies": ["User Service", "Team Service", "Match Service"],
+        "criticalPath": false
+      },
+      {
+        "name": "Tournament Service",
+        "responsibility": "Tournament creation, bracket generation, tournament progression",
+        "dependencies": ["User Service", "Team Service", "Match Service"],
+        "criticalPath": false
+      }
+    ],
+    "communicationPattern": "In-process function calls (monolith), REST-ready interfaces for future extraction",
+    "deploymentModel": "Single container (Docker Compose for local, single EC2/container for production)"
+  },
+  "technologyStack": {
+    "backend": "Node.js 20+ with Express.js and TypeScript",
+    "frontend": "React Native for mobile (iOS/Android) - Phase 3+",
+    "database": {
+      "primary": "PostgreSQL 15",
+      "cache": "Redis 7",
+      "search": "None (future: Elasticsearch for user/team search)"
+    },
+    "authentication": "JWT with Passport.js (bcrypt for password hashing)",
+    "testing": "Jest with TDD workflow (unit, integration, e2e, regression, performance tests)",
+    "infrastructure": "Docker Compose (local development), AWS ECS or Railway (production)",
+    "cicd": "GitHub Actions (future implementation)"
+  },
+  "dataArchitecture": {
+    "approach": "Relational with clear service boundaries for future extraction",
+    "majorEntities": [
+      "User",
+      "Team",
+      "Challenge",
+      "Match",
+      "League",
+      "Tournament",
+      "Stats",
+      "Notification"
+    ],
+    "relationships": "User → Teams (many-to-many via team_members), User → Sports (many-to-many via user_sports), Team → Matches (one-to-many), Match → Stats (one-to-one aggregation), League → Teams (many-to-many), Tournament → Matches (one-to-many with bracket structure)",
+    "keyPatterns": [
+      "Soft deletes (is_active flag) for users and teams",
+      "Audit timestamps (created_at, updated_at) on all tables",
+      "UUID primary keys for all entities",
+      "JSON columns for flexible metadata (match_metadata, tournament_bracket)",
+      "Materialized views for leaderboards and rankings (future optimization)"
+    ]
+  },
+  "nonFunctionalRequirements": {
+    "performance": {
+      "apiResponseTime": "<100ms for standard CRUD queries, <500ms for aggregations/stats",
+      "concurrentUsers": "100+ concurrent users without degradation (MVP target)",
+      "scalability": "Designed for 10K+ users, can scale horizontally to 100K+ with database optimization",
+      "throughput": "1000 requests/second sustained load"
+    },
+    "security": {
+      "authentication": "JWT with 7-day expiration, bcrypt password hashing (12 rounds), refresh token support",
+      "dataPrivacy": "Field-level access control (own profile shows all fields, other users' profiles hide email/phone), password_hash never exposed in API responses",
+      "apiSecurity": "Rate limiting (100 req/min per IP), Zod input validation on all endpoints, CORS configuration, SQL injection prevention via parameterized queries",
+      "compliance": ["GDPR-ready (user data export/deletion)", "Basic data privacy (no HIPAA/PCI required)"]
+    },
+    "quality": {
+      "testCoverage": "90%+ for production code (controllers, repositories, middleware)",
+      "methodology": "TDD (write tests first) - comprehensive test suite with unit, integration, e2e, regression, and performance tests",
+      "errorHandling": "Centralized error handling middleware with consistent error response format",
+      "monitoring": "Structured logging with Winston (future: APM with DataDog or New Relic)"
+    },
+    "availability": {
+      "uptime": "Best effort for MVP (no SLA), target 99.5% uptime for production",
+      "disasterRecovery": "Daily automated PostgreSQL backups, 24-hour RPO/RTO acceptable for MVP"
+    }
+  },
+  "developmentStrategy": {
+    "parallelizationReadiness": "Design for eventual parallelization, START SEQUENTIAL for foundation. User Service and Team Service must be stable before parallel development begins. Once base services have 90%+ test coverage and stable interfaces, controlled parallelization (2-3 streams) is safe.",
+    "serviceIsolation": "Clear service boundaries with dedicated folders (services/user-service/, services/team-service/). Each service owns its controllers, routes, repositories, and schemas. Shared utilities in shared/ folder. Design interfaces as if services will be extracted to microservices later (dependency injection, no tight coupling).",
+    "testingStrategy": "Comprehensive test suite to enable confident parallel work. All services must have 90%+ coverage before parallelization. Integration tests act as contracts between services. Test database isolation (separate DB per test suite). Performance tests for critical paths.",
+    "criticalPathGuidance": "CRITICAL PATH: User Service (auth + profiles) → Team Service → Match Service. Stats, League, and Tournament services are non-critical and can be parallelized after Match Service is stable. DO NOT parallelize User and Team services - they are foundational dependencies.",
+    "technicalDebtPolicy": "Refactor immediately if technical debt blocks parallelization or violates 90% coverage target. Track non-blocking debt in GitHub issues. Zero tolerance for security debt (auth vulnerabilities, SQL injection, exposed secrets)."
+  },
+  "integrationPoints": [
+    {
+      "name": "Firebase Cloud Messaging (FCM)",
+      "purpose": "Push notifications for match updates, challenge invitations, team invites",
+      "criticality": "medium",
+      "fallbackStrategy": "Degrade to email notifications if FCM unavailable"
+    },
+    {
+      "name": "AWS S3 / Cloudinary",
+      "purpose": "Media storage for user avatars, team logos, match highlight videos",
+      "criticality": "medium",
+      "fallbackStrategy": "Use default avatars, skip video uploads if unavailable"
+    },
+    {
+      "name": "SendGrid / Mailgun",
+      "purpose": "Transactional emails (password reset, invitations, notifications)",
+      "criticality": "high",
+      "fallbackStrategy": "Queue emails for retry, critical for password reset flow"
+    },
+    {
+      "name": "Stripe",
+      "purpose": "Payment processing for premium features, tournament fees (future Phase 4+)",
+      "criticality": "low",
+      "fallbackStrategy": "Not critical for MVP, can be added later"
+    }
+  ],
+  "constraints": {
+    "budget": "Minimal infrastructure budget - prioritize cost-effective solutions",
+    "timeline": "Feature-based development with foundation-first approach",
+    "team": "AI-driven development with human oversight",
+    "technical": [
+      "Must work locally with Docker Compose (zero cloud dependency for development)",
+      "Must support multiple sports (pickleball, paddle, basketball, soccer, cricket)",
+      "Must be mobile-first (React Native), web admin panel for management",
+      "JWT-based authentication (no external auth providers)"
+    ]
+  },
+  "unstructuredNotes": "PM Agent: The architecture prioritizes SEQUENTIAL FOUNDATION BUILDING first - do NOT parallelize User Service and Team Service development. These are critical dependencies and must be rock-solid before moving forward.\n\nKey Architectural Decisions:\n1. Chose modular-monolith over microservices: Simpler deployment, faster iteration, can extract services later if needed.\n2. Chose PostgreSQL over MongoDB: Relational data model fits sports/teams/matches well, complex queries needed for leaderboards/stats.\n3. Chose JWT over session-based auth: Stateless, mobile-friendly, easier to scale horizontally.\n4. Chose TDD with 90% coverage: High coverage enables confident refactoring and parallel development later.\n\nCritical Risks:\n1. N+1 query problem: User → user_sports JOIN can be expensive. Consider eager loading or dataloader pattern.\n2. Match result disputes: Business logic needed for verification flow (both teams must confirm results).\n3. Leaderboard performance: Denormalize stats or use Redis sorted sets for real-time rankings.\n4. Video storage costs: S3 can get expensive. Consider usage limits or compression strategies.\n\nPhase Guidance for PM Agent:\n- Phase 1 (Sequential): User Service foundation - auth, profiles, sports preferences. MUST be 90%+ coverage.\n- Phase 2 (Sequential): Team Service - build on stable User Service. MUST be 90%+ coverage.\n- Phase 3 (Controlled Parallel): Match Service + React Native UI can start in parallel (2 streams).\n- Phase 4 (Full Parallel): Stats, League, Tournament services can all be developed independently by multiple agents.\n\nThe PM Agent should define MATURITY GATES at end of each phase:\n- Phase 1 Gate: All User Service tests pass, 90%+ coverage, JWT working, no auth vulnerabilities.\n- Phase 2 Gate: All Team Service tests pass, 90%+ coverage, invitation flow working, integration tests with User Service passing.\n- Phase 3 Gate: Match lifecycle complete, mobile app can create/view matches, integration tests passing.\n\nSecurity Note: Password reset flow is critical - include in early phases. Focus on registration, login, token refresh, and password reset as core auth features.\n\nPerformance Note: Redis is included in stack for session management and rate limiting initially. In later phases, use Redis sorted sets for leaderboards to avoid expensive SQL aggregations."
+}

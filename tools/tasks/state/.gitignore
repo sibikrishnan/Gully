@@ -1,0 +1,11 @@
+# Ignore all execution state files (ephemeral data)
+*.json
+
+# Ignore lock files
+*.lock
+
+# Ignore temp files
+*.tmp
+
+# This directory contains only runtime/execution state
+# All static definitions should be in definitions/ (Git-versioned)
