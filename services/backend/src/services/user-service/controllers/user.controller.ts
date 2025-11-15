@@ -1,11 +1,12 @@
 /**
  * User Controller
- * Handles user profile retrieval with field-level access control
+ * Handles user profile retrieval and updates with field-level access control
  */
 
 import { Response } from 'express';
 import { AuthenticatedRequest } from '../../../shared/types/auth.types';
 import { UserRepository } from '../repositories/user.repository';
+import { stripNonUpdatableFields, updateUserSchema } from '../schemas/user.schema';
 
 const userRepository = new UserRepository();
 
@@ -45,6 +46,85 @@ export async function getUserProfile(
     }
   } catch (error) {
     console.error('Error in getUserProfile:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+/**
+ * PATCH /api/users/:id - Update user profile
+ * Implements authorization and field-level security:
+ * - Only allows users to update their own profile (403 for others)
+ * - Strips non-updatable fields (id, email, password_hash, created_at, updated_at)
+ * - Validates partial updates with Zod schema
+ * - Returns 200 with updated user on success
+ * - Returns 404 if user not found
+ * - Returns 403 if unauthorized
+ */
+export async function updateUserProfile(
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> {
+  try {
+    const userId = parseInt(req.params.id, 10);
+
+    // Authorization check: users can only update their own profile
+    if (!req.user || req.user.id !== userId) {
+      res.status(403).json({ error: 'Forbidden: You can only update your own profile' });
+      return;
+    }
+
+    // Strip non-updatable fields from request body
+    const sanitizedData = stripNonUpdatableFields(req.body);
+
+    // Validate with Zod partial schema
+    const validationResult = updateUserSchema.safeParse(sanitizedData);
+    if (!validationResult.success) {
+      res.status(400).json({
+        error: 'Validation failed',
+        details: validationResult.error.issues
+      });
+      return;
+    }
+
+    const updates = validationResult.data;
+
+    // Handle empty update payload (no-op)
+    if (Object.keys(updates).length === 0) {
+      // Return current user data
+      const currentUser = await userRepository.findById(userId);
+      if (!currentUser) {
+        res.status(404).json({ error: 'User not found' });
+        return;
+      }
+      res.status(200).json(currentUser);
+      return;
+    }
+
+    // Perform update via repository
+    const updatedUser = await userRepository.updateUser(userId, updates);
+
+    // User not found
+    if (!updatedUser) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    // Success
+    res.status(200).json(updatedUser);
+  } catch (error: any) {
+    // Handle known validation errors
+    if (error.message === 'Username already exists') {
+      res.status(409).json({ error: 'Username already exists' });
+      return;
+    }
+
+    if (error.message?.includes('Invalid status value') ||
+        error.message?.includes('Invalid skill_level value')) {
+      res.status(400).json({ error: error.message });
+      return;
+    }
+
+    console.error('Error in updateUserProfile:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
