@@ -157,6 +157,20 @@ export class UserCascadeService {
     const query = trx || db;
 
     try {
+      // Check if user_stats table exists first (avoid transaction abort)
+      const tableExists = await query.raw(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables
+          WHERE table_schema = 'public'
+          AND table_name = 'user_stats'
+        )
+      `);
+
+      if (!tableExists.rows[0].exists) {
+        console.log('Stats tables not yet created - skipping stats archival');
+        return;
+      }
+
       // Get user stats
       const stats = await query('user_stats')
         .select('*')
@@ -164,6 +178,20 @@ export class UserCascadeService {
         .first();
 
       if (stats) {
+        // Check if archive table exists
+        const archiveTableExists = await query.raw(`
+          SELECT EXISTS (
+            SELECT FROM information_schema.tables
+            WHERE table_schema = 'public'
+            AND table_name = 'user_stats_archive'
+          )
+        `);
+
+        if (!archiveTableExists.rows[0].exists) {
+          console.log('Stats archive table not yet created - skipping stats archival');
+          return;
+        }
+
         // Insert into archive table
         await query('user_stats_archive').insert({
           ...stats,
@@ -212,6 +240,20 @@ export class UserCascadeService {
     const query = trx || db;
 
     try {
+      // Check if table exists first (avoid transaction abort)
+      const tableExists = await query.raw(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables
+          WHERE table_schema = 'public'
+          AND table_name = 'pickleball_league_members'
+        )
+      `);
+
+      if (!tableExists.rows[0].exists) {
+        console.log('Pickleball league tables not yet created - skipping league removal');
+        return;
+      }
+
       await query('pickleball_league_members')
         .where({ user_id: userId })
         .delete();
@@ -234,6 +276,20 @@ export class UserCascadeService {
     const query = trx || db;
 
     try {
+      // Check if table exists first (avoid transaction abort)
+      const tableExists = await query.raw(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables
+          WHERE table_schema = 'public'
+          AND table_name = 'paddle_tournament_participants'
+        )
+      `);
+
+      if (!tableExists.rows[0].exists) {
+        console.log('Paddle tournament tables not yet created - skipping tournament removal');
+        return;
+      }
+
       await query('paddle_tournament_participants')
         .where({ user_id: userId })
         .delete();
