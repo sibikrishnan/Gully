@@ -1,0 +1,603 @@
+{
+  "taskId": "P2-PROF-T2",
+  "version": "2.0",
+  "lastModified": "2025-11-11T15:22:00Z",
+  "testCases": [
+    {
+      "id": "user-update.unit.repository-basic",
+      "category": "unit",
+      "description": "Repository layer: Basic update operations for single and multiple fields",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-repository-update.test.ts",
+        "status": "not_created",
+        "testCount": 8,
+        "estimatedDuration": "25 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["updateUser", "updateUserFields"],
+        "scenarios": [
+          "Update single field (full_name) returns updated user object",
+          "Update multiple fields (full_name, phone_number, location_name) in single query",
+          "Update with empty object {} performs no operation and returns original user",
+          "Update non-existent user ID (e.g., 999999) returns null",
+          "Update skill_level from 'beginner' to 'intermediate' succeeds",
+          "Update location fields (location_lat, location_lng, location_name) together",
+          "Update profile_image_url with valid URL",
+          "Query excludes password_hash from returned user object"
+        ],
+        "edgeCases": [
+          "Update with same values (no actual change) still triggers updated_at",
+          "Update with NULL for optional fields (e.g., phone_number = NULL)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-update.unit.repository-constraints",
+      "category": "unit",
+      "description": "Repository layer: Database constraints and transaction integrity",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-repository-constraints.test.ts",
+        "status": "not_created",
+        "testCount": 6,
+        "estimatedDuration": "30 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["updateUser", "validateUpdateConstraints"],
+        "scenarios": [
+          "Update username to duplicate value throws UNIQUE constraint error",
+          "Update status to invalid value (e.g., 'deleted') throws ENUM constraint error",
+          "Update skill_level to invalid value (e.g., 'pro') throws ENUM constraint error",
+          "Update with transaction rollback on constraint violation (rollback test)",
+          "Update preserves other fields when partial update fails",
+          "Update inactive user (status='inactive') returns null (only active users)"
+        ],
+        "edgeCases": [
+          "Concurrent updates to same user row (optimistic locking test)",
+          "Update during database connection interruption"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/database/migrations/20251101000001_create_users.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-update.unit.repository-timestamp",
+      "category": "unit",
+      "description": "Repository layer: Automatic updated_at timestamp trigger validation",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-repository-timestamp.test.ts",
+        "status": "not_created",
+        "testCount": 6,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["updateUser"],
+        "scenarios": [
+          "Update any field triggers updated_at to change to current timestamp",
+          "updated_at is different from created_at after update",
+          "Multiple consecutive updates show increasing updated_at timestamps",
+          "updated_at precision is timestamp with timezone",
+          "created_at remains unchanged after update operation",
+          "No-op update (same values) still updates updated_at timestamp"
+        ],
+        "edgeCases": [
+          "updated_at within 1 second of NOW() after update",
+          "Timezone consistency for updated_at"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/database/migrations/20251101000001_create_users.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-update.unit.controller-authorization",
+      "category": "unit",
+      "description": "Controller layer: Authorization checks ensuring users can only update own profile",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-controller-authorization.test.ts",
+        "status": "not_created",
+        "testCount": 7,
+        "estimatedDuration": "25 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["updateUserProfile", "checkProfileOwnership"],
+        "scenarios": [
+          "User with id=123 can update own profile (req.user.id=123, params.id=123) returns 200",
+          "User with id=123 cannot update other profile (req.user.id=123, params.id=456) returns 403",
+          "req.user missing (no JWT) is handled by middleware, but controller checks anyway",
+          "req.user.id type coercion (string '123' vs number 123) handled correctly",
+          "Non-existent user ID (params.id=999999) returns 404 before authorization check",
+          "Inactive user (status='inactive') returns 404, not 403",
+          "Suspended user (status='suspended') attempting update returns 404"
+        ],
+        "edgeCases": [
+          "req.user.id is null or undefined (malformed JWT payload)",
+          "params.id is non-numeric string (e.g., 'abc') returns 400"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-update.unit.controller-validation",
+      "category": "unit",
+      "description": "Controller layer: Field stripping and business logic validation",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-controller-validation.test.ts",
+        "status": "not_created",
+        "testCount": 8,
+        "estimatedDuration": "25 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["updateUserProfile", "stripNonUpdatableFields", "validateUpdatePayload"],
+        "scenarios": [
+          "Request body includes 'id' field - stripped before database update",
+          "Request body includes 'created_at' field - stripped before update",
+          "Request body includes 'password_hash' field - stripped before update",
+          "Request body includes 'email' field - stripped (email updates require separate flow)",
+          "Only updatable fields (full_name, phone_number, skill_level, location_*, profile_image_url, preferred_radius_km) are processed",
+          "Empty request body {} results in 200 with no changes (no-op update)",
+          "Request body with only non-updatable fields results in no-op update",
+          "Valid partial update with mixed updatable + non-updatable fields strips non-updatable"
+        ],
+        "edgeCases": [
+          "Request body with nested objects (e.g., {user: {full_name: 'X'}}) - reject or flatten",
+          "Request body with array values in scalar fields"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-update.unit.zod-partial-schema",
+      "category": "unit",
+      "description": "Validation layer: Zod partial schema for PATCH operations",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-update-zod-schema.test.ts",
+        "status": "not_created",
+        "testCount": 10,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["updateUserSchema", "updateUserSchema.partial", "validateUpdatePayload"],
+        "scenarios": [
+          "Schema allows empty object {} (all fields optional)",
+          "Schema allows single field update (e.g., {full_name: 'John Doe'})",
+          "Schema validates phone_number format (e.g., '+1234567890' valid, 'abc' invalid)",
+          "Schema validates profile_image_url as valid URL format",
+          "Schema validates skill_level enum values ('beginner', 'intermediate', 'advanced', 'expert')",
+          "Schema validates status enum values ('active', 'inactive', 'suspended')",
+          "Schema validates location_lat as decimal between -90 and 90",
+          "Schema validates location_lng as decimal between -180 and 180",
+          "Schema validates preferred_radius_km as positive integer",
+          "Schema rejects unknown fields not in schema definition"
+        ],
+        "edgeCases": [
+          "Schema handles undefined vs null for optional fields",
+          "Schema trims whitespace from string fields",
+          "Schema validates maximum string lengths (full_name max 100 chars)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user.schema.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-update.integration.route-success",
+      "category": "integration",
+      "description": "Route integration: Successful update flows with complete middleware chain",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-route-success.test.ts",
+        "status": "not_created",
+        "testCount": 7,
+        "estimatedDuration": "35 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["PATCH /api/users/:id"],
+        "scenarios": [
+          "PATCH /api/users/123 with valid JWT (user_id=123) and {full_name: 'New Name'} returns 200 with updated user",
+          "PATCH /api/users/123 with multiple fields {full_name, phone_number, location_city} returns 200",
+          "PATCH /api/users/123 with empty body {} returns 200 with unchanged user (no-op)",
+          "Response includes updated_at timestamp that is more recent than request time",
+          "Response excludes password_hash field",
+          "Response includes all user fields including email (own profile)",
+          "PATCH updates are immediately visible in subsequent GET /api/users/:id request"
+        ],
+        "edgeCases": [
+          "PATCH with Content-Type application/json header required",
+          "PATCH with very large request body (near size limit)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user.routes.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      },
+      "dependsOn": ["user-update.unit.controller-authorization"]
+    },
+    {
+      "id": "user-update.integration.route-errors",
+      "category": "integration",
+      "description": "Route integration: Error responses and validation failures",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-route-errors.test.ts",
+        "status": "not_created",
+        "testCount": 8,
+        "estimatedDuration": "30 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["PATCH /api/users/:id", "validationMiddleware", "authMiddleware"],
+        "scenarios": [
+          "PATCH without Authorization header returns 401 Unauthorized",
+          "PATCH with malformed JWT token returns 401 Unauthorized",
+          "PATCH with expired JWT token returns 401 Unauthorized",
+          "PATCH to other user's profile (id mismatch) returns 403 Forbidden",
+          "PATCH to non-existent user ID returns 404 Not Found",
+          "PATCH with invalid payload (e.g., skill_level='invalid') returns 400 Bad Request with details",
+          "PATCH with malformed JSON returns 400 Bad Request",
+          "PATCH with non-numeric user ID (e.g., /api/users/abc) returns 400 Bad Request"
+        ],
+        "edgeCases": [
+          "PATCH with missing Content-Type header",
+          "PATCH with charset encoding issues (UTF-8)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user.routes.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/middleware/auth.middleware.ts"
+        ]
+      },
+      "dependsOn": ["user-update.unit.controller-authorization"]
+    },
+    {
+      "id": "user-update.integration.database-transaction",
+      "category": "integration",
+      "description": "Database integration: Transaction handling and rollback scenarios",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-transaction.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "40 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["updateUser", "database transaction handling"],
+        "scenarios": [
+          "Update operation uses database transaction (BEGIN/COMMIT pattern)",
+          "Constraint violation triggers ROLLBACK (e.g., duplicate username)",
+          "Partial update failure rolls back all changes (atomicity test)",
+          "Successful update commits transaction and persists to database",
+          "Database trigger (updated_at) fires within same transaction"
+        ],
+        "edgeCases": [
+          "Transaction deadlock detection and retry",
+          "Transaction timeout handling (long-running update)",
+          "Nested transaction behavior (if supported)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/database/connection.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-update.integration.field-stripping",
+      "category": "integration",
+      "description": "End-to-end field stripping: Non-updatable fields are ignored at all layers",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-field-stripping.test.ts",
+        "status": "not_created",
+        "testCount": 6,
+        "estimatedDuration": "25 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["PATCH /api/users/:id", "stripNonUpdatableFields"],
+        "scenarios": [
+          "PATCH with {id: 999, full_name: 'New'} - id is stripped, full_name updates, id remains unchanged",
+          "PATCH with {created_at: '2020-01-01', full_name: 'New'} - created_at stripped, remains original",
+          "PATCH with {password_hash: 'hack', full_name: 'New'} - password_hash stripped, remains original",
+          "PATCH with {email: 'new@test.com', full_name: 'New'} - email stripped (requires separate flow)",
+          "PATCH with only non-updatable fields {id, created_at, email} returns 200 with no changes",
+          "GET after PATCH confirms non-updatable fields remain unchanged"
+        ],
+        "edgeCases": [
+          "PATCH with all possible non-updatable fields in single request",
+          "PATCH attempts to set id to NULL or 0"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user.routes.ts"
+        ]
+      },
+      "dependsOn": ["user-update.unit.controller-validation"]
+    },
+    {
+      "id": "user-update.integration.security-idor",
+      "category": "integration",
+      "description": "Security: IDOR (Insecure Direct Object Reference) attack prevention",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-security-idor.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["PATCH /api/users/:id", "checkProfileOwnership"],
+        "scenarios": [
+          "User A (id=1) with valid JWT attempts PATCH /api/users/2 returns 403 Forbidden",
+          "User B (id=2) with valid JWT attempts PATCH /api/users/1 returns 403 Forbidden",
+          "Attacker with valid JWT for id=1 cannot modify id=2 by sending {id: 2} in body (stripped + 403)",
+          "JWT token for user_id=1 attempting PATCH /api/users/1 succeeds (own profile)",
+          "Authorization check occurs BEFORE any database write operation (fail-fast)"
+        ],
+        "edgeCases": [
+          "JWT claims user_id as string '1' vs numeric 1 (type coercion test)",
+          "JWT with admin role (future) - currently should still fail for other users"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/middleware/auth.middleware.ts"
+        ]
+      },
+      "dependsOn": ["user-update.unit.controller-authorization"]
+    },
+    {
+      "id": "user-update.integration.security-injection",
+      "category": "integration",
+      "description": "Security: SQL injection and XSS prevention in update fields",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-security-injection.test.ts",
+        "status": "not_created",
+        "testCount": 6,
+        "estimatedDuration": "25 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["updateUser", "validateUpdatePayload"],
+        "scenarios": [
+          "PATCH with SQL injection in full_name (e.g., \"'; DROP TABLE users;--\") is escaped/parameterized",
+          "PATCH with XSS payload in full_name (e.g., \"<script>alert('xss')</script>\") is stored safely",
+          "PATCH with SQL injection in location_name is parameterized",
+          "Parameterized queries prevent injection in WHERE clause (user id check)",
+          "Database returns injected strings as literal text, not executed",
+          "GET after PATCH returns XSS payload as plain text, not executed"
+        ],
+        "edgeCases": [
+          "Unicode characters in update fields (emoji, non-ASCII)",
+          "Null bytes in string fields"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user.schema.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-update.e2e.complete-flow",
+      "category": "e2e",
+      "description": "End-to-end: Complete user profile update flow with verification",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/user-update-complete-flow.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "50 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["Complete update flow"],
+        "scenarios": [
+          "User registers → Login → PATCH profile → GET profile → Verify changes persisted",
+          "User login → PATCH full_name → Logout → Login again → GET profile → Verify persistence",
+          "User PATCH location fields (lat, lng, name) → Verify in database → GET profile confirms",
+          "User PATCH skill_level from 'beginner' to 'intermediate' → Verify in response and database",
+          "User attempts PATCH other user → Receives 403 → Original user profile unchanged"
+        ],
+        "edgeCases": [
+          "PATCH during concurrent GET request (read consistency)",
+          "Multiple PATCH requests in rapid succession (last write wins)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/"
+        ]
+      },
+      "dependsOn": ["user-update.integration.route-success", "user-update.integration.database-transaction"]
+    },
+    {
+      "id": "user-update.regression.get-compatibility",
+      "category": "regression",
+      "description": "Regression: GET endpoint still works correctly after PATCH implementation",
+      "required": true,
+      "priority": "medium",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/regression/user-update-get-regression.test.ts",
+        "status": "not_created",
+        "testCount": 4,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["GET /api/users/:id", "PATCH /api/users/:id"],
+        "scenarios": [
+          "GET /api/users/:id returns updated data after PATCH operation",
+          "GET field-level access control (own vs other profile) still works after PATCH changes",
+          "GET response excludes password_hash after PATCH (security regression check)",
+          "GET with sports data still returns correct sports array after profile PATCH"
+        ],
+        "edgeCases": [
+          "GET immediately after PATCH (no delay) returns fresh data"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-update.e2e.complete-flow"]
+    },
+    {
+      "id": "user-update.performance.bulk-updates",
+      "category": "performance",
+      "description": "Performance: PATCH endpoint response time and database efficiency",
+      "required": false,
+      "priority": "low",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/performance/user-update-performance.test.ts",
+        "status": "not_created",
+        "testCount": 3,
+        "estimatedDuration": "60 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["PATCH /api/users/:id"],
+        "scenarios": [
+          "PATCH single field completes in under 100ms (p95)",
+          "PATCH multiple fields completes in under 150ms (p95)",
+          "100 sequential PATCH requests complete in under 10 seconds"
+        ],
+        "edgeCases": [
+          "PATCH with database connection pool exhaustion",
+          "PATCH performance with database indexes active"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": []
+    }
+  ],
+  "coverageRequirements": {
+    "enabled": true,
+    "minimumPercentage": 90,
+    "criticalFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user.schema.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user.routes.ts"
+    ]
+  },
+  "successCriteria": {
+    "allTestsMustPass": true,
+    "noTypeScriptErrors": true,
+    "noLintingErrors": true,
+    "buildMustSucceed": true
+  },
+  "executionConfig": {
+    "runInOrder": [
+      "user-update.unit.repository-basic",
+      "user-update.unit.repository-constraints",
+      "user-update.unit.repository-timestamp",
+      "user-update.unit.zod-partial-schema",
+      "user-update.unit.controller-validation",
+      "user-update.unit.controller-authorization",
+      "user-update.integration.field-stripping",
+      "user-update.integration.database-transaction",
+      "user-update.integration.route-success",
+      "user-update.integration.route-errors",
+      "user-update.integration.security-idor",
+      "user-update.integration.security-injection",
+      "user-update.e2e.complete-flow",
+      "user-update.regression.get-compatibility",
+      "user-update.performance.bulk-updates"
+    ],
+    "stopOnFirstFailure": false,
+    "parallelizable": false
+  },
+  "previousVersion": {
+    "archivedAt": "2025-11-11T15:22:29Z",
+    "archivePath": "archive/20251111_152229/P2-PROF-T2-embedded.json",
+    "reason": "Migrated from embedded test suite to separated architecture pattern. Old version had 7 embedded test cases (73 total test count). New version has 15 test case groups with 50+ total tests following PM Agent test budget allocation."
+  }
+}

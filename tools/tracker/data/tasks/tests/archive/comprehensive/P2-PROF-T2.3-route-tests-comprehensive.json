@@ -1,0 +1,223 @@
+{
+  "taskId": "P2-PROF-T2.3",
+  "version": "1.0",
+  "lastModified": "2025-11-11T00:00:00Z",
+  "testCases": [
+    {
+      "id": "user-update-route.integration.middleware-chain",
+      "category": "integration",
+      "description": "Integration tests for middleware chain execution order",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-middleware-chain.test.ts",
+        "status": "not_created",
+        "testCount": 6,
+        "estimatedDuration": "25 seconds"
+      },
+      "coverage": {
+        "targetFunctions": [
+          "PATCH /api/users/:id route",
+          "authenticate middleware",
+          "validateRequest middleware"
+        ],
+        "scenarios": [
+          "Middleware executes in order: authenticate → validateParams → validateBody → controller",
+          "Authentication middleware populates req.user",
+          "Validation middleware catches invalid :id parameter",
+          "Validation middleware catches invalid request body",
+          "Controller receives sanitized, validated data",
+          "Error in middleware stops execution chain"
+        ],
+        "edgeCases": [
+          "Middleware error handling propagation",
+          "Multiple validation errors combined in response"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user.routes.ts"
+        ]
+      }
+    },
+    {
+      "id": "user-update-route.integration.error-responses",
+      "category": "integration",
+      "description": "Integration tests for HTTP error response formatting",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-update-error-responses.test.ts",
+        "status": "not_created",
+        "testCount": 7,
+        "estimatedDuration": "30 seconds"
+      },
+      "coverage": {
+        "targetFunctions": [
+          "PATCH /api/users/:id route"
+        ],
+        "scenarios": [
+          "401 response for missing Authorization header",
+          "401 response for invalid JWT token",
+          "401 response for expired JWT token",
+          "400 response for invalid :id parameter (non-integer)",
+          "400 response for invalid request body (with Zod error details)",
+          "403 response for unauthorized profile update (other user)",
+          "404 response for non-existent user"
+        ],
+        "edgeCases": [
+          "Malformed JSON body returns 400",
+          "Content-Type validation",
+          "Request body size limit exceeded"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user.routes.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      },
+      "dependsOn": ["user-update-route.integration.middleware-chain"]
+    },
+    {
+      "id": "user-update-route.e2e.successful-update",
+      "category": "e2e",
+      "description": "End-to-end tests for successful profile update flow",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/user-update-success-flow.test.ts",
+        "status": "not_created",
+        "testCount": 6,
+        "estimatedDuration": "40 seconds"
+      },
+      "coverage": {
+        "targetFunctions": [
+          "PATCH /api/users/:id route"
+        ],
+        "scenarios": [
+          "PATCH /api/users/:id with valid JWT and payload returns 200 with updated user",
+          "Update full_name field returns updated user object",
+          "Update bio and location_city returns updated user object",
+          "Empty payload returns 200 (no-op, user unchanged)",
+          "Response includes all user fields (excluding password_hash)",
+          "Response Content-Type is application/json"
+        ],
+        "edgeCases": [
+          "Update with Authorization header format variations",
+          "Update with extra whitespace in JWT token",
+          "Verify updated_at timestamp changed in response"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/"
+        ]
+      },
+      "dependsOn": ["user-update-route.integration.middleware-chain"]
+    },
+    {
+      "id": "user-update-route.e2e.security",
+      "category": "e2e",
+      "description": "End-to-end security tests for authorization and field stripping",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gull/backend/tests/e2e/user-update-security.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "30 seconds"
+      },
+      "coverage": {
+        "targetFunctions": [
+          "PATCH /api/users/:id route"
+        ],
+        "scenarios": [
+          "User can update own profile (JWT user_id matches :id)",
+          "User cannot update other user's profile (403)",
+          "Non-updatable fields (id, created_at, password_hash) are stripped",
+          "Email field is stripped (requires separate verification)",
+          "Verify stripped fields remain unchanged in database"
+        ],
+        "edgeCases": [
+          "Attempt to update password_hash via PATCH (should be stripped)",
+          "Attempt to change user ID via PATCH (should be stripped)",
+          "XSS payload in bio field (should be sanitized)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/"
+        ]
+      },
+      "dependsOn": ["user-update-route.e2e.successful-update"]
+    },
+    {
+      "id": "user-update-route.e2e.cors",
+      "category": "e2e",
+      "description": "End-to-end tests for CORS handling",
+      "required": true,
+      "priority": "medium",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/user-update-cors.test.ts",
+        "status": "not_created",
+        "testCount": 3,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": [
+          "PATCH /api/users/:id route"
+        ],
+        "scenarios": [
+          "OPTIONS preflight request returns 204 with CORS headers",
+          "PATCH request includes Access-Control-Allow-Origin header",
+          "PATCH request includes Access-Control-Allow-Methods header"
+        ],
+        "edgeCases": [
+          "CORS headers present for error responses"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user.routes.ts"
+        ]
+      },
+      "dependsOn": []
+    }
+  ],
+  "coverageRequirements": {
+    "enabled": true,
+    "minimumPercentage": 90,
+    "criticalFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user.routes.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/middleware/validate-request.middleware.ts"
+    ]
+  },
+  "successCriteria": {
+    "allTestsMustPass": true,
+    "noTypeScriptErrors": true,
+    "noLintingErrors": true,
+    "buildMustSucceed": true
+  },
+  "executionConfig": {
+    "runInOrder": [
+      "user-update-route.integration.middleware-chain",
+      "user-update-route.integration.error-responses",
+      "user-update-route.e2e.successful-update",
+      "user-update-route.e2e.security",
+      "user-update-route.e2e.cors"
+    ],
+    "stopOnFirstFailure": false,
+    "parallelizable": false
+  }
+}

@@ -25,7 +25,7 @@ This directory contains all project documentation organized by category.
 - `FUTURE_FEATURES.md` - Future feature ideas and scope
 
 ### Service Development Briefs
-**Location:** `parallel-development/`
+**Location:** `service-briefs/`
 
 - `INDEX.md` - Service briefs navigator
 - `briefs/UserService-Brief.md` - User authentication & profiles (✅ Complete)
@@ -66,7 +66,7 @@ Historical documentation preserved for reference. See `archives/INDEX.md` for na
 
 **Need to...**
 - Understand system architecture? → `architecture/OVERVIEW.md`
-- Learn about a specific service? → `parallel-development/INDEX.md`
+- Learn about a specific service? → `service-briefs/INDEX.md`
 - See API endpoints? → `planning/API_ENDPOINTS.md`
 - Check database schema? → `planning/DATABASE_SCHEMA.md`
 - Review Phase 1 work? → `weekly-reviews/WEEK1_REVIEW.md` (historical)

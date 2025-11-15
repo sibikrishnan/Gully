@@ -1,0 +1,20 @@
+{
+  "id": "P4",
+  "name": "Challenge System",
+  "status": "not_started",
+  "startDate": null,
+  "completionDate": null,
+  "tasks": {
+    "complete": 0,
+    "total": 5
+  },
+  "tests": {
+    "passing": 0,
+    "total": 200
+  },
+  "coverage": 0,
+  "maturityGate": {
+    "status": "not_checked",
+    "verifiedDate": null
+  }
+}

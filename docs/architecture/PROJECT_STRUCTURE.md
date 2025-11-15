@@ -42,7 +42,7 @@ gully/
 ├── docs/                       # Project documentation
 │   ├── architecture/           # Architecture documentation
 │   ├── planning/               # Planning docs (schema, API, roadmap)
-│   ├── parallel-development/   # Service development briefs
+│   ├── service-briefs/   # Service development briefs
 │   ├── guides/                 # Workflow and session guides
 │   └── weekly-reviews/         # Weekly retrospectives
 │

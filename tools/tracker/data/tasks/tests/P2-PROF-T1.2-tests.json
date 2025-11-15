@@ -1,0 +1,676 @@
+{
+  "taskId": "P2-PROF-T1.2",
+  "version": "1.0",
+  "lastModified": "2025-11-10T00:00:00Z",
+  "testCases": [
+    {
+      "id": "user-controller.unit.getUserProfile-own",
+      "category": "unit",
+      "description": "Unit tests for getUserProfile with own profile access (shows all fields)",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-profile-controller.test.ts",
+        "status": "not_created",
+        "testCount": 6,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile"],
+        "scenarios": [
+          "getUserProfile with own ID (req.user.id=1, params.id='1') returns 200 with email and phone_number included",
+          "getUserProfile with own ID returns complete user object with all profile fields (full_name, username, email, phone_number, location_*, profile_image_url)",
+          "getUserProfile with own ID and 3 sports returns user with sports array populated",
+          "getUserProfile never includes password_hash (verified repository excludes it)",
+          "Field filtering logic: req.user.id === parseInt(params.id) triggers 'own profile' path",
+          "Response status is 200 and Content-Type is application/json for successful own profile retrieval"
+        ],
+        "edgeCases": [
+          "Own profile with empty sports array returns user with sports=[]",
+          "Own profile with NULL phone_number returns user with phone_number=null"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-controller.unit.getUserProfile-other",
+      "category": "unit",
+      "description": "Unit tests for getUserProfile with other user's profile access (excludes email/phone)",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-profile-controller.test.ts",
+        "status": "not_created",
+        "testCount": 6,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile"],
+        "scenarios": [
+          "getUserProfile with other ID (req.user.id=1, params.id='2') returns 200 with email and phone_number EXCLUDED",
+          "getUserProfile with other ID returns partial user object (full_name, username, location_*, profile_image_url) but NOT email/phone",
+          "getUserProfile with other ID and 2 sports returns user with sports array but NO sensitive fields",
+          "Field filtering logic: req.user.id !== parseInt(params.id) triggers 'other profile' path",
+          "Other profile response explicitly excludes email field (email=undefined in response)",
+          "Other profile response explicitly excludes phone_number field (phone_number=undefined in response)"
+        ],
+        "edgeCases": [
+          "Other profile with skill_level='expert' in pickleball still excludes email/phone",
+          "Other profile with NULL location fields returns user without email/phone"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      },
+      "dependsOn": ["user-controller.unit.getUserProfile-own"]
+    },
+    {
+      "id": "user-controller.unit.getUserProfile-notfound",
+      "category": "unit",
+      "description": "Unit tests for getUserProfile with non-existent user (404 handling)",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-profile-controller.test.ts",
+        "status": "not_created",
+        "testCount": 4,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile"],
+        "scenarios": [
+          "getUserProfile with non-existent user ID (params.id='999') returns 404 Not Found",
+          "getUserProfile calls UserRepository.getUserWithSports and receives null",
+          "404 response includes error message 'User not found' in JSON body",
+          "404 response Content-Type is application/json with proper error structure"
+        ],
+        "edgeCases": [
+          "getUserProfile with ID=0 returns 404 (invalid ID, should fail validation or return null)",
+          "getUserProfile with negative ID (ID=-5) returns 404"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      },
+      "dependsOn": ["user-controller.unit.getUserProfile-own"]
+    },
+    {
+      "id": "user-controller.unit.field-filtering-logic",
+      "category": "unit",
+      "description": "Unit tests for field filtering logic (own vs other profile determination)",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-profile-field-filter.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile"],
+        "scenarios": [
+          "Field filtering: req.user.id=5 and params.id='5' triggers own profile path (string-to-number comparison)",
+          "Field filtering: req.user.id=5 and params.id='10' triggers other profile path",
+          "Field filtering uses parseInt(params.id) for comparison (handles string param)",
+          "Own profile path includes: email, phone_number, plus all public fields",
+          "Other profile path excludes: email, phone_number, but includes all public fields (username, full_name, location_*, profile_image_url, sports)"
+        ],
+        "edgeCases": [
+          "Field filtering with req.user.id=1 and params.id='01' (leading zero) correctly identifies as own profile",
+          "Field filtering logic is case-insensitive for ID comparison (both are numbers)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-validation.unit.getUserParamsSchema",
+      "category": "unit",
+      "description": "Unit tests for getUserParamsSchema Zod validation (ID parameter)",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-validation.test.ts",
+        "status": "not_created",
+        "testCount": 7,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserParamsSchema.parse", "getUserParamsSchema.safeParse"],
+        "scenarios": [
+          "getUserParamsSchema validates valid positive integer ID ('123') successfully",
+          "getUserParamsSchema uses z.coerce.number() to convert string '42' to number 42",
+          "getUserParamsSchema validates ID=1 (minimum valid ID)",
+          "getUserParamsSchema rejects ID='0' (not positive)",
+          "getUserParamsSchema rejects ID='-5' (negative integer)",
+          "getUserParamsSchema rejects ID='abc' (non-numeric string)",
+          "getUserParamsSchema uses .int() to reject decimal IDs like '3.14'"
+        ],
+        "edgeCases": [
+          "getUserParamsSchema rejects empty string ID=''",
+          "getUserParamsSchema rejects null or undefined ID",
+          "getUserParamsSchema validates large integer ID='999999'"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user.schema.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-controller.integration.getUserProfile-repository",
+      "category": "integration",
+      "description": "Integration tests for getUserProfile calling UserRepository.getUserWithSports",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-controller-repository.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "25 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile", "UserRepository.getUserWithSports"],
+        "scenarios": [
+          "getUserProfile calls UserRepository.getUserWithSports with integer ID parsed from params.id",
+          "getUserProfile with params.id='25' calls repository with getUserWithSports(25)",
+          "getUserProfile receives user object from repository and applies field filtering before response",
+          "getUserProfile integration: repository returns user with 3 sports, controller includes sports in response",
+          "getUserProfile integration: repository returns null, controller responds with 404"
+        ],
+        "edgeCases": [
+          "getUserProfile handles repository throwing error (returns 500 Internal Server Error)",
+          "getUserProfile with repository timeout gracefully handles error"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-controller.unit.getUserProfile-own"]
+    },
+    {
+      "id": "user-controller.integration.access-control-own",
+      "category": "integration",
+      "description": "Integration tests for field-level access control with own profile (full data access)",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-access-control.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "25 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile"],
+        "scenarios": [
+          "Access control integration: req.user.id=10 requests params.id='10', receives email='user10@example.com' and phone_number='+1234567890'",
+          "Access control: own profile includes all sensitive fields (email, phone_number)",
+          "Access control: own profile with pickleball and paddle sports shows email + sports array",
+          "Access control: req.user object from JWT middleware is used for ownership check",
+          "Access control: own profile response includes username, full_name, email, phone_number, location_latitude, location_longitude, profile_image_url, sports"
+        ],
+        "edgeCases": [
+          "Access control: own profile with NULL email returns email=null (not excluded)",
+          "Access control: own profile with NULL phone_number returns phone_number=null (not excluded)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      },
+      "dependsOn": ["user-controller.unit.getUserProfile-own"]
+    },
+    {
+      "id": "user-controller.integration.access-control-other",
+      "category": "integration",
+      "description": "Integration tests for field-level access control with other user's profile (restricted access)",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-access-control.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "25 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile"],
+        "scenarios": [
+          "Access control integration: req.user.id=1 requests params.id='2', response EXCLUDES email and phone_number",
+          "Access control: other profile response includes username, full_name, location_*, profile_image_url, sports",
+          "Access control: other profile with email='otheruser@example.com' in database returns response WITHOUT email field",
+          "Access control: other profile with phone_number='+9876543210' in database returns response WITHOUT phone_number field",
+          "Access control: other profile with 2 sports (basketball, soccer) returns sports array but NO sensitive fields"
+        ],
+        "edgeCases": [
+          "Access control: req.user.id=5 requests params.id='100' (non-existent other user) returns 404 without leaking existence",
+          "Access control: other profile filtering works even if email/phone are NULL in database"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      },
+      "dependsOn": ["user-controller.unit.getUserProfile-other"]
+    },
+    {
+      "id": "user-controller.integration.sports-inclusion",
+      "category": "integration",
+      "description": "Integration tests verifying sports array is included in both own and other profiles",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-sports.test.ts",
+        "status": "not_created",
+        "testCount": 4,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile"],
+        "scenarios": [
+          "Sports inclusion: own profile with pickleball (skill_level='intermediate', years_experience=2) includes sports array",
+          "Sports inclusion: other profile with paddle (skill_level='beginner') includes sports array (sports are public data)",
+          "Sports inclusion: user with 3 sports (pickleball, paddle, basketball) returns all 3 in sports array",
+          "Sports inclusion: user with 0 sports returns empty sports array []"
+        ],
+        "edgeCases": [
+          "Sports inclusion: sports array includes all fields (sport_name, skill_level, years_experience, preferred_position)",
+          "Sports inclusion: sport with NULL years_experience and NULL preferred_position returns sport object with nulls"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      },
+      "dependsOn": ["user-controller.integration.getUserProfile-repository"]
+    },
+    {
+      "id": "user-controller.integration.password-exclusion",
+      "category": "integration",
+      "description": "Integration tests verifying password_hash is NEVER included in responses (security critical)",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-security.test.ts",
+        "status": "not_created",
+        "testCount": 4,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile", "UserRepository.getUserWithSports"],
+        "scenarios": [
+          "Password exclusion: own profile response does NOT include password_hash field (verified repository excludes it)",
+          "Password exclusion: other profile response does NOT include password_hash field",
+          "Password exclusion: response object inspection shows password_hash=undefined (not present)",
+          "Password exclusion: repository layer already excludes password_hash via SELECT statement (defense in depth)"
+        ],
+        "edgeCases": [
+          "Password exclusion: even if repository mistakenly returns password_hash, controller should strip it (currently relies on repository)",
+          "Password exclusion: JSON.stringify(response) should not contain 'password_hash' string anywhere"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-controller.integration.status-active-filter",
+      "category": "integration",
+      "description": "Integration tests for soft-deleted users (status != 'active') returning 404",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-status.test.ts",
+        "status": "not_created",
+        "testCount": 3,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile", "UserRepository.getUserWithSports"],
+        "scenarios": [
+          "Status filter: user with status='inactive' (soft-deleted) returns 404 Not Found",
+          "Status filter: user with status='suspended' returns 404 Not Found",
+          "Status filter: repository filters for status='active', controller receives null for inactive users"
+        ],
+        "edgeCases": [
+          "Status filter: soft-deleted user (status='inactive') requesting own profile still gets 404 (no special access)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-controller.integration.getUserProfile-repository"]
+    },
+    {
+      "id": "user-controller.integration.response-format",
+      "category": "integration",
+      "description": "Integration tests for response format (status codes, Content-Type, JSON structure)",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-response.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile"],
+        "scenarios": [
+          "Response format: successful retrieval returns 200 OK status",
+          "Response format: non-existent user returns 404 Not Found status",
+          "Response format: Content-Type header is 'application/json; charset=utf-8'",
+          "Response format: success response body is valid JSON with user object",
+          "Response format: 404 error response includes {error: 'User not found'} in JSON body"
+        ],
+        "edgeCases": [
+          "Response format: user object includes id, username, full_name at minimum",
+          "Response format: sports array is always present (empty [] if no sports)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      },
+      "dependsOn": ["user-controller.integration.getUserProfile-repository"]
+    },
+    {
+      "id": "user-controller.integration.type-safety",
+      "category": "integration",
+      "description": "Integration tests for TypeScript type safety (AuthenticatedRequest, Response types)",
+      "required": true,
+      "priority": "medium",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-types.test.ts",
+        "status": "not_created",
+        "testCount": 4,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile"],
+        "scenarios": [
+          "Type safety: getUserProfile accepts (req: AuthenticatedRequest, res: Response) signature",
+          "Type safety: req.user is typed as JWTPayload with id, email properties",
+          "Type safety: req.params.id is typed as string (Express param)",
+          "Type safety: repository returns User | null type (matches getUserWithSports signature)"
+        ],
+        "edgeCases": [
+          "Type safety: parseInt(req.params.id) converts string to number for comparison",
+          "Type safety: response user object matches User interface from auth.types.ts"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/types/auth.types.ts"
+        ]
+      },
+      "dependsOn": []
+    },
+    {
+      "id": "user-controller.integration.error-handling",
+      "category": "integration",
+      "description": "Integration tests for error handling (repository errors, database failures)",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-errors.test.ts",
+        "status": "not_created",
+        "testCount": 4,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile"],
+        "scenarios": [
+          "Error handling: repository throws database error, controller catches and returns 500 Internal Server Error",
+          "Error handling: repository timeout, controller returns 500 with error message",
+          "Error handling: malformed ID (params.id='abc') handled by validation middleware (returns 400 Bad Request)",
+          "Error handling: req.user is undefined (auth middleware failure), controller handles gracefully"
+        ],
+        "edgeCases": [
+          "Error handling: repository returns unexpected data structure, controller validates before response",
+          "Error handling: database connection failure, controller returns 500 without exposing internals"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      },
+      "dependsOn": ["user-controller.integration.getUserProfile-repository"]
+    },
+    {
+      "id": "user-validation.integration.params-validation",
+      "category": "integration",
+      "description": "Integration tests for Zod parameter validation with controller (400 errors for invalid IDs)",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-validation.test.ts",
+        "status": "not_created",
+        "testCount": 5,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserParamsSchema", "getUserProfile"],
+        "scenarios": [
+          "Params validation integration: invalid ID='abc' triggers Zod validation error, returns 400 Bad Request",
+          "Params validation: negative ID='-5' fails Zod positive() check, returns 400",
+          "Params validation: ID='0' fails Zod positive() check, returns 400",
+          "Params validation: decimal ID='3.14' fails Zod int() check, returns 400",
+          "Params validation: valid ID='42' passes Zod validation, proceeds to controller logic"
+        ],
+        "edgeCases": [
+          "Params validation: empty string ID='' fails Zod validation, returns 400",
+          "Params validation: very large ID='999999999999' passes Zod validation (positive integer)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user.schema.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts"
+        ]
+      },
+      "dependsOn": ["user-validation.unit.getUserParamsSchema"]
+    },
+    {
+      "id": "user-controller.integration.performance",
+      "category": "integration",
+      "description": "Integration performance tests for controller + repository response time",
+      "required": true,
+      "priority": "medium",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-performance.test.ts",
+        "status": "not_created",
+        "testCount": 3,
+        "estimatedDuration": "30 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile", "UserRepository.getUserWithSports"],
+        "scenarios": [
+          "Performance: getUserProfile with own ID completes in <100ms (controller + repository)",
+          "Performance: getUserProfile with other ID and 3 sports completes in <100ms",
+          "Performance: field filtering logic adds negligible overhead (<5ms)"
+        ],
+        "edgeCases": [
+          "Performance: user with 5 sports still returns in <150ms (acceptable for edge case)",
+          "Performance: concurrent requests (10 simultaneous getUserProfile calls) all complete in <200ms"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-controller.integration.getUserProfile-repository"]
+    },
+    {
+      "id": "user-controller.integration.auth-request-types",
+      "category": "integration",
+      "description": "Integration tests for AuthenticatedRequest type usage (req.user from JWT middleware)",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-auth-types.test.ts",
+        "status": "not_created",
+        "testCount": 4,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile"],
+        "scenarios": [
+          "AuthenticatedRequest: req.user contains id and email properties from JWT payload",
+          "AuthenticatedRequest: req.user.id is used for ownership comparison (req.user.id === parseInt(params.id))",
+          "AuthenticatedRequest: controller expects req.user to be populated by auth middleware (dependency on T1.3)",
+          "AuthenticatedRequest: req.user.id is integer type matching database user.id"
+        ],
+        "edgeCases": [
+          "AuthenticatedRequest: req.user.id type mismatch (string vs number) handled by parseInt",
+          "AuthenticatedRequest: missing req.user (auth middleware not applied) should cause error (handled by middleware in T1.3)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/shared/types/auth.types.ts"
+        ]
+      },
+      "dependsOn": ["user-controller.integration.type-safety"]
+    },
+    {
+      "id": "user-controller.integration.sql-injection-prevention",
+      "category": "integration",
+      "description": "Integration security tests for SQL injection prevention (parameterized queries)",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-profile-sql-injection.test.ts",
+        "status": "not_created",
+        "testCount": 3,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["getUserProfile", "UserRepository.getUserWithSports"],
+        "scenarios": [
+          "SQL injection: params.id='1 OR 1=1' is validated by Zod and rejected (400 Bad Request)",
+          "SQL injection: params.id='1; DROP TABLE users;' fails Zod int validation, returns 400",
+          "SQL injection: repository uses parameterized queries via Knex (ID is bound parameter, not string concatenation)"
+        ],
+        "edgeCases": [
+          "SQL injection: params.id with special characters like quotes/semicolons fails Zod validation",
+          "SQL injection: even if Zod validation bypassed, Knex parameterization prevents SQL injection at database layer"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user.repository.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user.schema.ts"
+        ]
+      },
+      "dependsOn": ["user-validation.integration.params-validation"]
+    }
+  ],
+  "coverageRequirements": {
+    "enabled": true,
+    "minimumPercentage": 90,
+    "criticalFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user.controller.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user.schema.ts"
+    ]
+  },
+  "successCriteria": {
+    "allTestsMustPass": true,
+    "noTypeScriptErrors": true,
+    "noLintingErrors": false,
+    "buildMustSucceed": true
+  },
+  "executionConfig": {
+    "runInOrder": [
+      "user-validation.unit.getUserParamsSchema",
+      "user-controller.unit.field-filtering-logic",
+      "user-controller.unit.getUserProfile-own",
+      "user-controller.unit.getUserProfile-other",
+      "user-controller.unit.getUserProfile-notfound",
+      "user-controller.integration.getUserProfile-repository",
+      "user-controller.integration.access-control-own",
+      "user-controller.integration.access-control-other",
+      "user-controller.integration.sports-inclusion",
+      "user-controller.integration.password-exclusion",
+      "user-controller.integration.status-active-filter",
+      "user-controller.integration.response-format",
+      "user-controller.integration.type-safety",
+      "user-controller.integration.error-handling",
+      "user-validation.integration.params-validation",
+      "user-controller.integration.performance",
+      "user-controller.integration.auth-request-types",
+      "user-controller.integration.sql-injection-prevention"
+    ],
+    "stopOnFirstFailure": false,
+    "parallelizable": false
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": "P1",
+  "name": "User Authentication",
+  "status": "complete",
+  "startDate": "2025-11-08",
+  "completionDate": "2025-11-09",
+  "tasks": {
+    "complete": 5,
+    "total": 5
+  },
+  "tests": {
+    "passing": 121,
+    "total": 121
+  },
+  "coverage": 92,
+  "maturityGate": {
+    "status": "passed",
+    "verifiedDate": "2025-11-09"
+  }
+}

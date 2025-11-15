@@ -1,0 +1,395 @@
+# Gully - Claude Code Context (Essential Only)
+
+## 🎯 Project Identity
+**Solo developer** building sports challenge MVP | **$0 budget** | **Phase 2/7**
+
+**Current Status:** Phase 1 ✅ Complete (User Authentication: 121 tests, 90%+ coverage) → Phase 2 (User Profiles in progress)
+
+**Master Navigator:** See [INDEX.md](../INDEX.md) for fast file discovery (✅ Available at project root)
+
+---
+
+## 💬 Context Awareness Protocol
+
+### At Session Startup, Claude MUST:
+1. **State current context** in 2-3 sentences:
+   - "I've loaded project essentials and understand we're in Phase X working on [task]"
+   - "I'm aware of: [key files/status]. Ready to continue with [next task]."
+
+2. **Avoid repeating full project history** unless explicitly asked
+
+3. **Use `/gullystatus`** to load STATUS.md for current state (~500 tokens)
+
+4. **Load context on-demand** only when needed for specific task:
+   - `/gullycontext mvp` - MVP scope details
+   - `/gullycontext arch` - Architecture details
+   - `/gullycontext database` - Schema details
+   - `/gullycontext learnings` - Phase 1 patterns & mistakes
+
+**Key Principle:** Keep human and Claude in same context without token waste.
+
+---
+
+## 📂 FILE DISCOVERY PROTOCOL (CRITICAL - ALWAYS FOLLOW)
+
+### 🎯 PRIMARY RULE: ALWAYS USE INDEX FILES FIRST
+
+**Before searching for any file, Claude MUST:**
+
+1. **Start with INDEX.md** (root level) - Master navigator for ALL files
+   - Path: `/Users/sibikrishnan/Documents/Gully/INDEX.md`
+   - Contains: Task tracking, backend code, docs, config, database paths
+2. **Use section indexes** for specific areas:
+   - `docs/INDEX.md` - Documentation hub
+   - `docs/architecture/INDEX.md` - Architecture docs
+   - `.claude/context/INDEX.md` - Context sections
+   - `docs/archives/INDEX.md` - Historical files
+   - `tools/tracker/data/tasks/index.json` - Task registry (JSON)
+
+### ✅ CORRECT File Discovery Pattern
+
+**Example 1: Finding database schema**
+```
+Step 1: Read INDEX.md (root)
+Step 2: See "Database Architecture" section
+Step 3: Follow link to docs/planning/DATABASE_SCHEMA.md
+Result: Found in 1-2 tool calls ✅
+```
+
+**Example 2: Finding UserService implementation**
+```
+Step 1: Read INDEX.md (root)
+Step 2: See "Backend Code" section → backend/src/services/user-service/
+Step 3: Navigate to specific controller/repository/route file
+Result: Found in 2 tool calls ✅
+```
+
+**Example 3: Loading architecture context**
+```
+Step 1: Check .claude/context/INDEX.md
+Step 2: See available sections (arch, database, mvp, workflow)
+Step 3: Use /gullycontext arch
+Result: Loaded targeted context, not entire project ✅
+```
+
+### ❌ FORBIDDEN Anti-Patterns
+
+**DO NOT:**
+- ❌ Use Glob to search for files without checking INDEX first
+- ❌ Use Grep to find files without checking INDEX first
+- ❌ Read multiple potential files hoping one is correct
+- ❌ Load FULL_CONTEXT.md (archived, outdated)
+- ❌ Load comprehensive docs when INDEX has quick reference
+
+**REASON:** Wastes tokens, slower discovery, defeats refactoring purpose
+
+### 🔍 When INDEX Doesn't Have It
+
+**Only if INDEX.md doesn't reference the file:**
+1. Check if file is in archives (docs/archives/INDEX.md)
+2. Use Glob with specific pattern
+3. Update INDEX.md after finding it (improve for next time)
+
+### 🎯 Performance Target
+
+**Goal:** Find any file in 1-2 tool calls via INDEX navigation
+**Measure:** Track with `/gullymetrics` - flag if >2 calls for known files
+
+**Most frequent starting points:** INDEX.md → STATUS.md → TASK_HISTORY.md → docs/planning/ → backend/src/services/
+
+---
+
+## 🔄 Task Workflow (ALWAYS follow for every new task)
+
+**State the Goal** - Confirm the task I'm starting.
+
+**State the Approach** - Briefly confirm the high-level method and provide a numbered list of the specific, planned steps to achieve the goal.
+
+**State the First Step** - Declare the immediate action to be taken from the list in Step 2.
+
+Then enter formal Plan Mode ONLY if task is ambiguous, involves architectural changes, or requires major choices not detailed in TASK_HISTORY.md.
+
+---
+
+## 💬 Communication Protocol (CRITICAL)
+
+### Claude MUST:
+1. **Ask questions frequently** - Don't assume, verify understanding
+2. **Confirm requirements** before implementing complex features
+3. **Request context when needed** - "Please run `/gullycontext arch/services`"
+4. **Summarize understanding** before starting work
+5. **Flag uncertainties immediately** - Don't proceed with assumptions
+
+**Philosophy:** Frequent communication > Silent assumptions
+
+---
+
+## 📋 Display Preferences
+
+- Always display the to-do list for user visibility
+
+---
+
+## 🏗️ Architecture (Non-Negotiable)
+
+### MODULAR MONOLITH - NOT Microservices
+- Service-oriented folder structure, **single Node.js process**
+- Clear service boundaries, runs as monolith
+- Easy migration to containers later (post-funding)
+
+### Stack
+- **Backend:** Node.js + Express + TypeScript (modular monolith)
+- **Database:** PostgreSQL + Redis (Docker Compose, local only)
+- **Auth:** Passport.js + JWT (self-hosted, no Auth0)
+- **Frontend:** Next.js (defer to Week 3+)
+
+### Service Boundaries
+- **User Service:** Auth, profiles → `/api/auth/*`, `/api/users/*`
+- **Team Service:** Team management → `/api/teams/*`
+- **Match Service:** Challenges, scheduling → `/api/challenges/*`, `/api/matches/*`
+- **Stats Service:** Leaderboards, analytics → `/api/stats/*`
+
+**For details:** `/gullycontext arch`
+
+---
+
+## 🚫 Non-Negotiables
+
+### ❌ FORBIDDEN Until Funded
+- Paid services (AWS beyond free tier, Auth0, SendGrid, Stripe, etc.)
+- Kubernetes, complex orchestration
+- Distributed microservices
+- Over-engineering for scale
+
+### ✅ REQUIRED Always
+- TDD approach (write tests first, 90%+ coverage)
+- Zero-cost development (Docker local, free hosting for demos)
+- Immediate verification (run tests + build before moving on)
+- Small tasks (60-90 min chunks)
+
+**For decision framework:** `/gullycontext mvp`
+
+---
+
+## 🎨 Quality & Review Standards
+
+### Code Quality Checklist (Before Every Commit)
+- [ ] All tests pass (`npm test`)
+- [ ] No TypeScript errors (`npx tsc --noEmit`)
+- [ ] 80%+ test coverage maintained
+- [ ] No console.log or commented-out code
+- [ ] Error handling in place for all endpoints
+- [ ] Database migrations run cleanly
+- [ ] Docker containers healthy
+
+### Review Standards
+- **Read AI-generated code carefully** - Understand before accepting
+- **Test immediately** - Never commit untested code
+- **Question complexity** - Ask "is there a simpler way?"
+- **Verify dependencies** - Are they free? Still maintained?
+- **Check costs** - Does anything require paid services?
+
+### Anti-Patterns - Red Flag Phrases
+When Claude suggests these, **STOP and reconsider:**
+- "Let's add a microservice for..." → Use modular monolith
+- "We need Kubernetes" → Use Docker Compose only
+- "Let's use [paid service]" → Find free alternative
+- "Let's build a framework for..." → Keep it simple
+- "We need 99.99% uptime" → MVP doesn't need this
+- "This needs to scale to millions" → Build for 100 users first
+
+**For detailed workflow guidance:** Use `/gullycontext workflow/[communication|review|principles|antipatterns]` on-demand only
+
+---
+
+## 📚 Phase 1 Learnings - Mistake Prevention
+
+### ✅ Always Verify Immediately
+- Run full test suite after changes (not just individual tests)
+- Run `npm run build` before committing
+- Check container logs after config changes
+
+### ✅ Common Pitfalls to Avoid
+1. **Config files**: Don't use empty strings for password fields (Redis, etc.)
+2. **Tests**: Ensure proper cleanup between tests (use afterEach hooks)
+3. **Types**: Use strict TypeScript, add proper type guards
+
+### ✅ Proven Patterns
+- TDD approach (write tests first)
+- Manageable task chunks (feature-driven)
+- Token optimization (use `/gullycontext` for granular loading)
+- Immediate verification (never move to next task without verifying)
+
+### ✅ Token Optimization Rule (Added 2025-11-04)
+**Critical Principle:** No frequently-read file should exceed 100 lines (~500 tokens)
+
+**Architecture Pattern:**
+- Active work files stay minimal (TASK_HISTORY.md: 86 lines)
+- Completed work archives by phase (`docs/archives/tasks/PHASEN_TASKS.md`)
+- Archives never loaded unless explicitly needed
+
+**Enforcement:**
+- Token Auditor agent runs at each phase review
+- Catches bloat before it becomes a problem (preventive, not reactive)
+- Scans: TASK_HISTORY.md, STATUS.md, `.claude/.claude.md`, phase reviews
+
+**Impact:**
+- TASK_HISTORY.md: 402 lines → 86 lines (80% reduction, ~2,000 tokens saved)
+- Future-proof: Scales linearly through all 7 phases
+
+---
+
+## 🔧 Git Workflow (AUTO-COMMIT MODE)
+
+### 🚨 User delegated git to Claude - Commit automatically, don't ask
+
+### Auto-Commit Triggers
+1. ✅ Todo items marked complete
+2. ✅ Logical units finished (feature done, tests pass)
+3. ✅ Files created/modified (related batch)
+4. ✅ Bug fixes completed
+
+### Auto-Commit Workflow (Execute Immediately)
+1. Run `git status` + `git diff`
+2. Stage relevant files (exclude secrets, temp files)
+3. Create commit message (conventional commits format + emoji + co-author)
+4. Commit immediately
+5. Push to remote (keeps backup current)
+6. Brief confirmation: "✅ Committed: [message]"
+
+### Only Ask User When:
+- ⚠️ Pushing to `main` or `master` branch
+- ⚠️ Force push required
+- ⚠️ Detected secrets/credentials in staged files
+
+### Commit Message Format (Enhanced for Context Integrity)
+```
+<type>: <concise description>
+
+<optional details if complex>
+
+**Context Loaded:**
+- /gullycontext <section> (if used)
+- **Critical File Versions:**
+    - .claude/.claude.md: <Last Updated Date from file footer>
+    - TASK_HISTORY.md: <Line count (e.g., 91 lines)>
+- Other File Paths: <path:lines>
+
+**Metadata:** [Task: X.Y] [Module: user-service|team-service|match-service|stats-service|shared] [Status: pending|in_progress|completed]
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+**Example:**
+```
+feat: implement user profile GET endpoint
+
+Added GET /api/users/:id with auth middleware and Zod validation.
+Tests: 12 passing, 95% coverage.
+
+**Context Loaded:**
+- /gullycontext database/tables
+- **Critical File Versions:**
+    - .claude/.claude.md: 2025-11-03
+    - TASK_HISTORY.md: 86 lines
+- backend/src/services/user-service/controllers/auth.controller.ts:1-80
+
+**Metadata:** [Task: 7.1] [Module: user-service] [Status: completed]
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+**Use `gh` CLI** for GitHub operations (issues, PRs, checks, releases)
+
+---
+
+## 📋 Code Standards
+
+### File Naming
+- Controllers: `*.controller.ts`
+- Routes: `*.routes.ts`
+- Tests: `*.test.ts`
+
+### Imports
+```typescript
+// Absolute imports for shared
+import { db } from '@shared/database';
+
+// Relative within service
+import { UserController } from './controllers/user.controller';
+```
+
+---
+
+## 📚 Load Context On-Demand (Token Optimization)
+
+**Load full sections:**
+```bash
+/gullycontext mvp         # MVP scope, timeline, metrics
+/gullycontext arch        # Architecture, services, migration
+/gullycontext database    # Tables, Redis, indexes
+/gullycontext learnings   # Week 1 patterns & mistakes
+/gullycontext workflow    # Principles, review protocol
+```
+
+**Load specific subsections (most efficient):**
+```bash
+/gullycontext mvp/in-scope
+/gullycontext arch/services
+/gullycontext database/tables
+/gullycontext learnings
+```
+
+**Claude should proactively request these when needed!**
+
+---
+
+## 🎯 Core Principles
+
+1. **Zero cost until validated** - No paid services without users
+2. **Modular monolith, always** - Service structure, single process
+3. **Ship, then polish** - Working beats perfect
+4. **Verify everything** - Run tests + build before moving on
+5. **Local-first forever** - MacBook is the datacenter
+6. **Communicate constantly** - Questions > Assumptions
+7. **TDD discipline** - Tests first, 90%+ coverage maintained
+
+---
+
+## 🚀 Session Workflow (From observation.txt)
+
+### Human's Session Startup Checklist
+1. Start Docker: `cd backend && docker compose up -d`
+2. Run `/verify` (manual - Claude cannot automate)
+3. Check context with `/gullystatus`
+4. Continue work with `/gullycontinue`
+
+### Claude's Session Startup Response
+1. State context awareness in 2-3 sentences
+2. Confirm current week/task
+3. Ask if should continue or load specific context
+4. **Do NOT repeat full project history**
+
+### After Task Completion
+- Update TASK_HISTORY.md
+- Auto-commit with template
+- Optionally verify with `/gullyverify`
+
+---
+
+## 🤝 Working Together
+
+- **Claude:** Ask early, request context when needed, state awareness at startup
+- **User:** Provide clear requirements, flag off-track behavior
+- **Goal:** Stay aligned, ship working code, minimize token waste
+
+**All slash commands use `/gully` prefix (Non-Negotiable)**
+
+---
+
+**Last Updated:** 2025-11-07 (Post Phase 1 → Phase 2 transition)
+**Next Review:** End of Phase 2

@@ -1,0 +1,16 @@
+phase,parent_id,subtask_file,title,status,created,started,completed,test_count,notes
+P2,P2-PROF-T1,P2-PROF-T1.1.json,Repository - findById with user_sports JOIN,completed,2025-11-10,2025-11-10,2025-11-11,43,Schema discovery + repository implementation
+P2,P2-PROF-T1,P2-PROF-T1.2.json,Controller - getUserProfile with field filtering,completed,2025-11-10,2025-11-11,2025-11-11,15,Field-level access control implemented
+P2,P2-PROF-T2,P2-PROF-T2.1-repo.json,Repository - updateUser with constraints,completed,2025-11-11,2025-11-12,2025-11-12,30,MISSED TRACKER UPDATE - tests passing
+P2,P2-PROF-T2,P2-PROF-T2.2-controller.json,Controller - PATCH handler,completed,2025-11-11,2025-11-14,2025-11-14,34,Controller + validation schema + 34 tests passing
+P2,P2-PROF-T2,P2-PROF-T2.3-route.json,Route - PATCH endpoint integration,completed,2025-11-11,2025-11-14,2025-11-14,19,Route + middleware chain + 19 tests passing (4+7+3+3+2)
+P2,P2-PROF-T3,task.json,DELETE /api/users/:id - Soft Delete User,pending,2025-11-11,,,0,Single task - no subtasks
+P2,P2-PROF-T4,task.json,POST/DELETE /api/users/:id/sports - Manage Sport Preferences,pending,2025-11-11,,,0,Single task - no subtasks
+P2,P2-PROF-T5,task.json,GET /api/users/search - Search Users with Filters,pending,2025-11-11,,,0,Single task - no subtasks
+P3,P3-TEAM-T1,task.json,POST /api/teams - Create Team with Captain,pending,2025-11-11,,,0,Phase 3 - blocked by P2 completion
+P3,P3-TEAM-T2,task.json,GET /api/teams/:id - Retrieve Team Details,pending,2025-11-11,,,0,Phase 3 - blocked by P2 completion
+P3,P3-TEAM-T3,task.json,PATCH /api/teams/:id - Update Team Details,pending,2025-11-11,,,0,Phase 3 - blocked by P2 completion
+P3,P3-TEAM-T4,task.json,DELETE /api/teams/:id - Soft Delete Team,pending,2025-11-11,,,0,Phase 3 - blocked by P2 completion
+P3,P3-TEAM-T5,task.json,POST /api/teams/:id/members - Add Team Member,pending,2025-11-11,,,0,Phase 3 - blocked by P2 completion
+P3,P3-TEAM-T6,task.json,DELETE /api/teams/:id/members/:userId - Remove Team Member,pending,2025-11-11,,,0,Phase 3 - blocked by P2 completion
+P3,P3-TEAM-T7,task.json,GET /api/teams - Search and List Teams,pending,2025-11-11,,,0,Phase 3 - blocked by P2 completion

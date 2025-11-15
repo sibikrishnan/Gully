@@ -1,0 +1,3 @@
+# Don't ignore hook scripts - they should be committed
+!*.sh
+!README.md

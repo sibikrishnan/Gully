@@ -1,47 +1,47 @@
-**CRITICAL OPTIMIZATION:** Parse task info from conversation history, NOT by reading full files.
+**CRITICAL OPTIMIZATION:** Load task info from CSV tracker and task JSON files efficiently.
 
 ## Usage:
-- `/gullycontinue` - Auto-detect next task from `/gullystatus` output or STATUS.md
-- `/gullycontinue 3.1` - Explicitly load Task 3.1 (bypasses auto-detection)
+- `/gullycontinue` - Auto-detect next task from CSV tracker
+- `/gullycontinue P2-PROF-T2.2` - Explicitly load specific subtask
 
 ## Workflow:
 
-1. **Parse command arguments**
-   - If task number provided (e.g., "3.1"), use that directly
-   - Otherwise, check for `/gullystatus` output in conversation history
-   - Look for the most recent message containing "⏭️ Next: Task X.Y"
-   - Extract the task number (e.g., "3.1") from that line
+1. **Determine task to load**
+   - If subtask ID provided (e.g., "P2-PROF-T2.2"), use that directly
+   - Otherwise, read `tools/tracker/data/TASK_TRACKER.csv`
+   - Find first row with `status=pending` (this is the next task)
+   - Extract parent_id and subtask_file from CSV row
 
-2. **Targeted file read of ONLY that task section**
-   - Search TASK_HISTORY.md for the heading `### ⏳ Task X.Y:` or `### ⏸️ Task X.Y:`
-   - Read ONLY that task section (not the entire file)
-   - Use Grep to find the line number, then Read with offset+limit
+2. **Load task JSON file**
+   - CSV column `subtask_file` contains the JSON filename (e.g., "P2-PROF-T2.2-controller.json")
+   - CSV column `parent_id` contains parent task ID (e.g., "P2-PROF-T2")
+   - File path: `tools/tracker/data/tasks/{parent_id}/{subtask_file}`
+   - Example: `tools/tracker/data/tasks/P2-PROF-T2/P2-PROF-T2.2-controller.json`
+   - Parse task JSON structure (id, description, workflow, dependencies, etc.)
 
 3. **Extract and display task info**
-   - Commit message template
-   - Planned work bullets
-   - Files to create
-   - Duration estimate
+   - Task description and activeForm
+   - Workflow phases and actions
+   - Dependencies and blockers
+   - Test suite reference
+   - Estimated duration
+   - Checkpoints
 
-4. **Ask for confirmation**
+4. **Ask for confirmation to proceed**
 
-## Fallback Behavior:
+## CSV Integration:
 
-If no task number provided AND no `/gullystatus` output found in conversation history:
-- Read STATUS.md to get the next task number (lightweight read)
-- Then proceed with targeted TASK_HISTORY.md read for that specific task
+The CSV tracker (`TASK_TRACKER.csv`) is the single source of truth for:
+- Which tasks are pending/in_progress/completed
+- Task order and dependencies
+- Location of task JSON files (subtask_file column)
+
+The JSON files contain detailed implementation instructions but don't track status.
 
 **Token Optimization:**
-- Primary path: ~200 tokens (targeted task section only)
-- Fallback path: ~500 tokens (STATUS.md + targeted task section)
-- OLD approach: ~2,500 tokens (entire 402-line TASK_HISTORY.md)
-- NEW architecture: ~500 tokens (streamlined 86-line TASK_HISTORY.md)
-- **Savings: 80-92% reduction**
-
-**Archive Structure (2025-11-04):**
-- TASK_HISTORY.md contains ONLY pending/active tasks (86 lines, ~500 tokens)
-- Completed tasks archived by week in `docs/archives/tasks/WEEKN_TASKS.md`
-- Week 1 archive: `docs/archives/tasks/WEEK1_TASKS.md` (303 lines, never loaded unless needed)
+- Primary path: ~1,500 tokens (CSV scan + task JSON file)
+- Efficient: Direct file access from CSV reference
+- **Benefit: 100% accurate, CSV is single source of truth for status**
 
 Format:
 ```
