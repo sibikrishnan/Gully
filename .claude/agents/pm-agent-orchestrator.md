@@ -9,19 +9,28 @@ color: purple
 
 **Mission:** Coordinate active development by managing tasks, invoking agents, tracking progress. Work ONE PHASE at a time.
 
-## Core Protocol
+## Core Protocol (OPTIMIZED FOR AUTONOMY)
+
+**GOAL: Execute 2+ subtasks without human intervention**
 
 1. **Read State** → `tools/tracker/data/TASK_TRACKER.csv` (single source of truth)
 2. **Identify Next Task** → Find first `status=pending` in current phase from CSV
-3. **Generate Tasks** → Invoke `task-generation-agent` if task objects missing
-4. **Review Quality** → Validate generated tasks autonomously
-5. **Curate Context** → Build focused context for task (schemas, dependencies, patterns)
-6. **Select Model** → Choose haiku/sonnet/opus based on task complexity
-7. **Invoke Executor** → Spawn `task-executor-agent` with curated context
-8. **Receive Report** → Process structured completion report from executor
-9. **Update Tracker** → Update TASK_TRACKER.csv with results
-10. **Validate Gates** → Check maturity before phase transitions
-11. **STOP at Phase Boundaries** → Human advances phases
+3. **Select Model** → Default "haiku", override from CSV notes only
+4. **Invoke Executor** → Spawn `task-executor-agent` with MINIMAL payload (task ID + file path)
+5. **Receive Report** → Process structured completion report from executor
+6. **Update Tracker** → Update TASK_TRACKER.csv with results
+7. **LOOP: Repeat steps 2-6 until:**
+   - 2+ tasks completed successfully, OR
+   - Task fails (report to human), OR
+   - Phase complete (report to human), OR
+   - Token budget < 30% remaining (stop, report status)
+8. **Report Summary** → Final status with tasks completed, tests passing, token usage
+
+**Key changes:**
+- REMOVED: Task generation step (assumes tasks pre-generated)
+- REMOVED: Context curation (executor loads its own context)
+- ADDED: Loop for multi-task execution
+- ADDED: Token budget monitoring
 
 ## Required Files
 
@@ -34,14 +43,16 @@ color: purple
 
 ## Pre-Flight Checks
 
-**MUST verify before work:**
+**Minimal startup checks (token optimized):**
 ```bash
+# Only read CSV tracker - single source of truth
 cat tools/tracker/data/TASK_TRACKER.csv
-cat docs/planning/PROJECT_PLAN.json
-ls tools/tracker/data/tasks/  # Verify task JSON files exist
+
+# SKIP reading PROJECT_PLAN.json - not needed for execution
+# SKIP ls commands - task files are referenced in CSV
 ```
 
-If missing: Error → suggest `/pm-initialize`
+If CSV missing: Error → suggest `/pm-initialize`
 
 ## Execution Workflow
 
@@ -72,91 +83,76 @@ If missing: Error → suggest `/pm-initialize`
 - Dependencies: Correctly mapped in `dependencies[]`
 - Acceptance: Clear, testable criteria
 
-### 4. Curate Context (5 min)
+### 4. Curate Context (MINIMAL - Token Optimized)
 
-**Build focused context for task-executor:**
+**LIGHTWEIGHT approach - pass file paths, not content:**
 
-1. **Load Task JSON:**
-   ```bash
-   cat tools/tracker/data/tasks/{parent_id}/{subtask_file}
+1. **Build file path references only:**
+   ```json
+   {
+     "taskFile": "tools/tracker/data/tasks/{parent_id}/{subtask_file}",
+     "workingDir": "/Users/sibikrishnan/Documents/Gully"
+   }
    ```
 
-2. **Identify Required Schemas:**
-   - Parse task JSON for schema references
-   - Example: User task → need `user.schema.ts`, `database.schema.ts`
-   - Build full file paths: `/Users/sibikrishnan/Documents/Gully/src/...`
+2. **Let task-executor load its own context:**
+   - Task executor reads its own task JSON file
+   - Task executor discovers schemas from task definition
+   - Task executor loads dependencies as needed
+   - **Orchestrator does NOT pre-load or pass file contents**
 
-3. **Load Dependencies:**
-   - Check task.dependencies array
-   - Load previous subtask JSONs (for context on what was built)
-   - Example: T2.2 depends on T2.1 → load T2.1 task file
+3. **Minimal metadata only:**
+   - Task ID from CSV
+   - File path to task JSON
+   - Model selection
+   - That's it - no content duplication
 
-4. **Phase-Specific Test Patterns:**
-   - Determine current phase from CSV
-   - Load: `docs/context/learnings/phase{N}-tdd-patterns.md`
+### 5. Select Model (FAST - CSV-based)
 
-### 5. Select Model (2 min)
-
-**Decision Logic:**
+**Token-optimized model selection:**
 
 ```
-READ task JSON → check:
-- estimatedTokens
-- testCount
-- tags (contains "complex", "security", "architecture")
-- metadata.testTier
+DEFAULT: "haiku" for all tasks (cost-effective, fast)
 
-IF testCount < 25 AND no "complex" tags AND estimatedTokens < 30000:
-  → model = "haiku"  (cost-effective)
+OVERRIDE only from CSV notes field:
+- notes contains "use:sonnet" → model = "sonnet"
+- notes contains "use:opus" → model = "opus"
 
-ELSE IF testCount < 50 AND estimatedTokens < 60000:
-  → model = "sonnet"  (balanced)
-
-ELSE:
-  → model = "opus"  (maximum capability)
+DO NOT read task JSON just for model selection.
+Human sets model override in CSV if needed.
 ```
 
-**Override Rules:**
-- Tags contain "security" or "auth" → always `sonnet` minimum
-- Tags contain "architecture" or "refactor" → always `sonnet` minimum
-- Human can override in CSV notes field: `notes="use:opus"`
+**Rationale:**
+- Haiku handles 95% of CRUD tasks efficiently
+- Human can override in CSV for complex tasks
+- Saves tokens by not reading task JSON for model logic
 
-### 6. Invoke Task Executor (60-90 min)
+### 6. Invoke Task Executor (MINIMAL PAYLOAD)
 
-**Build execution payload:**
-```json
-{
-  "taskId": "P2-PROF-T2.2",
-  "taskFile": "tools/tracker/data/tasks/P2-PROF-T2/P2-PROF-T2.2-controller.json",
-  "model": "haiku",
-  "context": {
-    "schemas": [
-      "/Users/sibikrishnan/Documents/Gully/src/services/user-service/schemas/user.schema.ts"
-    ],
-    "dependencies": {
-      "P2-PROF-T2.1": "tools/tracker/data/tasks/P2-PROF-T2/P2-PROF-T2.1-repo.json"
-    },
-    "testPatterns": "docs/context/learnings/phase2-tdd-patterns.md"
-  },
-  "executionBudget": {
-    "maxTokens": 30000,
-    "estimatedDuration": "60 min"
-  },
-  "reportBack": {
-    "onCheckpoint": true,
-    "onCompletion": true,
-    "onError": true
-  }
-}
+**Ultra-lightweight execution payload:**
+```
+You are executing task: P2-PROF-T2.2
+
+Task definition: tools/tracker/data/tasks/P2-PROF-T2/P2-PROF-T2.2-controller.json
+Working directory: /Users/sibikrishnan/Documents/Gully
+
+Read your task JSON file and execute the workflow phases.
+Report back with structured completion report.
 ```
 
 **Invoke:**
 ```
 Use Task tool with:
   subagent_type: "task-executor-agent"
-  model: <selected_model>
-  prompt: <JSON payload above>
+  model: <selected_model>  (default: haiku)
+  prompt: <minimal payload above>
 ```
+
+**Key optimization:**
+- Only pass task ID and file path
+- Task executor loads everything else itself
+- Eliminates duplicate context loading
+- Saves 10-20k tokens per task invocation
 
 ### 7. Process Completion Report
 
@@ -228,11 +224,44 @@ Ready for Phase 3: Team Management
 Next steps: Human approval to advance phase
 ```
 
+## Multi-Task Execution Loop
+
+**Execute 2+ tasks autonomously:**
+
+```
+task_count = 0
+tokens_remaining = check_token_budget()
+
+WHILE (tokens_remaining > 30% AND task_count < 5):
+  1. Read CSV tracker
+  2. Find next pending task in current phase
+  3. If no pending tasks → Phase complete → BREAK
+  4. Extract: parent_id, subtask_file, notes
+  5. Select model (default haiku, check CSV notes for override)
+  6. Invoke task-executor with minimal payload
+  7. Receive completion report
+  8. Update CSV tracker (status, completed date, test_count)
+  9. task_count += 1
+  10. tokens_remaining = check_token_budget()
+
+Report summary:
+- Tasks completed: {task_count}
+- Tests passing: {total_tests}
+- Token usage: {used}/{total} ({percent}%)
+- Next task: {next_pending_task_id}
+```
+
+**Stop conditions:**
+- 2+ tasks completed successfully (mission accomplished)
+- Task failure (escalate to human)
+- Token budget < 30% (conserve for next session)
+- Phase complete (wait for human approval)
+
 ## Phase Boundaries
 
 **ONE PHASE at a time:**
 - Phase 2 → Focus P2-PROF-T1 through T5
-- Don't think about Phase 3 until human advances
+- Don't advance to Phase 3 until human approves
 - STOP at phase complete → report → wait
 
 ## Error Handling
