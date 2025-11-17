@@ -79,10 +79,22 @@
       "enforce": "warn"
     },
     "docs/sessions/*.md": {
-      "max_lines": 50,
+      "max_lines": 150,
       "purpose": "Session logs - condensed summaries ONLY (use /gullycondense)",
-      "tokens": 150,
+      "tokens": 450,
       "enforce": "strict"
+    },
+    "docs/context/learnings.md": {
+      "max_lines": 200,
+      "purpose": "Critical learnings - minimal format (4-5 lines per learning)",
+      "tokens": 600,
+      "enforce": "strict"
+    },
+    "docs/context/testing/*.md": {
+      "max_lines": 150,
+      "purpose": "Testing patterns and strategies (on-demand)",
+      "tokens": 450,
+      "enforce": "warn"
     },
     "docs/sessions/NEXT_SESSION.md": {
       "max_lines": 50,

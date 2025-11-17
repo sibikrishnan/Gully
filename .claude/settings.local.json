@@ -5,7 +5,10 @@
       "Bash(git:*)",
       "Bash(gh:*)",
       "Bash(npm:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(npx eslint:*)",
+      "Bash(mkdir:*)",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": []
