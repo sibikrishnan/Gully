@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(bash:*)",
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(npm:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []
