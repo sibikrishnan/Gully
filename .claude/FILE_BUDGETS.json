@@ -24,9 +24,9 @@
       "tokens": 150,
       "enforce": "strict"
     },
-    ".claude/skills/*.md": {
+    ".claude/skills/**/*.md": {
       "max_lines": 100,
-      "purpose": "Skill validation logic - concise operational instructions",
+      "purpose": "Skill validation logic - concise operational instructions (no verbose docs/examples)",
       "tokens": 300,
       "enforce": "strict"
     },
