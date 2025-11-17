@@ -1,0 +1,237 @@
+# CodeRabbit Configuration for Gully Project
+# This file customizes CodeRabbit's analysis behavior for the code-review skill
+
+reviews:
+  # ============================================================================
+  # Focus Areas
+  # ============================================================================
+  security: true          # Check for security vulnerabilities
+  performance: true       # Identify performance issues
+  best_practices: true    # Enforce coding best practices
+  testing: true          # Analyze test coverage and quality
+  documentation: false    # Skip documentation checks (handled separately)
+
+  # ============================================================================
+  # Severity Thresholds
+  # ============================================================================
+  # Block PR if these severity levels are found
+  fail_on:
+    - critical
+    - high
+
+  # Warn but don't block
+  warn_on:
+    - medium
+
+  # Report but ignore
+  report_only:
+    - low
+
+  # ============================================================================
+  # Ignore Patterns
+  # ============================================================================
+  # Files/directories to exclude from analysis
+  ignore:
+    # Test files (analyzed separately)
+    - "*.test.ts"
+    - "*.spec.ts"
+    - "**/__tests__/**"
+    - "**/__mocks__/**"
+    - "**/test/**"
+    - "**/tests/**"
+
+    # Build artifacts
+    - "**/dist/**"
+    - "**/build/**"
+    - "**/.next/**"
+    - "**/coverage/**"
+
+    # Dependencies
+    - "**/node_modules/**"
+    - "**/vendor/**"
+
+    # Database migrations (reviewed manually)
+    - "**/migrations/**"
+    - "**/seeds/**"
+
+    # Configuration files
+    - "*.config.js"
+    - "*.config.ts"
+    - ".eslintrc.*"
+    - ".prettierrc.*"
+
+    # Generated files
+    - "**/*.generated.*"
+    - "**/generated/**"
+
+  # ============================================================================
+  # Security Rules
+  # ============================================================================
+  rules:
+    security:
+      # Injection attacks
+      - no-sql-injection
+      - no-nosql-injection
+      - no-xss
+      - no-command-injection
+      - no-path-traversal
+
+      # Authentication/Authorization
+      - secure-auth
+      - no-hardcoded-credentials
+      - no-weak-crypto
+      - validate-jwt
+
+      # Data protection
+      - no-secrets
+      - sanitize-inputs
+      - validate-outputs
+      - secure-headers
+
+    # ==========================================================================
+    # Performance Rules
+    # ==========================================================================
+    performance:
+      # Database
+      - no-n-plus-one
+      - efficient-queries
+      - use-indexes
+      - limit-query-size
+
+      # Resource management
+      - no-memory-leaks
+      - close-connections
+      - use-pooling
+      - cache-expensive-ops
+
+      # Async/await
+      - no-blocking-operations
+      - parallel-async-calls
+      - timeout-async-ops
+
+    # ==========================================================================
+    # Code Quality Rules
+    # ==========================================================================
+    quality:
+      # Complexity
+      - max-complexity: 10
+      - max-function-length: 50
+      - max-file-length: 300
+      - max-params: 5
+
+      # Duplication
+      - no-duplicate-code
+      - dry-principle
+      - extract-common-logic
+
+      # Error handling
+      - proper-error-handling
+      - no-silent-failures
+      - log-errors
+      - graceful-degradation
+
+      # Type safety (TypeScript)
+      - no-any-type
+      - strict-null-checks
+      - explicit-return-types
+      - no-type-assertions
+
+    # ==========================================================================
+    # Best Practices
+    # ==========================================================================
+    practices:
+      # SOLID principles
+      - single-responsibility
+      - dependency-injection
+      - interface-segregation
+
+      # Testing
+      - test-critical-paths
+      - test-edge-cases
+      - no-test-dependencies
+
+      # Code organization
+      - consistent-naming
+      - proper-imports
+      - no-circular-deps
+      - modular-structure
+
+  # ============================================================================
+  # Language-Specific Settings
+  # ============================================================================
+  languages:
+    typescript:
+      strict: true
+      no_implicit_any: true
+      strict_null_checks: true
+
+    javascript:
+      es_version: 2022
+      use_strict: true
+
+  # ============================================================================
+  # Output Settings
+  # ============================================================================
+  output:
+    format: "prompt-only"  # Token-efficient format for AI
+    group_by: "severity"   # Group findings by severity level
+    show_context: true     # Include code context in output
+    max_issues: 50         # Limit output to top 50 issues
+
+  # ============================================================================
+  # Integration Settings
+  # ============================================================================
+  integration:
+    auto_fix: false        # Don't auto-fix (Claude handles this)
+    create_issues: false   # Don't create GitHub issues automatically
+    comment_pr: false      # Don't comment on PRs automatically
+
+# ==============================================================================
+# Project-Specific Customizations
+# ==============================================================================
+
+# Gully project uses NestJS - specific patterns
+nestjs:
+  # Controllers
+  - validate-dto
+  - use-guards
+  - use-interceptors
+  - proper-decorators
+
+  # Services
+  - injectable-services
+  - dependency-injection
+  - transaction-management
+
+  # Repositories
+  - use-repository-pattern
+  - parameterized-queries
+  - handle-query-errors
+
+  # Validation
+  - class-validator
+  - class-transformer
+  - sanitize-dto
+
+# Database-specific (PostgreSQL)
+postgresql:
+  - use-prepared-statements
+  - handle-connection-errors
+  - use-transactions
+  - proper-indexing
+
+# API-specific
+api:
+  - validate-inputs
+  - sanitize-outputs
+  - rate-limiting
+  - proper-status-codes
+  - error-responses
+
+# ==============================================================================
+# Notes
+# ==============================================================================
+# - This config is optional; CodeRabbit works with sensible defaults
+# - Adjust severity thresholds based on team preferences
+# - Add project-specific patterns as they emerge
+# - Review and update quarterly
