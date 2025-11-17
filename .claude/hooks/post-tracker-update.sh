@@ -25,14 +25,19 @@ fi
 # Check if task was marked completed
 NEW_STRING=$(echo "$TOOL_INPUT" | jq -r '.new_string // empty')
 if [[ "$NEW_STRING" == *"completed"* ]]; then
-  echo "🎓 Task completion detected - triggering auto-learning..." >&2
+  echo "🎓 Task completion detected - Learning capture needed!" >&2
   echo "" >&2
-  echo "📋 Running: /gullycondense (session → 150-line log)" >&2
-  echo "🔍 Running: /gullyanalyze (extract patterns)" >&2
-  echo "📚 Updating: context files and learnings.md" >&2
+  echo "   ⚡ RUN SKILL: learning" >&2
   echo "" >&2
-  echo "⏳ This will run in the background after current operation completes." >&2
-  echo "✅ You can continue working - learning capture is automated." >&2
+  echo "   This will:" >&2
+  echo "   - Condense session → 150-line log" >&2
+  echo "   - Extract critical patterns" >&2
+  echo "   - Update learnings.md + context files" >&2
+  echo "   - Archive old learnings if needed" >&2
+  echo "" >&2
+  echo "   Duration: ~30-60 seconds | Cost: ~500-1,000 tokens" >&2
+  echo "" >&2
+  echo "✅ Simply type the skill name 'learning' to invoke" >&2
 fi
 
 # Allow the write to proceed
