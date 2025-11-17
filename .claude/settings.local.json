@@ -9,7 +9,9 @@
       "Bash(npx eslint:*)",
       "Bash(mkdir:*)",
       "Bash(chmod:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "WebFetch(domain:docs.coderabbit.ai)",
+      "Bash(coderabbit auth:*)"
     ],
     "deny": [],
     "ask": []
