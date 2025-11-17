@@ -3,47 +3,152 @@
     ".claude/agents/*.md": {
       "max_lines": 150,
       "purpose": "Agent prompts - operational instructions ONLY (move verbose docs to docs/agents/)",
-      "tokens": 450
+      "tokens": 450,
+      "enforce": "strict"
     },
     ".claude/commands/*.md": {
       "max_lines": 30,
-      "purpose": "Slash commands - logic + brief help",
-      "tokens": 90
+      "purpose": "Slash commands - logic + brief help (NO examples, NO verbose docs)",
+      "tokens": 90,
+      "enforce": "strict"
     },
-    ".claude/.claude.md": {
+    ".claude/CLAUDE.md": {
       "max_lines": 200,
-      "purpose": "Core project context",
-      "tokens": 600
+      "purpose": "Core project context - git workflow, key rules ONLY",
+      "tokens": 600,
+      "enforce": "strict"
     },
     ".claude/hooks/*.md": {
+      "max_lines": 50,
+      "purpose": "Hook logic ONLY - no documentation",
+      "tokens": 150,
+      "enforce": "strict"
+    },
+    ".claude/skills/*.md": {
       "max_lines": 100,
-      "purpose": "Hook documentation",
-      "tokens": 300
+      "purpose": "Skill validation logic - concise operational instructions",
+      "tokens": 300,
+      "enforce": "strict"
     },
     "docs/schemas/*.md": {
       "max_lines": 150,
       "purpose": "Schema definition + validation rules",
-      "tokens": 450
+      "tokens": 450,
+      "enforce": "warn"
     },
     "docs/context/arch/*.md": {
       "max_lines": 300,
-      "purpose": "Architecture guides (on-demand)",
-      "tokens": 900
+      "purpose": "Architecture guides (on-demand via /gullycontext)",
+      "tokens": 900,
+      "enforce": "warn"
     },
-    "docs/protocols/*.md": {
+    "docs/context/database/*.md": {
+      "max_lines": 200,
+      "purpose": "Database patterns and schemas (on-demand)",
+      "tokens": 600,
+      "enforce": "warn"
+    },
+    "docs/context/mvp/*.md": {
       "max_lines": 150,
-      "purpose": "Process definitions",
-      "tokens": 450
+      "purpose": "MVP scope definitions (on-demand)",
+      "tokens": 450,
+      "enforce": "warn"
+    },
+    "docs/context/workflow/*.md": {
+      "max_lines": 150,
+      "purpose": "Workflow principles (on-demand)",
+      "tokens": 450,
+      "enforce": "warn"
+    },
+    "docs/context/commands/*.md": {
+      "max_lines": 100,
+      "purpose": "Command usage examples (on-demand)",
+      "tokens": 300,
+      "enforce": "warn"
     },
     "docs/context/**/*.md": {
       "max_lines": 200,
-      "purpose": "Context sections (on-demand)",
-      "tokens": 600
+      "purpose": "Context sections (on-demand via /gullycontext)",
+      "tokens": 600,
+      "enforce": "warn"
     },
     "docs/agents/*.md": {
       "max_lines": 500,
       "purpose": "Agent examples & extended documentation",
-      "tokens": 1500
+      "tokens": 1500,
+      "enforce": "warn"
+    },
+    "docs/sessions/*.md": {
+      "max_lines": 50,
+      "purpose": "Session logs - condensed summaries ONLY (use /gullycondense)",
+      "tokens": 150,
+      "enforce": "strict"
+    },
+    "docs/sessions/NEXT_SESSION.md": {
+      "max_lines": 50,
+      "purpose": "Next session prompt - concise continuation instructions",
+      "tokens": 150,
+      "enforce": "strict"
+    },
+    "docs/guides/*.md": {
+      "max_lines": 300,
+      "purpose": "User-facing guides and tutorials",
+      "tokens": 900,
+      "enforce": "warn"
+    },
+    "docs/planning/*.md": {
+      "max_lines": 400,
+      "purpose": "Planning documents (features, roadmaps, schemas)",
+      "tokens": 1200,
+      "enforce": "warn"
+    },
+    "docs/service-briefs/briefs/*.md": {
+      "max_lines": 250,
+      "purpose": "Service architecture and API documentation",
+      "tokens": 750,
+      "enforce": "warn"
+    },
+    "docs/workflows/*.md": {
+      "max_lines": 200,
+      "purpose": "Workflow documentation and task generation",
+      "tokens": 600,
+      "enforce": "warn"
+    },
+    "docs/git-strategy/*.md": {
+      "max_lines": 300,
+      "purpose": "Git branching strategy and cleanup guides",
+      "tokens": 900,
+      "enforce": "warn"
+    },
+    "docs/architecture/*.md": {
+      "max_lines": 350,
+      "purpose": "High-level architecture overviews",
+      "tokens": 1050,
+      "enforce": "warn"
+    },
+    "docs/archives/**/*.md": {
+      "max_lines": 1000,
+      "purpose": "Historical documents - no active enforcement",
+      "tokens": 3000,
+      "enforce": "none"
+    },
+    "docs/*.md": {
+      "max_lines": 250,
+      "purpose": "Root-level documentation (README, INDEX, etc.)",
+      "tokens": 750,
+      "enforce": "warn"
+    },
+    "docs/commands/*.md": {
+      "max_lines": 200,
+      "purpose": "Command documentation and usage guides",
+      "tokens": 600,
+      "enforce": "warn"
+    },
+    "docs/reviews/*.md": {
+      "max_lines": 400,
+      "purpose": "Review documents and retrospectives",
+      "tokens": 1200,
+      "enforce": "warn"
     }
   },
   "path_rules": {
@@ -68,5 +173,56 @@
     "warning": "Every file in .claude/ loads at EVERY session startup",
     "calculation": "1,000 lines = ~3k tokens × N sessions = significant cost",
     "rule": "Ask: Does this NEED to be in .claude/? If NO → move to docs/"
+  },
+  "enforcement_levels": {
+    "strict": {
+      "description": "BLOCK write if over budget - these files load every session",
+      "action": "Reject write, show budget violation, suggest condensing or moving to docs/",
+      "applies_to": ".claude/* files (agents, commands, hooks, skills)"
+    },
+    "warn": {
+      "description": "WARN if over budget - on-demand files, less critical",
+      "action": "Show warning, allow write, suggest optimization",
+      "applies_to": "docs/* files (context, guides, planning)"
+    },
+    "none": {
+      "description": "No enforcement - historical/archived content",
+      "action": "No validation performed",
+      "applies_to": "docs/archives/**"
+    }
+  },
+  "skill_integration": {
+    "skill_name": "budget-checker",
+    "location": ".claude/skills/budget-checker.md",
+    "usage": "ALWAYS invoke before Write/Edit on .claude/* or docs/* files",
+    "workflow": [
+      "1. Skill validates file path against budgets",
+      "2. Counts lines in proposed content",
+      "3. If strict + over budget → BLOCK with error message",
+      "4. If warn + over budget → WARN but allow",
+      "5. Suggests condensing strategies if needed"
+    ]
+  },
+  "condensing_strategies": {
+    "commands": [
+      "Remove examples (move to docs/commands/)",
+      "Remove verbose help (keep 1-line description)",
+      "Remove comments, keep only executable logic"
+    ],
+    "agents": [
+      "Remove background/context (move to docs/agents/)",
+      "Keep only operational instructions",
+      "Use bullet points, remove prose"
+    ],
+    "sessions": [
+      "Use /gullycondense to auto-condense to 50 lines",
+      "Extract patterns to context files",
+      "Move detailed logs to docs/archives/"
+    ],
+    "context": [
+      "Use tables instead of prose",
+      "Compress examples to minimal forms",
+      "Link to detailed docs instead of embedding"
+    ]
   }
 }

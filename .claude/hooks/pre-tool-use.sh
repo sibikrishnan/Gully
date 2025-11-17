@@ -80,6 +80,7 @@ if [[ -n "$CONTENT" && "$CONTENT" != "null" ]]; then
     PATTERN=$(echo "$budget_entry" | jq -r '.key')
     MAX_LINES=$(echo "$budget_entry" | jq -r '.value.max_lines')
     PURPOSE=$(echo "$budget_entry" | jq -r '.value.purpose')
+    ENFORCE=$(echo "$budget_entry" | jq -r '.value.enforce // "warn"')
 
     # Convert glob pattern to regex for matching
     # ** -> .* (match any characters including /)
@@ -89,13 +90,34 @@ if [[ -n "$CONTENT" && "$CONTENT" != "null" ]]; then
     if [[ "$ESCAPED_FILE_PATH" =~ $REGEX_PATTERN ]]; then
       MATCHED=true
       if (( LINE_COUNT > MAX_LINES )); then
-        echo "❌ BLOCKED: File exceeds token budget" >&2
-        echo "   File: $FILE_PATH" >&2
-        echo "   Lines: $LINE_COUNT / $MAX_LINES max" >&2
-        echo "   Type: $PURPOSE" >&2
-        echo "   Solution: Split into core + detail, or compress content" >&2
-        echo "   Budget: .claude/FILE_BUDGETS.json" >&2
-        exit 1
+        EXCESS=$((LINE_COUNT - MAX_LINES))
+        TOKEN_COUNT=$((LINE_COUNT * 3))
+        MAX_TOKENS=$((MAX_LINES * 3))
+        EXCESS_TOKENS=$((EXCESS * 3))
+
+        if [[ "$ENFORCE" == "strict" ]]; then
+          echo "❌ BUDGET VIOLATION (STRICT): File exceeds budget - WRITE BLOCKED" >&2
+          echo "   File: $FILE_PATH" >&2
+          echo "   Current: $LINE_COUNT lines (~$TOKEN_COUNT tokens)" >&2
+          echo "   Limit: $MAX_LINES lines (~$MAX_TOKENS tokens)" >&2
+          echo "   Overage: +$EXCESS lines (+$EXCESS_TOKENS tokens)" >&2
+          echo "   Purpose: $PURPOSE" >&2
+          echo "" >&2
+          echo "   SOLUTION: Condense content or move details to docs/" >&2
+          echo "   Budget file: .claude/FILE_BUDGETS.json" >&2
+          exit 1
+        elif [[ "$ENFORCE" == "warn" ]]; then
+          echo "⚠️  BUDGET WARNING: File exceeds recommended limit" >&2
+          echo "   File: $FILE_PATH" >&2
+          echo "   Current: $LINE_COUNT lines (~$TOKEN_COUNT tokens)" >&2
+          echo "   Limit: $MAX_LINES lines (~$MAX_TOKENS tokens)" >&2
+          echo "   Overage: +$EXCESS lines (+$EXCESS_TOKENS tokens)" >&2
+          echo "   Purpose: $PURPOSE" >&2
+          echo "" >&2
+          echo "   Write ALLOWED but consider condensing for better performance." >&2
+          # Continue with warning, don't exit
+        fi
+        # else enforce == "none", no action needed
       fi
       # Match found and valid, exit loop
       break
