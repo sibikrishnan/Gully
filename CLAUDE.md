@@ -1,18 +1,5 @@
 - when suggesting to switch to new sessions, make sure to give the copy paste option of the next feasible thing they may build.
 
-## File Budget Limits (ALWAYS CHECK BEFORE WRITING)
-
-**Before writing docs/commands**: Check `.claude/FILE_BUDGETS.json` for limits. Hook auto-enforces.
-
-**Key limits** (STRICT = blocked if exceeded):
-- `.claude/commands/*.md`: 30 lines (logic only, NO examples)
-- `.claude/agents/*.md`: 150 lines (instructions only, NO background)
-- `docs/sessions/*.md`: 50 lines (use `/gullycondense`)
-- `docs/context/**/*.md`: 200 lines (on-demand content)
-
-**Cost awareness**: Every file in `.claude/` loads at EVERY session startup = $$$
-If it doesn't need to load every session → move to `docs/`
-
 ## Git Workflow (CRITICAL - ALWAYS FOLLOW)
 
 **Reference**: See `GIT.md` for complete branching strategy

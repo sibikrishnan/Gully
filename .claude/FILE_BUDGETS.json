@@ -12,7 +12,7 @@
       "tokens": 90,
       "enforce": "strict"
     },
-    ".claude/CLAUDE.md": {
+    ".claude/.claude.md": {
       "max_lines": 200,
       "purpose": "Core project context - git workflow, key rules ONLY",
       "tokens": 600,
