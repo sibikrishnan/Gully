@@ -11,7 +11,11 @@
       "Bash(chmod:*)",
       "Bash(test:*)",
       "WebFetch(domain:docs.coderabbit.ai)",
-      "Bash(coderabbit auth:*)"
+      "Bash(coderabbit auth:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl:*)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []
