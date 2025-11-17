@@ -1,73 +1,62 @@
 ---
 name: ctx
-description: Load project context sections (database schema, architecture, MVP scope, workflow patterns) when implementing features, making architectural decisions, or answering questions about project structure and patterns
+description: Auto-load minimal relevant context when starting tasks by analyzing task tags, description, and parent ID. Intelligently selects database schemas, architecture patterns, and workflow guides at file or section level for maximum token efficiency. Use BEFORE implementing features.
 ---
 
-# Context Loader
+# Intelligent Context Loader
 
-Load on-demand context from project documentation to inform implementation decisions.
+Automatically loads minimal, task-relevant context from project documentation.
 
-## When to Invoke
+## Auto-Invocation Trigger
 
-Invoke this skill when you need context about:
-- **Database operations** → table schemas, indexes, Redis patterns, Knex usage
-- **Architecture decisions** → service boundaries, tech stack, directory structure
-- **Feature planning** → MVP scope, timeline, success metrics
-- **Workflow questions** → development principles, antipatterns, communication standards
-- **Planning reference** → database schema, API endpoints, roadmap
-- **Historical patterns** → Phase 1 learnings and mistakes
+Claude should invoke this skill when:
+- Starting a new task (after reading task JSON)
+- Implementing routes, controllers, repositories, or validation
+- Working with database operations (queries, migrations, schemas)
+- Writing tests (unit, integration, E2E)
+- Making architecture decisions
 
-## How It Works
+## How It Works (Auto-Inference)
 
-1. Read CONTEXT_MAP.md for section-to-file mappings
-2. Identify section needed (database, arch, mvp, workflow, planning, learnings)
-3. Extract file paths for that section
-4. Use Read tool to load each file with absolute path
-5. Return combined context with clear section labels
+1. Read task JSON (tags, description, parent_id)
+2. Read TASK_CONTEXT_MAP.md for tag/keyword mappings
+3. Infer minimal context needed (file or section level)
+4. Load only relevant content (target: <100 lines)
+5. Report token efficiency
 
-## Available Sections
+## Implementation Steps
 
-**database**: Table schemas, indexes, Redis caching, Knex patterns
-**arch**: Service boundaries, tech stack, directory structure, migration path
-**mvp**: Feature scope (in/out), timeline, success metrics
-**workflow**: Development principles, antipatterns, communication, review standards
-**planning**: Database schema, API endpoints, roadmap (detailed planning docs)
-**learnings**: Phase 1 patterns, mistakes, and prevention strategies
+1. **Read task context**: Extract tags, description, parent_id from task JSON
+2. **Read mapping**: Load TASK_CONTEXT_MAP.md for inference rules
+3. **Infer context needs**: Map task characteristics to context files/sections
+4. **Determine granularity**: Section-level (<100 lines) or file-level
+5. **Load context**: Use CONTEXT_MAP.md for file paths, Read tool to load
+6. **Extract sections**: If section-level, extract specific markdown sections
+7. **Return formatted**: Present loaded context with clear labels
 
-## Implementation
+## Output Format
 
-**Step 1**: Read context map
-Read /Users/sibikrishnan/Documents/Gully/CONTEXT_MAP.md
+```
+✅ Auto-loaded context for {task-id}
 
-**Step 2**: Parse requested section
-Identify section name (e.g., "database", "arch", "mvp")
+📊 {file-name} (section: {section-name})
+[content]
 
-**Step 3**: Extract file paths
-Parse CONTEXT_MAP.md to find all files under requested section
-Each line format: `filename: relative/path/to/file.md`
+Token efficiency: X lines loaded vs Y lines full (Z% savings)
+```
 
-**Step 4**: Read files
-For each file path, prepend repo root: /Users/sibikrishnan/Documents/Gully/
-Use Read tool to load content
+## Example: Routes Task
 
-**Step 5**: Return combined context
-Format output with clear section labels for each file loaded
+**Task**: P2-PROF-T4.3 (tags: routes, middleware, sports)
 
-## Example Usage
+**Auto-inference**:
+- routes → arch/structure.md#routes
+- middleware → arch/structure.md#middleware
+- sports → database/tables.md#user_sports-table
 
-**Task**: Implement user sports preferences endpoint
-
-**Action**: Invoke ctx skill → "need database context"
-
-**Skill execution**:
-1. Reads CONTEXT_MAP.md
-2. Finds database section with 4 files
-3. Reads tables.md, indexes.md, redis.md, knex-patterns.md
-4. Returns combined database context
-
-**Result**: Claude implements endpoint with correct schema knowledge, no guessing
+**Result**: Loads ~95 lines vs 850 lines (89% savings)
 
 ---
 
-**Token efficiency**: Only loads when invoked, not every session
-**Replaces**: Manual grep/glob searches and `/gullycontext` commands Claude cannot invoke
+**Key**: Auto-invoked by Claude when starting tasks, not manual
+**Replaces**: Manual grep/glob wildcard searches
