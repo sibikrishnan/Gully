@@ -41,11 +41,16 @@ coderabbit --prompt-only --base develop
 - 🟡 **MEDIUM**: Code quality, tech debt (Should fix)
 - ⚪ **LOW**: Style, docs (Optional)
 
-### 4. Create TodoWrite Tasks
+### 4. Create TodoWrite Tasks & Get Approval
 
-Convert findings to prioritized task list (CRITICAL → HIGH → MEDIUM)
+1. Convert findings to prioritized task list (CRITICAL → HIGH → MEDIUM)
+2. Show plan to user with issue summaries
+<!-- 3. **WAIT for explicit user approval** before fixing -->
+<!-- 4. User may approve all, select specific fixes, or defer some -->
 
 ### 5. Fix Issues Systematically
+<!-- After Approval -->
+<!-- Note: Fixes use ephemeral TodoWrite (in-memory), NOT formal task tracker at /tools/tracker/data/tasks/ -->
 
 For each task:
 1. Mark as in_progress
@@ -59,7 +64,7 @@ fix: [description]
 
 [details]
 
-Related: CodeRabbit-{SEVERITY}-{ID}
+Related: {TASK-ID} (CodeRabbit-{SEVERITY}-{ID})
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
