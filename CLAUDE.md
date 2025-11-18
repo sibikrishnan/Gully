@@ -1,5 +1,66 @@
 - when suggesting to switch to new sessions, make sure to give the copy paste option of the next feasible thing they may build.
 
+## Skill Invocation Workflow (CRITICAL - ALWAYS FOLLOW)
+
+**Skills are NOT automatic** - They must be manually invoked using the `Skill` tool at specific workflow checkpoints.
+
+### BEFORE Starting Implementation
+
+**MANDATORY: Invoke `ctx` skill**
+
+```
+When: After reading task JSON file, before any implementation
+Why: Load minimal relevant context (80-90% token savings)
+How: Use Skill tool with skill="ctx"
+```
+
+**Example workflow:**
+1. User: "Implement P2-PROF-T5"
+2. Read `/tools/tracker/data/tasks/P2-PROF-T5/task.json`
+3. **Invoke `ctx` skill** ← DO NOT SKIP
+4. Follow skill instructions to load context
+5. Proceed with implementation
+
+### AFTER Task Complete (Before PR)
+
+**MANDATORY: Invoke `code-review` skill**
+
+```
+When: All tests passing, before creating pull request
+Why: Systematic CodeRabbit review + fix critical/high issues
+How: Use Skill tool with skill="code-review"
+```
+
+**Example workflow:**
+1. Implementation complete, tests passing
+2. **Invoke `code-review` skill** ← DO NOT SKIP
+3. Follow skill instructions (analysis → todo list → fixes → commit)
+4. Create pull request
+
+### AFTER Task Complete (After PR)
+
+**MANDATORY: Invoke `learning` skill**
+
+```
+When: TASK_TRACKER.csv updated to "completed", before next task
+Why: Extract patterns, prevent repeating expensive mistakes
+How: Use Skill tool with skill="learning"
+```
+
+**Example workflow:**
+1. PR merged, TASK_TRACKER.csv updated
+2. **Invoke `learning` skill** ← DO NOT SKIP
+3. Follow skill instructions (condense → extract → update learnings.md)
+4. Ready for next task
+
+### Key Rules
+
+- ✅ **ALWAYS** invoke `ctx` before implementation
+- ✅ **ALWAYS** invoke `code-review` before PR creation
+- ✅ **ALWAYS** invoke `learning` after task completion
+- ❌ **NEVER** skip skills - they prevent expensive token waste
+- ❌ **NEVER** assume skills run automatically
+
 ## Git Workflow (CRITICAL - ALWAYS FOLLOW)
 
 **Reference**: See `GIT.md` for complete branching strategy

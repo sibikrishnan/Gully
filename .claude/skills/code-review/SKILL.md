@@ -1,15 +1,15 @@
 ---
 name: code-review
-description: Automated code review using CodeRabbit CLI with issue fixing workflow. Run AFTER completing a task implementation and BEFORE creating PR. Systematically analyzes code, creates task list from findings, and fixes all critical/high issues.
+description: Code review using CodeRabbit CLI with issue fixing workflow. INVOKE AFTER completing task implementation and BEFORE creating PR. Systematically analyzes code, creates task list from findings, and fixes all critical/high issues.
 ---
 
 # Code Review Skill
 
-Automatically run CodeRabbit analysis, create task list from findings, and fix all critical/high issues before PR creation.
+Run CodeRabbit analysis, create task list from findings, and fix all critical/high issues before PR creation.
 
-## Auto-Invocation Trigger
+## When to Invoke This Skill
 
-Invoke this skill when:
+**MANDATORY - Invoke this skill using `Skill` tool when:**
 - Task implementation complete and tests passing
 - Before creating pull request
 - After refactoring or significant code changes

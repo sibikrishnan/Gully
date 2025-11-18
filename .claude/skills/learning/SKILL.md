@@ -1,13 +1,17 @@
 ---
 name: learning
-description: Auto-condense session and extract learnings after task completion
+description: Condense session and extract learnings after task completion. INVOKE after updating TASK_TRACKER.csv to "completed" status.
 ---
 
 # Learning Skill
 
-**Purpose:** Automatically condense session, analyze patterns, and update learnings/context files.
+**Purpose:** Condense session, analyze patterns, and update learnings/context files.
 
-**When to use:** After completing a task (when TASK_TRACKER.csv is updated with "completed")
+## When to Invoke This Skill
+
+**MANDATORY - Invoke this skill using `Skill` tool when:**
+- After completing a task (when TASK_TRACKER.csv is updated with "completed")
+- Before switching to next task or ending session
 
 ---
 

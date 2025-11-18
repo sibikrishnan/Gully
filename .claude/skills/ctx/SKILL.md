@@ -1,16 +1,16 @@
 ---
 name: ctx
-description: Auto-load minimal relevant context when starting tasks by analyzing task tags, description, and parent ID. Intelligently selects database schemas, architecture patterns, and workflow guides at file or section level for maximum token efficiency. Use BEFORE implementing features.
+description: Load minimal relevant context when starting tasks by analyzing task tags, description, and parent ID. Intelligently selects database schemas, architecture patterns, and workflow guides at file or section level for maximum token efficiency. INVOKE BEFORE implementing features.
 ---
 
 # Intelligent Context Loader
 
-Automatically loads minimal, task-relevant context from project documentation.
+Loads minimal, task-relevant context from project documentation.
 
-## Auto-Invocation Trigger
+## When to Invoke This Skill
 
-Claude should invoke this skill when:
-- Starting a new task (after reading task JSON)
+**MANDATORY - Invoke this skill using `Skill` tool when:**
+- Starting a new task (after reading task JSON file)
 - Implementing routes, controllers, repositories, or validation
 - Working with database operations (queries, migrations, schemas)
 - Writing tests (unit, integration, E2E)
