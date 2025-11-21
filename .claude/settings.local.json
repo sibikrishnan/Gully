@@ -15,7 +15,11 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(curl:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(coderabbit --prompt-only:*)",
+      "Bash(coderabbit:*)",
+      "Bash(tee:*)",
+      "WebFetch(domain:www.anthropic.com)"
     ],
     "deny": [],
     "ask": []
