@@ -1,0 +1,270 @@
+{
+  "taskId": "P2-PROF-T5.4",
+  "testSuiteVersion": "1.0",
+  "testCases": [
+    {
+      "id": "user-search-e2e.pickleball-search",
+      "category": "e2e",
+      "description": "E2E test for searching pickleball players",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/user-search-flow.test.ts",
+        "status": "not_created",
+        "testCount": 1,
+        "estimatedDuration": "8 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["Complete search flow"],
+        "scenarios": [
+          "Create 3 users (2 with pickleball, 1 with paddle)",
+          "GET /api/users/search?sport=pickleball",
+          "Verify: 200 status, 2 results returned, correct user data in response"
+        ],
+        "edgeCases": [
+          "Sport filter accuracy",
+          "Result formatting",
+          "Pagination metadata"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/"
+        ]
+      }
+    },
+    {
+      "id": "user-search-e2e.filters-pagination",
+      "category": "e2e",
+      "description": "E2E test for search with multiple filters and pagination",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/user-search-flow.test.ts",
+        "status": "not_created",
+        "testCount": 1,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["Complete search with pagination"],
+        "scenarios": [
+          "Create 25 users with various sports and locations",
+          "GET /api/users/search?location_city=SF&limit=10&offset=0",
+          "Verify: 10 results, pagination metadata with hasMore=true",
+          "GET /api/users/search?location_city=SF&limit=10&offset=10",
+          "Verify: Next page results, consistent ordering across pages"
+        ],
+        "edgeCases": [
+          "Multi-page navigation",
+          "Filter accuracy",
+          "Ordering consistency"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/"
+        ]
+      },
+      "dependsOn": ["user-search-e2e.pickleball-search"]
+    },
+    {
+      "id": "user-search-e2e.create-then-search",
+      "category": "e2e",
+      "description": "E2E test for creating user then finding in search results",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/user-search-flow.test.ts",
+        "status": "not_created",
+        "testCount": 1,
+        "estimatedDuration": "7 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["Complete create-search flow"],
+        "scenarios": [
+          "Create user with username='testplayer123' and sport='pickleball'",
+          "GET /api/users/search?query=testplayer123",
+          "Verify: User appears in results immediately with correct data"
+        ],
+        "edgeCases": [
+          "Immediate availability after creation",
+          "Text search accuracy",
+          "Case-insensitive search"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/"
+        ]
+      }
+    },
+    {
+      "id": "user-search-e2e.soft-delete-exclusion",
+      "category": "e2e",
+      "description": "E2E test for soft-deleted user exclusion from search",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/user-search-flow.test.ts",
+        "status": "not_created",
+        "testCount": 1,
+        "estimatedDuration": "8 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["Soft delete verification"],
+        "scenarios": [
+          "Create active user with pickleball sport",
+          "GET /api/users/search?sport=pickleball → Verify user present",
+          "Soft delete user (UPDATE users SET is_active=false)",
+          "GET /api/users/search?sport=pickleball → Verify user absent from results"
+        ],
+        "edgeCases": [
+          "is_active=false filtering",
+          "Soft delete propagation",
+          "Result count accuracy after deletion"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/"
+        ]
+      },
+      "dependsOn": ["user-search-e2e.pickleball-search"]
+    },
+    {
+      "id": "user-search-e2e.multi-filter-complex",
+      "category": "e2e",
+      "description": "E2E test for complex multi-filter search scenarios",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/user-search-flow.test.ts",
+        "status": "not_created",
+        "testCount": 1,
+        "estimatedDuration": "9 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["Complex filtering"],
+        "scenarios": [
+          "Create users with various combinations: (pickleball+advanced+NYC), (pickleball+beginner+SF), (paddle+advanced+NYC)",
+          "GET /api/users/search?sport=pickleball&skill_level=advanced&location_city=NYC",
+          "Verify: Only users matching ALL filters returned (1 user)"
+        ],
+        "edgeCases": [
+          "Multiple filter AND logic",
+          "Filter combination accuracy",
+          "Empty results when no match"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/"
+        ]
+      }
+    },
+    {
+      "id": "user-search-e2e.concurrent-operations",
+      "category": "e2e",
+      "description": "E2E test for search during concurrent user creation",
+      "required": true,
+      "priority": "medium",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/user-search-flow.test.ts",
+        "status": "not_created",
+        "testCount": 1,
+        "estimatedDuration": "8 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["Concurrent operation handling"],
+        "scenarios": [
+          "Start search request for all pickleball users",
+          "Concurrently create new user with pickleball sport",
+          "Verify: No errors, search completes successfully, consistent results"
+        ],
+        "edgeCases": [
+          "Race conditions",
+          "Database lock handling",
+          "Transaction isolation"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/"
+        ]
+      }
+    },
+    {
+      "id": "user-search-e2e.relevance-ordering",
+      "category": "e2e",
+      "description": "E2E test for search result ordering by relevance",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/e2e/user-search-flow.test.ts",
+        "status": "not_created",
+        "testCount": 1,
+        "estimatedDuration": "8 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["Relevance ranking"],
+        "scenarios": [
+          "Create users with usernames: 'pickleball', 'pickleballfan', 'paddle_pickleball'",
+          "GET /api/users/search?query=pickleball",
+          "Verify: Exact match 'pickleball' ranks first in results array, others follow in relevance order"
+        ],
+        "edgeCases": [
+          "Exact match boost",
+          "Partial match ranking",
+          "Relevance score calculation"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/"
+        ]
+      }
+    }
+  ],
+  "coverageRequirements": {
+    "enabled": true,
+    "minimumPercentage": 85,
+    "criticalFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user-search.controller.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/services/user-search.service.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user-search.repository.ts"
+    ]
+  },
+  "successCriteria": {
+    "allTestsMustPass": true,
+    "noTypeScriptErrors": true,
+    "noLintingErrors": true,
+    "buildMustSucceed": true
+  },
+  "executionConfig": {
+    "runInOrder": [
+      "user-search-e2e.pickleball-search",
+      "user-search-e2e.filters-pagination",
+      "user-search-e2e.create-then-search",
+      "user-search-e2e.soft-delete-exclusion",
+      "user-search-e2e.multi-filter-complex",
+      "user-search-e2e.concurrent-operations",
+      "user-search-e2e.relevance-ordering"
+    ],
+    "stopOnFirstFailure": false,
+    "parallelizable": false
+  }
+}
