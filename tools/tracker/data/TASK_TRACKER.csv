@@ -8,7 +8,7 @@ P2,P2-PROF-T3,task.json,DELETE /api/users/:id - Soft Delete User,completed,2025-
 P2,P2-PROF-T4,P2-PROF-T4.1-repo-validation.json,Repository & Validation - user_sports junction table,completed,2025-11-15,2025-11-15,2025-11-15,10,Repository (3 methods) + Zod schemas + 10 tests passing (6 unit + 4 integration)
 P2,P2-PROF-T4,P2-PROF-T4.2-controllers.json,Controllers - addUserSport & removeUserSport,completed,2025-11-15,2025-11-16,2025-11-16,16,Authorization + error handling + 16 tests passing (8 unit + 8 integration) - 90.9% coverage
 P2,P2-PROF-T4,P2-PROF-T4.3-routes.json,Routes - POST/DELETE sports endpoints with E2E,completed,2025-11-15,2025-11-17,2025-11-17,4,Routes + middleware chain (auth + validation) + 4 tests passing (2 integration + 2 E2E)
-P2,P2-PROF-T5,P2-PROF-T5.1-repo-schema-ranking.json,Repository - validation schemas - ranking service,pending,2025-11-11,,,8,Subtask 5.1: Repository + schemas + ranking (8 tests)
+P2,P2-PROF-T5,P2-PROF-T5.1-repo-schema-ranking.json,Repository - validation schemas - ranking service,completed,2025-11-11,2025-11-21,2025-11-21,28,Repository (executeSearchQuery + countTotalResults) + Zod schemas + ranking service + 28 tests passing (7 integration + 21 unit)
 P2,P2-PROF-T5,P2-PROF-T5.2-query-builder-service.json,Query builder and search service with pagination,pending,2025-11-11,,,8,Subtask 5.2: Query builder + pagination service (8 tests)
 P2,P2-PROF-T5,P2-PROF-T5.3-controller-routes.json,Controller and routes with middleware for search endpoint,pending,2025-11-11,,,8,Subtask 5.3: Controller + routes + middleware (8 tests)
 P2,P2-PROF-T5,P2-PROF-T5.4-e2e-verification.json,End-to-end tests and full integration verification,pending,2025-11-11,,,7,Subtask 5.4: E2E tests + verification (7 tests - total 31)
