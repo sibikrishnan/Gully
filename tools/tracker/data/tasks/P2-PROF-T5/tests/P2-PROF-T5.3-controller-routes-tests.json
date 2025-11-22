@@ -1,0 +1,295 @@
+{
+  "taskId": "P2-PROF-T5.3",
+  "testSuiteVersion": "1.0",
+  "testCases": [
+    {
+      "id": "user-search-controller.unit.query-processing",
+      "category": "unit",
+      "description": "Unit test for searchUsers controller query parameter processing",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-search-controller.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["searchUsers"],
+        "scenarios": [
+          "searchUsers extracts and processes query parameters correctly (query, location_city, sport, skill_level, limit, offset)",
+          "searchUsers applies default values (limit=20, offset=0) when not provided"
+        ],
+        "edgeCases": [
+          "Empty query string",
+          "Unknown parameters ignored",
+          "Array parameters parsed correctly"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user-search.controller.ts"
+        ]
+      }
+    },
+    {
+      "id": "user-search-controller.unit.service-orchestration",
+      "category": "unit",
+      "description": "Unit test for searchUsers service call orchestration",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-search-controller.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["searchUsers"],
+        "scenarios": [
+          "searchUsers calls services in correct order (buildQuery → executeQuery → countResults → sortByRelevance → paginateResults)",
+          "searchUsers passes correct parameters to each service method"
+        ],
+        "edgeCases": [
+          "Service call error propagation",
+          "Empty results handling",
+          "Null query handling"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user-search.controller.ts"
+        ]
+      },
+      "dependsOn": ["user-search-controller.unit.query-processing"]
+    },
+    {
+      "id": "user-search-controller.unit.error-handling",
+      "category": "unit",
+      "description": "Unit test for searchUsers error handling",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-search-controller.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["searchUsers"],
+        "scenarios": [
+          "searchUsers handles validation errors and returns 400 with error details",
+          "searchUsers handles database errors and returns 500"
+        ],
+        "edgeCases": [
+          "Zod validation error formatting",
+          "Repository error handling",
+          "Timeout errors"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user-search.controller.ts"
+        ]
+      }
+    },
+    {
+      "id": "user-search-controller.unit.response-format",
+      "category": "unit",
+      "description": "Unit test for searchUsers response formatting",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-search-controller.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["searchUsers"],
+        "scenarios": [
+          "searchUsers formats response with data array and pagination metadata",
+          "searchUsers sets pagination headers (X-Total-Count, Link)"
+        ],
+        "edgeCases": [
+          "Empty results array",
+          "Single result",
+          "Maximum results (100)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user-search.controller.ts"
+        ]
+      }
+    },
+    {
+      "id": "user-search-route.integration.success-response",
+      "category": "integration",
+      "description": "Integration test for GET /api/users/search successful response",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-search-route.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["GET /api/users/search"],
+        "scenarios": [
+          "GET /api/users/search returns 200 with results array",
+          "Response body includes data[] and pagination object"
+        ],
+        "edgeCases": [
+          "Empty search results",
+          "Large result set handling",
+          "CORS headers present"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user-search.routes.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user-search.controller.ts"
+        ]
+      }
+    },
+    {
+      "id": "user-search-route.integration.validation-errors",
+      "category": "integration",
+      "description": "Integration test for invalid query parameters returning 400",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-search-route.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["queryValidationMiddleware"],
+        "scenarios": [
+          "GET /api/users/search with invalid limit (>100) returns 400",
+          "GET /api/users/search with invalid skill_level returns 400"
+        ],
+        "edgeCases": [
+          "Multiple validation errors",
+          "Error message format",
+          "Status code 400 enforcement"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user-search.routes.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/middleware/query-validation.middleware.ts"
+        ]
+      },
+      "dependsOn": ["user-search-route.integration.success-response"]
+    },
+    {
+      "id": "user-search-route.integration.pagination-headers",
+      "category": "integration",
+      "description": "Integration test for pagination headers in response",
+      "required": true,
+      "priority": "medium",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-search-route.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["GET /api/users/search"],
+        "scenarios": [
+          "Response includes X-Total-Count header with total results",
+          "Response includes Link header for next page (if hasMore=true)"
+        ],
+        "edgeCases": [
+          "Last page has no Link header for next",
+          "First page Link header format",
+          "Header encoding"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user-search.controller.ts"
+        ]
+      }
+    },
+    {
+      "id": "user-search-route.integration.rate-limiting",
+      "category": "integration",
+      "description": "Integration test for rate limiting middleware",
+      "required": true,
+      "priority": "medium",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-search-route.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["rateLimitMiddleware"],
+        "scenarios": [
+          "Rate limiting blocks excessive requests and returns 429",
+          "Rate limit headers included in response (X-RateLimit-Limit, X-RateLimit-Remaining)"
+        ],
+        "edgeCases": [
+          "Rate limit reset after window",
+          "Per-IP rate limiting",
+          "Authenticated vs unauthenticated limits"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user-search.routes.ts",
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/middleware/rate-limit.middleware.ts"
+        ]
+      }
+    }
+  ],
+  "coverageRequirements": {
+    "enabled": true,
+    "minimumPercentage": 85,
+    "criticalFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/controllers/user-search.controller.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/routes/user-search.routes.ts"
+    ]
+  },
+  "successCriteria": {
+    "allTestsMustPass": true,
+    "noTypeScriptErrors": true,
+    "noLintingErrors": true,
+    "buildMustSucceed": true
+  },
+  "executionConfig": {
+    "runInOrder": [
+      "user-search-controller.unit.query-processing",
+      "user-search-controller.unit.service-orchestration",
+      "user-search-controller.unit.error-handling",
+      "user-search-controller.unit.response-format",
+      "user-search-route.integration.success-response",
+      "user-search-route.integration.validation-errors",
+      "user-search-route.integration.pagination-headers",
+      "user-search-route.integration.rate-limiting"
+    ],
+    "stopOnFirstFailure": false,
+    "parallelizable": false
+  }
+}

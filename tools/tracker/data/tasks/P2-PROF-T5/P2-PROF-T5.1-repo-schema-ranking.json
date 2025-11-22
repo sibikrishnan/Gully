@@ -1,0 +1,98 @@
+{
+  "id": "P2-PROF-T5.1",
+  "version": "1.0",
+  "content": "Implement repository, validation schemas, and ranking service for user search",
+  "activeForm": "Implementing repository, validation schemas, and ranking service for user search",
+  "description": "Implement user-search.repository.ts with executeSearchQuery and countTotalResults methods for searching users with filters (username, full_name, location, sport, skill_level). Create Zod validation schemas (user-search.schema.ts) for query parameters including pagination defaults (limit=20, max=100) and enum validations. Implement user-ranking.service.ts with calculateRelevance and sortByRelevance for search result ranking (exact matches, partial matches, recently active users). Write 8 MVP-tier tests (4 integration tests for database queries with JOIN operations and index usage, 2 validation tests for schema validation and defaults, 2 ranking tests for relevance scoring). Excludes soft-deleted users (is_active=false). This subtask provides the data access layer, validation, and ranking logic that will be used by the search service in T5.2.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-PROF-T5.1-repo-schema-ranking-tests.json",
+  "workflowRef": "workflows/tdd.json",
+  "planningResultRef": null,
+  "dependencies": ["P2-PROF-T4"],
+  "blockers": [],
+  "tags": ["user-service", "search", "pagination", "filtering", "pickleball", "paddle", "phase-2"],
+  "estimatedDuration": "35-40 min",
+  "metadata": {
+    "phase": 2,
+    "feature": "User Profiles",
+    "parentTask": "P2-PROF-T5",
+    "subtaskIndex": "5.1",
+    "estimatedTokens": 22000,
+    "testTier": "mvp",
+    "testCount": 8
+  },
+  "workflow": {
+    "planningRequired": true,
+    "checkpoints": [
+      {
+        "name": "Repository and Schema Implementation Complete",
+        "tokenLimit": 12000,
+        "requirement": "Repository methods executeSearchQuery and countTotalResults implemented with proper SQL queries, Zod validation schemas created",
+        "askHuman": false,
+        "exitIfFail": false
+      },
+      {
+        "name": "Ranking Service and Tests Passing",
+        "tokenLimit": 22000,
+        "requirement": "Ranking service implemented and all 8 MVP tests passing (repository queries, validation, ranking logic verified)",
+        "askHuman": true,
+        "exitIfFail": false
+      }
+    ],
+    "phases": [
+      {
+        "phase": 1,
+        "name": "Repository Implementation",
+        "required": true,
+        "actions": [
+          "Create: src/services/user-service/repositories/user-search.repository.ts",
+          "Implement: executeSearchQuery(filters: SearchFilters, pagination: PaginationParams): Promise<User[]>",
+          "Build: SQL SELECT query with WHERE clauses for username, full_name, location filters",
+          "Build: LEFT JOIN to user_sports table for sport filtering",
+          "Handle: Exclude soft-deleted users (is_active=false)",
+          "Build: Parameterized queries for SQL injection prevention",
+          "Implement: countTotalResults(filters: SearchFilters): Promise<number>",
+          "Build: SQL COUNT query matching search filters",
+          "Handle: Performance optimization with index hints"
+        ],
+        "gate": "Repository methods must be implemented with proper SQL queries and joins before proceeding"
+      },
+      {
+        "phase": 2,
+        "name": "Validation Schema and Ranking Service",
+        "actions": [
+          "Create: src/services/user-service/schemas/user-search.schema.ts",
+          "Implement: searchParamsSchema with Zod validation",
+          "Validate: query (string, optional) for username/full_name search",
+          "Validate: location_city (string, optional)",
+          "Validate: sport (array of enum: ['pickleball', 'paddle'], optional)",
+          "Validate: skill_level (enum: ['beginner', 'intermediate', 'advanced', 'expert'], optional)",
+          "Validate: limit (number, default: 20, max: 100)",
+          "Validate: offset (number, default: 0, min: 0)",
+          "Create: src/services/user-service/services/user-ranking.service.ts",
+          "Implement: calculateRelevance(user: User, searchQuery: string): number",
+          "Implement: sortByRelevance(users: User[], searchQuery: string): User[]",
+          "Logic: Boost exact username matches, partial matches, recently active users"
+        ]
+      },
+      {
+        "phase": 3,
+        "name": "MVP Test Suite (8 tests)",
+        "actions": [
+          "Write: 4 integration tests for repository database operations",
+          "Test: executeSearchQuery with username filter returns matching users",
+          "Test: executeSearchQuery with sport filter performs JOIN correctly",
+          "Test: countTotalResults returns accurate count with filters",
+          "Test: Query excludes soft-deleted users (is_active=false)",
+          "Write: 2 validation tests for schema validation",
+          "Test: Valid query parameters pass validation with defaults",
+          "Test: Invalid limit (>100) returns validation error",
+          "Write: 2 ranking tests for relevance scoring",
+          "Test: Exact username match ranks higher than partial match",
+          "Test: sortByRelevance orders results correctly by relevance score",
+          "Verify: All 8 tests passing with 85%+ coverage of repository, schema, and ranking layers"
+        ]
+      }
+    ]
+  }
+}

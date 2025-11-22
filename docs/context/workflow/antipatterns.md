@@ -261,4 +261,30 @@ When you hear these, pause and reconsider:
 
 ---
 
+## 🚫 Not Checking for Existing Work
+
+**Wrong:** Reading dependencies and implementing before checking if file exists.
+
+**Right:** `Glob **/*{task-name}*.ts` FIRST, then read/implement.
+
+**Why it's bad:**
+- Wastes tokens reading dependencies
+- Duplicates existing work
+- Misses context from existing code
+
+**How to avoid:**
+- Start every task with existence check
+- Pattern: `Glob` → Read existing → Decide next action
+- Check controllers, repos, schemas first
+
+**Token cost:** ~2,000 tokens per occurrence
+
+**Example (P2-PROF-T4.2):**
+- Task: Implement user sports controller
+- Mistake: Read repo + schemas first
+- Discovery: Controller already exists (wasted discovery tokens)
+- Fix: Should have checked for controller.ts first
+
+---
+
 **Remember:** The goal is shipping a working MVP, not building perfect infrastructure. Avoid these anti-patterns to stay focused and efficient.

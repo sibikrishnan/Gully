@@ -60,10 +60,12 @@
 
 ### Claude Code Setup
 - **Claude Config:** [.claude/.claude.md](.claude/.claude.md)
-- **Context Sections:** [docs/context/INDEX.md](docs/context/INDEX.md)
+- **Context Map:** [CONTEXT_MAP.md](CONTEXT_MAP.md) (on-demand context loading via ctx skill)
+- **Context Sections:** [docs/context/](docs/context/) (database, arch, mvp, workflow)
 - **Agents:** [.claude/agents/](.claude/agents/)
 - **Commands:** [.claude/commands/](.claude/commands/)
 - **Hooks:** [.claude/hooks/](.claude/hooks/)
+- **Skills:** [.claude/skills/](.claude/skills/)
 
 ### Project Config
 - **Package.json:** [services/backend/package.json](services/backend/package.json)
@@ -89,6 +91,12 @@
 - **Database Client:** [services/backend/src/shared/database/index.ts](services/backend/src/shared/database/index.ts)
 - **Knex Config:** [services/backend/src/shared/database/knexfile.ts](services/backend/src/shared/database/knexfile.ts)
 
+### Database Context Docs
+- **Tables Schema:** [docs/context/database/tables.md](docs/context/database/tables.md)
+- **Indexes:** [docs/context/database/indexes.md](docs/context/database/indexes.md)
+- **Redis Patterns:** [docs/context/database/redis.md](docs/context/database/redis.md)
+- **Knex Patterns:** [docs/context/database/knex-patterns.md](docs/context/database/knex-patterns.md)
+
 ---
 
 ## 🗂️ Archives
@@ -99,6 +107,11 @@
 - **Optimization Logs:** [docs/archives/optimization/](docs/archives/optimization/)
 - **Refactoring Docs:** [docs/archives/refactoring/](docs/archives/refactoring/)
 - **Task Archives:** [docs/archives/tasks/](docs/archives/tasks/)
+
+### Session Logs
+- **Session Directory:** [docs/sessions/](docs/sessions/)
+- **P2-PROF-T4.1 Log:** [docs/sessions/P2-PROF-T4.1-session-log.md](docs/sessions/P2-PROF-T4.1-session-log.md)
+- **P2-PROF-T4.2 Log:** [docs/sessions/P2-PROF-T4.2-session-log.md](docs/sessions/P2-PROF-T4.2-session-log.md)
 
 ---
 

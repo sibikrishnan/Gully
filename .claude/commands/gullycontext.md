@@ -22,6 +22,7 @@ Load specific context files only when needed.
 /gullycontext arch/services
 /gullycontext arch/structure
 /gullycontext database/tables
+/gullycontext database/knex-patterns  # Knex cross-DB patterns (CRITICAL for repositories)
 /gullycontext workflow/git-workflow
 /gullycontext workflow/file-discovery
 ```
