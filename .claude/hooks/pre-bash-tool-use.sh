@@ -21,7 +21,7 @@ if [[ "$TOOL_NAME" != "Bash" || "$COMMAND" != *"git commit"* ]]; then
 fi
 
 # Get current branch
-CURRENT_BRANCH=$(git -C "/Users/sibikrishnan/Documents/Gully" branch --show-current 2>/dev/null)
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 
 # BLOCK: Commits on master/develop
 if [[ "$CURRENT_BRANCH" == "master" || "$CURRENT_BRANCH" == "develop" ]]; then

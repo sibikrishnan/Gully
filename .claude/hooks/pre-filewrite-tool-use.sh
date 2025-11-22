@@ -33,7 +33,7 @@ if [[ -z "$FILE_PATH" ]]; then
 fi
 
 # Load budget configuration
-REPO_ROOT="/Users/sibikrishnan/Documents/Gully"
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
 BUDGET_FILE="$REPO_ROOT/.claude/FILE_BUDGETS.json"
 
 if [[ ! -f "$BUDGET_FILE" ]]; then
