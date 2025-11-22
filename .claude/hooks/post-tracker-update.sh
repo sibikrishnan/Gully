@@ -25,19 +25,15 @@ fi
 # Check if task was marked completed
 NEW_STRING=$(echo "$TOOL_INPUT" | jq -r '.new_string // empty')
 if [[ "$NEW_STRING" == *"completed"* ]]; then
-  echo "🎓 Task completion detected - Learning capture needed!" >&2
+  echo "🎓 Task completion detected!" >&2
   echo "" >&2
-  echo "   ⚡ RUN SKILL: learning" >&2
+  echo "   📋 REQUIRED GIT WORKFLOW:" >&2
+  echo "   1. Create PR: gh pr create --base [parent-branch] --head [current-branch]" >&2
+  echo "   2. After merge: git checkout develop && git pull" >&2
+  echo "   3. New task branch: git checkout -b feature/P{Phase}-{Component}-T{Task}" >&2
   echo "" >&2
-  echo "   This will:" >&2
-  echo "   - Condense session → 150-line log" >&2
-  echo "   - Extract critical patterns" >&2
-  echo "   - Update learnings.md + context files" >&2
-  echo "   - Archive old learnings if needed" >&2
+  echo "   ⚡ OPTIONAL: Run 'learning' skill to capture session patterns" >&2
   echo "" >&2
-  echo "   Duration: ~30-60 seconds | Cost: ~500-1,000 tokens" >&2
-  echo "" >&2
-  echo "✅ Simply type the skill name 'learning' to invoke" >&2
 fi
 
 # Allow the write to proceed
