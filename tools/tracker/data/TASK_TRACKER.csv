@@ -11,7 +11,7 @@ P2,P2-PROF-T4,P2-PROF-T4.3-routes.json,Routes - POST/DELETE sports endpoints wit
 P2,P2-PROF-T5,P2-PROF-T5.1-repo-schema-ranking.json,Repository - validation schemas - ranking service,completed,2025-11-11,2025-11-21,2025-11-21,28,Repository (executeSearchQuery + countTotalResults) + Zod schemas + ranking service + 28 tests passing (7 integration + 21 unit)
 P2,P2-PROF-T5,P2-PROF-T5.2-query-builder-service.json,Query builder and search service with pagination,completed,2025-11-11,2025-11-21,2025-11-21,38,Query builder (buildWhereClause + addJoinClauses + addPagination) + search service + pagination service + 38 tests passing (23 unit + 15 integration) - 86.53% coverage
 P2,P2-PROF-T5,P2-PROF-T5.3-controller-routes.json,Controller and routes with middleware for search endpoint,completed,2025-11-11,2025-11-21,2025-11-21,16,Controller + routes + rate-limit middleware + 16 tests passing (8 unit + 8 integration)
-P2,P2-PROF-T5,P2-PROF-T5.4-e2e-verification.json,End-to-end tests and full integration verification,pending,2025-11-11,,,7,Subtask 5.4: E2E tests + verification (7 tests - total 31)
+P2,P2-PROF-T5,P2-PROF-T5.4-e2e-verification.json,End-to-end tests and full integration verification,completed,2025-11-11,2025-11-22,2025-11-22,7,E2E tests complete - 7 tests passing (CodeRabbit reviewed - no issues)
 P3,P3-TEAM-T1,task.json,POST /api/teams - Create Team with Captain,pending,2025-11-11,,,0,Phase 3 - blocked by P2 completion
 P3,P3-TEAM-T2,task.json,GET /api/teams/:id - Retrieve Team Details,pending,2025-11-11,,,0,Phase 3 - blocked by P2 completion
 P3,P3-TEAM-T3,task.json,PATCH /api/teams/:id - Update Team Details,pending,2025-11-11,,,0,Phase 3 - blocked by P2 completion
