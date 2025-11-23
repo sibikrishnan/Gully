@@ -44,8 +44,9 @@ export async function searchUsers(
   res: Response
 ): Promise<void> {
   try {
-    // Extract and validate query parameters
-    // Note: validation middleware should have already parsed this
+    // Extract validated query parameters
+    // Note: validation middleware has already validated and attached to req.query
+    // Using type assertion here because Express Request typing doesn't know about our validation
     const validatedParams = req.query as unknown as SearchParams;
 
     // Build filters object

@@ -208,8 +208,9 @@ export class UserSearchService {
         this.repository.countTotalResults(query.filters)
       ]);
 
-      // Apply ranking/sorting
-      const rankedUsers = this.formatSearchResults(users, filters.query);
+      // Apply ranking/sorting using sanitized query from buildWhereClause
+      // This ensures ranking behavior matches what the repository saw
+      const rankedUsers = this.formatSearchResults(users, query.filters.query);
 
       // Format with pagination metadata
       return this.paginationService.paginateResults(

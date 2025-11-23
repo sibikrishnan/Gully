@@ -74,21 +74,23 @@ Both are valuable, not redundant.
 
 **Problem:** Checking output multiple times wastes tokens.
 
+**Note:** All `sleep()` values below are in **seconds** (helper function takes seconds, not milliseconds).
+
 **Wrong (multiple checks):**
 ```typescript
 // ❌ Token waste: ~5k tokens
-await sleep(15);
+await sleep(15);  // 15 seconds
 checkOutput(); // Still running...
-await sleep(30);
+await sleep(30);  // 30 seconds
 checkOutput(); // Still running...
-await sleep(45);
+await sleep(45);  // 45 seconds
 checkOutput(); // Finally done
 ```
 
 **Right (single long wait):**
 ```typescript
 // ✅ Efficient: ~1k tokens
-await sleep(120); // Be patient
+await sleep(120);  // 120 seconds - be patient
 checkOutput(); // Done
 ```
 
