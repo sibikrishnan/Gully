@@ -11,8 +11,15 @@ import { validateRequest } from '../../../shared/middleware/validation.middlewar
 import { getUserParamsSchema, updateUserSchema } from '../schemas/user.schema';
 import { addSportSchema, sportUserParamsSchema, deleteSportParamsSchema } from '../schemas/user-sports.schema';
 import { AuthenticatedRequest } from '../../../shared/types/auth.types';
+import searchRoutes from './user-search.routes';
 
 const router = Router();
+
+/**
+ * Mount search routes
+ * GET /api/users/search - Search users with filters and pagination
+ */
+router.use(searchRoutes);
 
 /**
  * GET /api/users/:id
