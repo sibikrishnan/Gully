@@ -67,3 +67,35 @@ import { handler } from './controller';
 - Test database state changes
 
 Both are valuable, not redundant.
+
+---
+
+## Waiting for Async Operations
+
+**Problem:** Checking output multiple times wastes tokens.
+
+**Wrong (multiple checks):**
+```typescript
+// ❌ Token waste: ~5k tokens
+await sleep(15);
+checkOutput(); // Still running...
+await sleep(30);
+checkOutput(); // Still running...
+await sleep(45);
+checkOutput(); // Finally done
+```
+
+**Right (single long wait):**
+```typescript
+// ✅ Efficient: ~1k tokens
+await sleep(120); // Be patient
+checkOutput(); // Done
+```
+
+**Guideline:**
+- Background tasks: Single wait (2x expected duration)
+- CodeRabbit review: 90-120 seconds
+- Test runs: 30-60 seconds
+- Build operations: 60-90 seconds
+
+**Cost if wrong:** ~5,000 tokens (multiple wait cycles + checks)

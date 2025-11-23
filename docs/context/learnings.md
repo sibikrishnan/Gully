@@ -32,6 +32,22 @@
 
 ---
 
+### Schema Verification Before DB Tests ⚠️ CRITICAL
+**Issue:** Writing DB assertions without checking schema first (used `is_active` instead of `status`)
+**Fix:** Read repository/model files BEFORE writing DB-related test assertions
+**Cost:** ~3,000 tokens (1 failed test run + grep + read + edit)
+**Details:** docs/sessions/P2-PROF-T5.4-e2e-session-log.md:41-50
+
+---
+
+### Check Tool Syntax Before Using ⚠️ CRITICAL
+**Issue:** Guessing CLI tool syntax wastes tokens (tried `coderabbit --prompt-only file.ts`)
+**Fix:** Run `<tool> --help` or `<tool> <command> --help` FIRST before using unfamiliar tools
+**Cost:** ~5,000 tokens (failed command + error + retry + wait cycles)
+**Details:** docs/sessions/P2-PROF-T5.4-e2e-session-log.md:53-69
+
+---
+
 ## Phase 1 Learnings (Reference)
 
 ### Redis Empty Password Crash

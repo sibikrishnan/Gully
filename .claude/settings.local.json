@@ -20,7 +20,11 @@
       "Bash(coderabbit:*)",
       "Bash(tee:*)",
       "WebFetch(domain:www.anthropic.com)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(timeout 60 npm test -- user-search-route.test.ts)",
+      "Bash(psql:*)",
+      "Bash(pkill:*)",
+      "Skill(learning)"
     ],
     "deny": [],
     "ask": []
