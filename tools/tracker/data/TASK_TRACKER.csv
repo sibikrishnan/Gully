@@ -10,7 +10,7 @@ P2,P2-PROF-T4,P2-PROF-T4.2-controllers.json,Controllers - addUserSport & removeU
 P2,P2-PROF-T4,P2-PROF-T4.3-routes.json,Routes - POST/DELETE sports endpoints with E2E,completed,2025-11-15,2025-11-17,2025-11-17,4,Routes + middleware chain (auth + validation) + 4 tests passing (2 integration + 2 E2E)
 P2,P2-PROF-T5,P2-PROF-T5.1-repo-schema-ranking.json,Repository - validation schemas - ranking service,completed,2025-11-11,2025-11-21,2025-11-21,28,Repository (executeSearchQuery + countTotalResults) + Zod schemas + ranking service + 28 tests passing (7 integration + 21 unit)
 P2,P2-PROF-T5,P2-PROF-T5.2-query-builder-service.json,Query builder and search service with pagination,completed,2025-11-11,2025-11-21,2025-11-21,38,Query builder (buildWhereClause + addJoinClauses + addPagination) + search service + pagination service + 38 tests passing (23 unit + 15 integration) - 86.53% coverage
-P2,P2-PROF-T5,P2-PROF-T5.3-controller-routes.json,Controller and routes with middleware for search endpoint,pending,2025-11-11,,,8,Subtask 5.3: Controller + routes + middleware (8 tests)
+P2,P2-PROF-T5,P2-PROF-T5.3-controller-routes.json,Controller and routes with middleware for search endpoint,completed,2025-11-11,2025-11-21,2025-11-21,16,Controller + routes + rate-limit middleware + 16 tests passing (8 unit + 8 integration)
 P2,P2-PROF-T5,P2-PROF-T5.4-e2e-verification.json,End-to-end tests and full integration verification,pending,2025-11-11,,,7,Subtask 5.4: E2E tests + verification (7 tests - total 31)
 P3,P3-TEAM-T1,task.json,POST /api/teams - Create Team with Captain,pending,2025-11-11,,,0,Phase 3 - blocked by P2 completion
 P3,P3-TEAM-T2,task.json,GET /api/teams/:id - Retrieve Team Details,pending,2025-11-11,,,0,Phase 3 - blocked by P2 completion
