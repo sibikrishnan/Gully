@@ -1,0 +1,14 @@
+{
+  "id": "P2-ARCH-T7",
+  "version": "1.0",
+  "content": "Add OpenAPI/Swagger contracts for service communication",
+  "activeForm": "Adding OpenAPI/Swagger contracts for service communication",
+  "description": "Create openapi.yaml for user-service with complete API contract. Set up swagger-ui-express for interactive documentation. Enable TypeScript client generation for future inter-service calls.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-ARCH-T7-tests.json",
+  "workflowRef": "workflows/test-after.json",
+  "dependencies": [],
+  "blockers": [],
+  "tags": ["architecture", "api", "contracts", "documentation", "high-value"],
+  "estimatedDuration": "75-90 min"
+}

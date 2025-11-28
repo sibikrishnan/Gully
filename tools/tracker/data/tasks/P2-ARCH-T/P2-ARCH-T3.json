@@ -1,0 +1,14 @@
+{
+  "id": "P2-ARCH-T3",
+  "version": "1.0",
+  "content": "Add service abstraction layer for Phase 2 migration readiness",
+  "activeForm": "Adding service abstraction layer for Phase 2 migration readiness",
+  "description": "Create service interfaces (IUserService, etc.) in shared/interfaces/service-registry.ts. Implement LocalUserService class following interface. Enable drop-in HTTP replacement for future microservices migration without code changes.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-ARCH-T3-tests.json",
+  "workflowRef": "workflows/tdd.json",
+  "dependencies": [],
+  "blockers": [],
+  "tags": ["architecture", "abstraction", "migration", "critical", "microservices"],
+  "estimatedDuration": "90-120 min"
+}

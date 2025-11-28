@@ -1,0 +1,14 @@
+{
+  "id": "P2-ARCH-T5",
+  "version": "1.0",
+  "content": "Add API versioning with /api/v1/* prefix",
+  "activeForm": "Adding API versioning with /api/v1/* prefix",
+  "description": "Update all route mounts to use /api/v1/* prefix. Create version middleware for future v2 routing. Document versioning strategy and deprecation policy.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-ARCH-T5-tests.json",
+  "workflowRef": "workflows/test-after.json",
+  "dependencies": [],
+  "blockers": [],
+  "tags": ["architecture", "api", "versioning", "high-value"],
+  "estimatedDuration": "45-60 min"
+}

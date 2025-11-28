@@ -1,0 +1,14 @@
+{
+  "id": "P2-ARCH-T4",
+  "version": "1.0",
+  "content": "Implement correlation ID middleware for distributed tracing",
+  "activeForm": "Implementing correlation ID middleware for distributed tracing",
+  "description": "Create correlation.middleware.ts that generates/extracts x-correlation-id header using uuid v4. Attach to request object, include in response headers, and integrate with logger for all log statements.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-ARCH-T4-tests.json",
+  "workflowRef": "workflows/tdd.json",
+  "dependencies": [],
+  "blockers": [],
+  "tags": ["architecture", "observability", "middleware", "critical", "debugging"],
+  "estimatedDuration": "60-75 min"
+}

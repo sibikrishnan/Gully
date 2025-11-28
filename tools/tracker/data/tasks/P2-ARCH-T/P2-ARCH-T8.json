@@ -1,0 +1,14 @@
+{
+  "id": "P2-ARCH-T8",
+  "version": "1.0",
+  "content": "Implement database query caching with Redis",
+  "activeForm": "Implementing database query caching with Redis",
+  "description": "Create query-cache.ts utility with cachedQuery wrapper. Implement TTL-based caching for read-heavy endpoints (user profiles, search results). Add cache invalidation on writes.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-ARCH-T8-tests.json",
+  "workflowRef": "workflows/tdd.json",
+  "dependencies": ["P2-ARCH-T2"],
+  "blockers": [],
+  "tags": ["architecture", "caching", "performance", "redis", "high-value"],
+  "estimatedDuration": "90-105 min"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "P2-ARCH-T6",
+  "version": "1.0",
+  "content": "Implement cursor-based pagination to replace offset pagination",
+  "activeForm": "Implementing cursor-based pagination to replace offset pagination",
+  "description": "Create pagination.service.ts with cursor-based logic using created_at + id. Update user search endpoint to support cursor parameter. Maintain backward compatibility with offset for migration period.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-ARCH-T6-tests.json",
+  "workflowRef": "workflows/tdd.json",
+  "dependencies": [],
+  "blockers": [],
+  "tags": ["architecture", "pagination", "performance", "high-value"],
+  "estimatedDuration": "90-120 min"
+}
