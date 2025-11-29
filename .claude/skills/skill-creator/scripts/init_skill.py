@@ -187,20 +187,30 @@ Note: This is a text placeholder. Actual assets can be any file type.
 
 
 def title_case_skill_name(skill_name):
-    """Convert hyphenated skill name to Title Case for display."""
+    """
+    Convert a hyphen-separated skill name into Title Case with spaces between words.
+    
+    Parameters:
+        skill_name (str): The skill name using hyphens to separate words (e.g., "my-skill-name").
+    
+    Returns:
+        str: The title-cased name with words separated by single spaces (e.g., "My Skill Name").
+    """
     return ' '.join(word.capitalize() for word in skill_name.split('-'))
 
 
 def init_skill(skill_name, path):
     """
-    Initialize a new skill directory with template SKILL.md.
-
-    Args:
-        skill_name: Name of the skill
-        path: Path where the skill directory should be created
-
+    Create a new skill directory populated with a SKILL.md template and example resources.
+    
+    Creates a directory named by `skill_name` under `path`, writes `SKILL.md` using the module template, and adds `scripts/`, `references/`, and `assets/` subdirectories with example files.
+    
+    Parameters:
+        skill_name (str): Skill directory name (typically hyphenated lowercase).
+        path (str or Path): Filesystem location where the skill directory will be created.
+    
     Returns:
-        Path to created skill directory, or None if error
+        Path or None: Path to the created skill directory on success, `None` if an error occurred.
     """
     # Determine skill directory path
     skill_dir = Path(path).resolve() / skill_name
@@ -271,6 +281,11 @@ def init_skill(skill_name, path):
 
 
 def main():
+    """
+    CLI entry point that parses command-line arguments, initializes a new skill directory, and exits with a status indicating success or failure.
+    
+    On invalid invocation prints usage guidance and exits with status code 1. When invoked correctly it calls init_skill with the provided skill name and path, prints progress messages, and exits with status code 0 on success or 1 on failure.
+    """
     if len(sys.argv) < 4 or sys.argv[2] != '--path':
         print("Usage: init_skill.py <skill-name> --path <path>")
         print("\nSkill name requirements:")

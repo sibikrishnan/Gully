@@ -11,7 +11,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 echo "🧹 Running POST cleanup..."
 
-# Function to clean Playwright screenshots
+# clean_playwright_screenshots removes PNG screenshots from PROJECT_ROOT/tracker/.playwright-mcp and logs whether screenshots were found and deleted or if the directory does not exist.
 clean_playwright_screenshots() {
     local screenshots_dir="$PROJECT_ROOT/tracker/.playwright-mcp"
 
@@ -31,7 +31,7 @@ clean_playwright_screenshots() {
     fi
 }
 
-# Function to stop any running background servers
+# stop_background_servers stops any process listening on port 8080.
 stop_background_servers() {
     local port=8080
     local pid=$(lsof -ti:$port 2>/dev/null || echo "")

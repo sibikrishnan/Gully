@@ -22,7 +22,10 @@ import userRoutes from './services/user-service/routes/user.routes';
 dotenv.config();
 
 /**
- * Create and configure Express application
+ * Create and configure an Express application with security, CORS, body parsing, logging,
+ * authentication initialization, health check, service routes, and error handlers.
+ *
+ * @returns The configured Express application instance
  */
 export function createApp(): Express {
   const app = express();

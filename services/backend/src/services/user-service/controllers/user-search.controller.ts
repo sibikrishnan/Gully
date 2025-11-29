@@ -11,33 +11,11 @@ import { SearchFilters } from '../repositories/user-search.repository';
 const searchService = new UserSearchService();
 
 /**
- * GET /api/users/search - Search users with filters and pagination
- * Processes query parameters, calls search service, and returns formatted results
+ * Handles GET /api/users/search: performs filtered, ranked user search and returns paginated results.
  *
- * Query parameters:
- * - query: Optional text search for username/full_name
- * - location_city: Optional city filter
- * - sport: Optional array of sports (['pickleball', 'paddle'])
- * - skill_level: Optional skill level enum
- * - limit: Pagination limit (default 20, max 100)
- * - offset: Pagination offset (default 0, min 0)
+ * Assumes validated query parameters are available on `req.query` and supports filters `query`, `location_city`, `sport`, and `skill_level`, plus pagination via `limit` and `offset`.
  *
- * Response format:
- * {
- *   data: User[],
- *   pagination: {
- *     total: number,
- *     limit: number,
- *     offset: number,
- *     currentPage: number,
- *     totalPages: number,
- *     hasMore: boolean
- *   }
- * }
- *
- * Headers:
- * - X-Total-Count: Total number of results
- * - Link: Next/previous page links (if applicable)
+ * Responds with 200 and a JSON object containing `data` and `pagination`; sets `X-Total-Count` and `Link` headers when applicable. Responds with 400 for validation failures and 500 for other server errors.
  */
 export async function searchUsers(
   req: Request,
@@ -102,15 +80,17 @@ export async function searchUsers(
 }
 
 /**
- * Build Link header for pagination navigation
- * Format: <url>; rel="next", <url>; rel="prev"
+ * Constructs an HTTP Link header for pagination with `next` and/or `prev` relations.
  *
- * @param baseUrl - Base URL for the endpoint
- * @param params - Current query parameters
- * @param hasMore - Whether there are more results
- * @param currentOffset - Current offset value
- * @param limit - Items per page
- * @returns Link header string or null if no links needed
+ * Preserves current filter parameters from `params` (including repeated `sport` values)
+ * and includes `limit` and `offset` for each generated link.
+ *
+ * @param baseUrl - Endpoint base URL (scheme, host, and path)
+ * @param params - Validated query parameters to preserve in generated links
+ * @param hasMore - Whether a `next` link should be included
+ * @param currentOffset - Current offset value used to calculate `prev` and `next`
+ * @param limit - Number of items per page included in generated links
+ * @returns The formatted Link header value (e.g., `<...>; rel="next", <...>; rel="prev"`) or `null` if no links are needed
  */
 function buildLinkHeader(
   baseUrl: string,

@@ -15,11 +15,16 @@ const cascadeService = new UserCascadeService();
 const cleanupService = new UserCleanupService();
 
 /**
- * GET /api/users/:id - Retrieve user profile
- * Implements field-level access control:
- * - Own profile (req.user.id === userId): Returns all fields including email, phone_number
- * - Other profile (req.user.id !== userId): Excludes email, phone_number
- * - Always excludes password_hash (handled by repository)
+ * Retrieve a user profile with field-level access control.
+ *
+ * Own profile requests return all user fields including `email` and `phone_number`.
+ * Requests for another user's profile omit `email` and `phone_number`.
+ * The `password_hash` field is never returned (handled by the repository).
+ *
+ * Responds with:
+ * - 200 and the user profile on success
+ * - 404 if the user is not found
+ * - 500 for unexpected server errors
  */
 export async function getUserProfile(
   req: AuthenticatedRequest,
@@ -55,14 +60,9 @@ export async function getUserProfile(
 }
 
 /**
- * PATCH /api/users/:id - Update user profile
- * Implements authorization and field-level security:
- * - Only allows users to update their own profile (403 for others)
- * - Strips non-updatable fields (id, email, password_hash, created_at, updated_at)
- * - Validates partial updates with Zod schema
- * - Returns 200 with updated user on success
- * - Returns 404 if user not found
- * - Returns 403 if unauthorized
+ * Update the authenticated user's profile with sanitized and validated fields.
+ *
+ * Strips non-updatable fields (e.g., id, email, password_hash, timestamps), validates the remaining partial payload, and applies the update only when the requester is the target user. Responds with 200 and the updated user on success; 403 if the requester is not the user; 400 for validation errors or invalid enum values; 409 if the username already exists; 404 if the user does not exist; and 500 for other server errors.
  */
 export async function updateUserProfile(
   req: AuthenticatedRequest,
@@ -134,13 +134,12 @@ export async function updateUserProfile(
 }
 
 /**
- * DELETE /api/users/:id - Delete user profile
- * Implements authorization and deletion orchestration:
- * - Only allows users to delete their own profile (403 for others)
- * - Orchestrates: cascade → cleanup → soft delete
- * - Returns 204 No Content on successful deletion
- * - Returns 404 if user not found or already deleted
- * - Returns 403 if unauthorized
+ * Delete the authenticated user's profile and orchestrate related cleanup.
+ *
+ * Performs an ownership check, then runs cascade operations for related data,
+ * purges sessions/tokens/cache, and performs a soft delete of the user record.
+ * Sends 204 No Content on success and appropriate HTTP error responses for
+ * unauthorized access, not-found, or deletion failures.
  */
 export async function deleteUserProfile(
   req: AuthenticatedRequest,

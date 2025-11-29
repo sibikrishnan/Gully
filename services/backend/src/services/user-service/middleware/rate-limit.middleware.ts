@@ -33,11 +33,11 @@ setInterval(() => {
 }, 5 * 60 * 1000);
 
 /**
- * Rate limiting middleware factory
+ * Creates an Express middleware that enforces a per-client-IP rate limit.
  *
- * @param maxRequests - Maximum requests allowed in the time window
+ * @param maxRequests - Maximum requests allowed within the time window
  * @param windowMs - Time window in milliseconds
- * @returns Express middleware function
+ * @returns An Express middleware that sets `X-RateLimit-*` headers and returns HTTP 429 with `Retry-After` when the limit is exceeded
  */
 export function createRateLimiter(maxRequests: number, windowMs: number) {
   return (req: Request, res: Response, next: NextFunction): void => {
