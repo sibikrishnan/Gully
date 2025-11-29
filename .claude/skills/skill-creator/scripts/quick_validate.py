@@ -9,7 +9,22 @@ import re
 from pathlib import Path
 
 def validate_skill(skill_path):
-    """Basic validation of a skill"""
+    """
+    Validate a skill directory by checking its SKILL.md frontmatter and required fields.
+    
+    Validations performed:
+    - SKILL.md exists at the given path.
+    - File contains YAML frontmatter delimited by `---`.
+    - Frontmatter includes `name:` and `description:` fields.
+    - `name` is hyphen-case (lowercase letters, digits, and hyphens), does not start or end with a hyphen, and does not contain consecutive hyphens.
+    - `description` does not contain angle brackets (`<` or `>``).
+    
+    Parameters:
+        skill_path (str | Path): Path to the skill directory to validate.
+    
+    Returns:
+        tuple: `(True, "Skill is valid!")` if all checks pass; otherwise `(False, <error message>)` describing the first validation failure.
+    """
     skill_path = Path(skill_path)
     
     # Check SKILL.md exists

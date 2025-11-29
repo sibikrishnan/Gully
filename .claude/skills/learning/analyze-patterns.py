@@ -10,7 +10,15 @@ import re
 import json
 
 def analyze_session(session_file):
-    """Extract patterns from session log."""
+    """
+    Extract categorized pattern placeholders from a session log.
+    
+    Parameters:
+        session_file (str): Path to the session log file to analyze.
+    
+    Returns:
+        patterns (dict): Mapping with keys "critical", "domain_specific", and "task_specific", each containing a list of detected pattern entries (current implementation returns empty lists).
+    """
 
     print(f"🔍 Analyzing patterns in: {session_file}")
     print()

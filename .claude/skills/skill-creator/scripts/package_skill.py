@@ -18,14 +18,16 @@ from quick_validate import validate_skill
 
 def package_skill(skill_path, output_dir=None):
     """
-    Package a skill folder into a zip file.
-
-    Args:
-        skill_path: Path to the skill folder
-        output_dir: Optional output directory for the zip file (defaults to current directory)
-
+    Create a distributable ZIP archive from a skill folder.
+    
+    Validates the skill folder (including presence of SKILL.md and running validate_skill) before packaging.
+    
+    Parameters:
+        skill_path (str | Path): Path to the skill folder to package.
+        output_dir (str | Path, optional): Directory where the resulting ZIP will be written. Defaults to the current working directory.
+    
     Returns:
-        Path to the created zip file, or None if error
+        Path | None: Path to the created ZIP file on success, or `None` if an error occurred.
     """
     skill_path = Path(skill_path).resolve()
 
@@ -83,6 +85,11 @@ def package_skill(skill_path, output_dir=None):
 
 
 def main():
+    """
+    Parse command-line arguments, package the specified skill folder, and exit with a status code.
+    
+    When invoked from the command line, expects a skill folder path and an optional output directory. Prints usage and exits with code 1 if required arguments are missing. Calls package_skill(...) to create the ZIP archive and exits with code 0 on success or 1 on failure.
+    """
     if len(sys.argv) < 2:
         print("Usage: python utils/package_skill.py <path/to/skill-folder> [output-directory]")
         print("\nExample:")

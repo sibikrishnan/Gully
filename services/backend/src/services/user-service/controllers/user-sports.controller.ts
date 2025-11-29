@@ -14,14 +14,17 @@ const userSportsRepository = new UserSportsRepository();
 const userRepository = new UserRepository();
 
 /**
- * POST /api/users/:id/sports - Add a sport to user's profile
- * Authorization: Users can only add sports to their own profile
- * Returns: 201 with created sport object
- * Errors:
- * - 400: Validation failed (invalid sport_name or skill_level)
- * - 403: Forbidden (trying to add sport to another user's profile)
- * - 404: User not found or inactive
- * - 409: Duplicate sport (user already has this sport)
+ * Add a sport to the authenticated user's profile.
+ *
+ * Validates the request body and ensures the requester matches the `:id` URL parameter.
+ * Responds with 201 and the created sport on success.
+ *
+ * Error responses:
+ * - 400: Validation failed (invalid payload)
+ * - 403: Forbidden (requester does not match `:id`)
+ * - 404: User not found
+ * - 409: Duplicate sport (sport already exists for user)
+ * - 500: Internal server error
  */
 export async function addUserSport(
   req: AuthenticatedRequest,
@@ -72,12 +75,10 @@ export async function addUserSport(
 }
 
 /**
- * DELETE /api/users/:id/sports/:sport - Remove a sport from user's profile
- * Authorization: Users can only remove sports from their own profile
- * Returns: 204 No Content on successful deletion
- * Errors:
- * - 403: Forbidden (trying to remove sport from another user's profile)
- * - 404: User not found OR sport not found
+ * Removes a sport from the specified user's profile.
+ *
+ * Responds with 204 No Content on successful deletion. Returns 403 if the authenticated user
+ * is not the target user, 404 if the user or sport is not found, and 500 for internal server errors.
  */
 export async function removeUserSport(
   req: AuthenticatedRequest,
