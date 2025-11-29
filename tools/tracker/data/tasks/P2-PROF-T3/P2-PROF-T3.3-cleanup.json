@@ -1,0 +1,82 @@
+{
+  "id": "P2-PROF-T3.3",
+  "version": "1.0",
+  "content": "Implement cleanup services layer for user deletion with session and token revocation",
+  "activeForm": "Implementing cleanup services layer for user deletion with session and token revocation",
+  "description": "Create user-cleanup.service.ts with cleanupUserSessions method that handles post-deletion cleanup. Revokes all JWT tokens, clears Redis cache, removes from online users, and closes WebSocket connections. Write 3 MVP-tier tests (integration tests for token revocation, cache clearing, and error handling). This subtask will be used by the controller in T3.4.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-PROF-T3.3-cleanup-tests.json",
+  "workflowRef": "workflows/tdd.json",
+  "planningResultRef": null,
+  "dependencies": [],
+  "blockers": [],
+  "tags": ["user-service", "cleanup", "services", "DELETE", "sessions", "phase-2"],
+  "estimatedDuration": "20-30 min",
+  "metadata": {
+    "phase": 2,
+    "feature": "User Profiles",
+    "parentTask": "P2-PROF-T3",
+    "subtaskIndex": "3.3",
+    "estimatedTokens": 13000,
+    "testTier": "mvp",
+    "testCount": 3,
+    "parallelizable": true,
+    "parallelGroup": "foundation"
+  },
+  "workflow": {
+    "planningRequired": true,
+    "checkpoints": [
+      {
+        "name": "Cleanup Service Implementation Complete",
+        "tokenLimit": 7000,
+        "requirement": "UserCleanupService created with cleanupUserSessions method and token/cache/WebSocket handlers",
+        "askHuman": false,
+        "exitIfFail": false
+      },
+      {
+        "name": "MVP Cleanup Tests Passing",
+        "tokenLimit": 13000,
+        "requirement": "All 3 tests passing (token revocation, cache clearing, graceful error handling verified)",
+        "askHuman": true,
+        "exitIfFail": false
+      }
+    ],
+    "phases": [
+      {
+        "phase": 1,
+        "name": "Cleanup Service Creation",
+        "required": true,
+        "actions": [
+          "Create: src/services/user-service/services/user-cleanup.service.ts",
+          "Implement: cleanupUserSessions(userId: number): Promise<void>",
+          "Implement: revokeTokens(userId: number) - revoke all JWT tokens for user",
+          "Implement: clearCache(userId: number) - clear Redis cache entries",
+          "Implement: removeFromOnlineUsers(userId: number) - remove from online tracking",
+          "Implement: closeWebSocketConnections(userId: number) - close active WS connections"
+        ],
+        "gate": "Cleanup service must handle token revocation and cache clearing before proceeding"
+      },
+      {
+        "phase": 2,
+        "name": "Error Handling and Resilience",
+        "actions": [
+          "Handle: Redis connection failure (log error, continue cleanup)",
+          "Handle: WebSocket server unavailable (graceful degradation)",
+          "Handle: Partial cleanup failure (log, don't throw)",
+          "Implement: Async cleanup (don't block deletion)",
+          "Log: Cleanup failures for monitoring"
+        ]
+      },
+      {
+        "phase": 3,
+        "name": "MVP Test Suite (3 tests)",
+        "actions": [
+          "Write: Test 1 - Revoke all user tokens successfully",
+          "Write: Test 2 - Clear user cache entries",
+          "Write: Test 3 - Graceful handling when Redis is down",
+          "Verify: All 3 tests passing with 90%+ coverage of cleanup service"
+        ]
+      }
+    ]
+  }
+}

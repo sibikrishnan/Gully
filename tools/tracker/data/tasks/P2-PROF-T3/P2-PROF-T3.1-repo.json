@@ -1,0 +1,83 @@
+{
+  "id": "P2-PROF-T3.1",
+  "version": "1.0",
+  "content": "Implement repository layer for DELETE /api/users/:id with soft delete and audit trail",
+  "activeForm": "Implementing repository layer for DELETE /api/users/:id with soft delete and audit trail",
+  "description": "Implement user.repository.ts with softDeleteUser method that handles soft deletion by setting is_active=false. Implements database-level soft delete with transaction handling, audit trail creation, and proper constraint handling. Preserves all user data (no hard delete). Write 4 MVP-tier tests (integration tests for database operations, transactions, and audit records). This subtask provides the data access layer that will be used by the controller in T3.4.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-PROF-T3.1-repo-tests.json",
+  "workflowRef": "workflows/tdd.json",
+  "planningResultRef": null,
+  "dependencies": [],
+  "blockers": [],
+  "tags": ["user-service", "repository", "database", "DELETE", "soft-delete", "phase-2"],
+  "estimatedDuration": "25-35 min",
+  "metadata": {
+    "phase": 2,
+    "feature": "User Profiles",
+    "parentTask": "P2-PROF-T3",
+    "subtaskIndex": "3.1",
+    "estimatedTokens": 15000,
+    "testTier": "mvp",
+    "testCount": 4,
+    "parallelizable": true,
+    "parallelGroup": "foundation"
+  },
+  "workflow": {
+    "planningRequired": true,
+    "checkpoints": [
+      {
+        "name": "Soft Delete Method Implementation Complete",
+        "tokenLimit": 8000,
+        "requirement": "Repository softDeleteUser method created with is_active flag update and transaction support",
+        "askHuman": false,
+        "exitIfFail": false
+      },
+      {
+        "name": "MVP Tests Passing with Audit Trail",
+        "tokenLimit": 15000,
+        "requirement": "All 4 tests passing (soft delete, transaction, audit, rollback verified)",
+        "askHuman": true,
+        "exitIfFail": false
+      }
+    ],
+    "phases": [
+      {
+        "phase": 1,
+        "name": "Repository Method Implementation",
+        "required": true,
+        "actions": [
+          "Update: src/services/user-service/repositories/user.repository.ts",
+          "Implement: softDeleteUser(id: number): Promise<boolean>",
+          "Build: SQL UPDATE query to set is_active=false, updated_at=NOW()",
+          "Use: INTEGER id parameter (not UUID)",
+          "Implement: Transaction support for atomic soft delete",
+          "Return: true if user found and deleted, false if user not found"
+        ],
+        "gate": "Soft delete query must use transactions before proceeding"
+      },
+      {
+        "phase": 2,
+        "name": "Audit Trail Implementation",
+        "actions": [
+          "Create: deletion_audit table entry (user_id, deleted_at, deleted_by)",
+          "Implement: Audit record creation within same transaction",
+          "Handle: User not found scenario (return false without audit)",
+          "Handle: Already deleted user (idempotent - return true)",
+          "Implement: Transaction rollback on audit failure"
+        ]
+      },
+      {
+        "phase": 3,
+        "name": "MVP Test Suite (4 tests)",
+        "actions": [
+          "Write: Test 1 - Successful soft delete sets is_active=false",
+          "Write: Test 2 - Soft delete creates audit record",
+          "Write: Test 3 - Transaction rollback on error",
+          "Write: Test 4 - Idempotent delete (already deleted user)",
+          "Verify: All 4 tests passing with 90%+ coverage of repository layer"
+        ]
+      }
+    ]
+  }
+}

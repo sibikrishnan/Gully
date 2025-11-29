@@ -1,0 +1,14 @@
+{
+  "id": "P2-ARCH-T1",
+  "version": "1.0",
+  "content": "Resolve UUID vs integer ID inconsistency in database schema",
+  "activeForm": "Resolving UUID vs integer ID inconsistency in database schema",
+  "description": "Choose between UUID or integer IDs and update either documentation (docs/context/database/tables.md) or implementation (migrations) to match. Update all references to maintain consistency across codebase.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-ARCH-T1-tests.json",
+  "workflowRef": "workflows/test-after.json",
+  "dependencies": [],
+  "blockers": [],
+  "tags": ["architecture", "database", "schema", "critical"],
+  "estimatedDuration": "60-90 min"
+}

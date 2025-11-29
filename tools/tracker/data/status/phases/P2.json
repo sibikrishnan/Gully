@@ -1,0 +1,20 @@
+{
+  "id": "P2",
+  "name": "User Profiles",
+  "status": "in_progress",
+  "startDate": "2025-11-10",
+  "completionDate": null,
+  "tasks": {
+    "complete": 1,
+    "total": 5
+  },
+  "tests": {
+    "passing": 69,
+    "total": 210
+  },
+  "coverage": 90,
+  "maturityGate": {
+    "status": "not_checked",
+    "verifiedDate": null
+  }
+}

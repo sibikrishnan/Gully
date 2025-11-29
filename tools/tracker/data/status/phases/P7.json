@@ -1,0 +1,20 @@
+{
+  "id": "P7",
+  "name": "Stats & Leaderboard",
+  "status": "not_started",
+  "startDate": null,
+  "completionDate": null,
+  "tasks": {
+    "complete": 0,
+    "total": 7
+  },
+  "tests": {
+    "passing": 0,
+    "total": 250
+  },
+  "coverage": 0,
+  "maturityGate": {
+    "status": "not_checked",
+    "verifiedDate": null
+  }
+}

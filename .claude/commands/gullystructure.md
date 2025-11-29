@@ -38,8 +38,8 @@ INDEX.md (root)                    ← START HERE for ANY file
 - See `.claude/context/INDEX.md` for available sections
 
 **Source Code:**
-- Backend → `backend/src/services/[service]/`
-- Tests → `backend/tests/`
+- Backend → `services/backend/src/services/[service]/`
+- Tests → `services/backend/tests/`
 
 ---
 

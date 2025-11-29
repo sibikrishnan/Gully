@@ -47,7 +47,7 @@
 
 ### Check which workflow a task uses
 ```bash
-jq '.workflow' backend/.claude/tasks/P3-TEAM-T1.json
+jq '.workflow' tools/tracker/P3-TEAM-T1.json
 ```
 
 ### List all available execution workflows
@@ -58,7 +58,7 @@ ls -1 backend/.claude/workflows/*.json
 ### Validate workflow exists for task
 ```bash
 task="P3-TEAM-T1"
-ref=$(jq -r '.workflow.workflowRef' "backend/.claude/tasks/$task.json")
+ref=$(jq -r '.workflow.workflowRef' "tools/tracker/$task.json")
 test -f "backend/.claude/$ref" && echo "✓ Valid" || echo "✗ Missing"
 ```
 

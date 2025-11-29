@@ -113,7 +113,7 @@
 ### For Architecture
 - ✅ **Overview:** `docs/architecture/OVERVIEW.md` - High-level system architecture
 - ✅ **Context Sections:** `.claude/context/` - Detailed, up-to-date context (load via `/gullycontext`)
-- ✅ **Service Briefs:** `docs/parallel-development/` - Service implementation guides
+- ✅ **Service Briefs:** `docs/service-briefs/` - Service implementation guides
 
 ### For Database
 - ✅ **Schema:** `docs/planning/DATABASE_SCHEMA.md` - Complete schema reference

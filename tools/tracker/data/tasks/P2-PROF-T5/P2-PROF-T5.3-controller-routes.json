@@ -1,0 +1,100 @@
+{
+  "id": "P2-PROF-T5.3",
+  "version": "1.0",
+  "content": "Implement controller and routes with middleware for user search endpoint",
+  "activeForm": "Implementing controller and routes with middleware for user search endpoint",
+  "description": "Implement user-search.controller.ts with searchUsers handler for GET /api/users/search. Controller processes query parameters, calls search service (T5.2), applies pagination, and returns formatted results with metadata. Create user-search.routes.ts to register the search endpoint with Express router, including middleware chain (query validation, rate limiting). Implement middleware for query parameter validation using Zod schemas from T5.1 and rate limiting per IP to prevent abuse. Write 8 MVP-tier tests (4 unit tests for controller query handling, filter application, error handling, and result formatting; 4 integration tests for route behavior covering 200 success responses, 400 validation errors, pagination headers, and rate limiting). This subtask completes the API layer and builds on the service layer (T5.2) to expose the search functionality via HTTP endpoints.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-PROF-T5.3-controller-routes-tests.json",
+  "workflowRef": "workflows/tdd.json",
+  "planningResultRef": null,
+  "dependencies": ["P2-PROF-T5.2"],
+  "blockers": [],
+  "tags": ["user-service", "search", "routes", "controller", "middleware", "phase-2"],
+  "estimatedDuration": "35-40 min",
+  "metadata": {
+    "phase": 2,
+    "feature": "User Profiles",
+    "parentTask": "P2-PROF-T5",
+    "subtaskIndex": "5.3",
+    "estimatedTokens": 22000,
+    "testTier": "mvp",
+    "testCount": 8
+  },
+  "workflow": {
+    "planningRequired": true,
+    "checkpoints": [
+      {
+        "name": "Controller Implementation Complete",
+        "tokenLimit": 12000,
+        "requirement": "Controller searchUsers method implemented with query processing, service calls, and response formatting",
+        "askHuman": false,
+        "exitIfFail": false
+      },
+      {
+        "name": "Routes and Tests Passing",
+        "tokenLimit": 22000,
+        "requirement": "Routes registered with middleware, all 8 MVP tests passing with proper HTTP status codes and headers verified",
+        "askHuman": true,
+        "exitIfFail": false
+      }
+    ],
+    "phases": [
+      {
+        "phase": 1,
+        "name": "Controller Implementation",
+        "required": true,
+        "actions": [
+          "Create: src/services/user-service/controllers/user-search.controller.ts",
+          "Implement: searchUsers(req: Request, res: Response, next: NextFunction): Promise<void>",
+          "Extract: query parameters from req.query (query, location_city, sport, skill_level, limit, offset)",
+          "Validate: query parameters using searchParamsSchema from T5.1",
+          "Call: userSearchService.buildSearchQuery(filters, pagination)",
+          "Call: userSearchRepository.executeSearchQuery(queryObject)",
+          "Call: userSearchRepository.countTotalResults(filters)",
+          "Call: rankingService.sortByRelevance(users, searchQuery)",
+          "Call: paginationService.paginateResults(users, total, limit, offset)",
+          "Format: response { data: users[], pagination: { total, limit, offset, hasMore } }",
+          "Handle: Errors (400 validation, 500 server errors)",
+          "Set: Pagination headers (X-Total-Count, Link for next/prev)"
+        ],
+        "gate": "Controller must handle query processing, service orchestration, and error handling before proceeding"
+      },
+      {
+        "phase": 2,
+        "name": "Routes and Middleware",
+        "actions": [
+          "Create: src/services/user-service/routes/user-search.routes.ts",
+          "Import: Express Router",
+          "Register: GET /search route",
+          "Attach: queryValidationMiddleware using searchParamsSchema",
+          "Attach: rateLimitMiddleware (100 requests per 15 minutes per IP)",
+          "Attach: searchUsers controller",
+          "Create: src/services/user-service/middleware/query-validation.middleware.ts",
+          "Implement: validateQueryParams(schema: ZodSchema) middleware factory",
+          "Validate: req.query against schema, return 400 on validation error",
+          "Create: src/services/user-service/middleware/rate-limit.middleware.ts (or use existing)",
+          "Configure: Rate limiting for search endpoint",
+          "Export: router to be mounted in main user routes"
+        ]
+      },
+      {
+        "phase": 3,
+        "name": "MVP Test Suite (8 tests)",
+        "actions": [
+          "Write: 4 unit tests for controller logic",
+          "Test: searchUsers processes query parameters correctly",
+          "Test: searchUsers applies filters and calls services in correct order",
+          "Test: searchUsers handles validation errors and returns 400",
+          "Test: searchUsers formats response with pagination metadata",
+          "Write: 4 integration tests for route behavior",
+          "Test: GET /api/users/search returns 200 with results array",
+          "Test: GET /api/users/search with invalid params returns 400",
+          "Test: Response includes pagination headers (X-Total-Count)",
+          "Test: Rate limiting blocks excessive requests (429 status)",
+          "Verify: All 8 tests passing with 85%+ coverage of controller and route layers"
+        ]
+      }
+    ]
+  }
+}

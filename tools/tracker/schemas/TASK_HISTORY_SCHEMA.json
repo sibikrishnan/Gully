@@ -1,0 +1,241 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gully.app/schemas/tracking/task-history.json",
+  "title": "Task History Schema",
+  "description": "Structured task execution log with metrics, learnings, and issues",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["version", "lastUpdated", "tasks", "metrics"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "phaseId", "title", "status", "priority", "complexity", "startDate", "execution", "tests"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^P\\d+-[A-Z]+-T\\d+$"
+          },
+          "phaseId": {
+            "type": "string",
+            "pattern": "^P\\d+$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "in_progress", "complete", "failed", "blocked"]
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["P0", "P1", "P2", "P3"]
+          },
+          "complexity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "very_high"]
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completionDate": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "execution": {
+            "type": "object",
+            "required": ["totalTokens", "totalDuration", "approach", "subtasks"],
+            "properties": {
+              "totalTokens": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "totalDuration": {
+                "type": "string",
+                "description": "Duration in human-readable format (e.g., '55 min')"
+              },
+              "approach": {
+                "type": "string",
+                "enum": ["direct", "subagent", "hybrid"],
+                "description": "Execution approach used"
+              },
+              "subtasks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["id", "approach", "tokens", "duration"],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^P\\d+-[A-Z]+-T\\d+\\.\\d+-[a-z]+$"
+                    },
+                    "approach": {
+                      "type": "string",
+                      "enum": ["direct", "subagent"]
+                    },
+                    "tokens": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "duration": {
+                      "type": "string"
+                    },
+                    "tests": {
+                      "type": "object",
+                      "required": ["passing", "total"],
+                      "properties": {
+                        "passing": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "total": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tests": {
+            "type": "object",
+            "required": ["total", "passing", "coverage"],
+            "properties": {
+              "total": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "passing": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "failing": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0
+              },
+              "skipped": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0
+              },
+              "coverage": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "distribution": {
+                "type": "object",
+                "properties": {
+                  "unit": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "integration": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "e2e": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "edge": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              }
+            }
+          },
+          "gitCommit": {
+            "type": ["string", "null"],
+            "pattern": "^[0-9a-f]{7,40}$",
+            "description": "Git commit hash for this task"
+          },
+          "learnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Key learnings from task execution"
+          },
+          "issuesEncountered": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["bugId", "summary", "resolved"],
+              "properties": {
+                "bugId": {
+                  "type": "string",
+                  "pattern": "^BUG-\\d+$"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "resolved": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "filesCreated": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of files created during task execution"
+          },
+          "filesModified": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of files modified during task execution"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes about task execution"
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["totalTasks", "avgTokensPerTask", "avgDuration", "avgCoverage"],
+      "properties": {
+        "totalTasks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "avgTokensPerTask": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "avgDuration": {
+          "type": "string"
+        },
+        "avgCoverage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "preferredApproach": {
+          "type": "string",
+          "enum": ["direct", "subagent", "hybrid"]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "P2-ARCH-T2",
+  "version": "1.0",
+  "content": "Implement Redis connection and integration",
+  "activeForm": "Implementing Redis connection and integration",
+  "description": "Create Redis connection module with ioredis, implement connection pooling, health checks, and integrate with rate limiter and session storage. Move from in-memory to Redis-based state management.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-ARCH-T2-tests.json",
+  "workflowRef": "workflows/tdd.json",
+  "dependencies": [],
+  "blockers": [],
+  "tags": ["architecture", "redis", "caching", "critical", "scaling"],
+  "estimatedDuration": "120-150 min"
+}

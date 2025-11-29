@@ -1,0 +1,20 @@
+{
+  "id": "P3",
+  "name": "Team Management",
+  "status": "not_started",
+  "startDate": null,
+  "completionDate": null,
+  "tasks": {
+    "complete": 0,
+    "total": 6
+  },
+  "tests": {
+    "passing": 0,
+    "total": 250
+  },
+  "coverage": 0,
+  "maturityGate": {
+    "status": "not_checked",
+    "verifiedDate": null
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "id": "P2-PROF-T5.2",
+  "version": "1.0",
+  "content": "Implement query builder and search service with pagination",
+  "activeForm": "Implementing query builder and search service with pagination",
+  "description": "Implement user-search.service.ts with buildSearchQuery, applyFilters, and formatSearchResults methods for constructing dynamic SQL queries based on search parameters. Implement query builder functions (buildWhereClause, addJoinClauses, addOrderBy, addPagination) for safe SQL generation with parameterization. Create pagination.service.ts with paginateResults and calculatePageInfo for consistent result pagination with limit/offset and total count metadata. Write 8 MVP-tier tests (4 unit tests for query builder logic covering WHERE clauses, JOIN generation, ORDER BY, and SQL injection prevention; 4 integration tests for pagination consistency, total count accuracy, ordering across pages, and edge cases). This subtask builds on the repository layer (T5.1) and provides the search logic layer that will be consumed by the controller in T5.3.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-PROF-T5.2-query-builder-service-tests.json",
+  "workflowRef": "workflows/tdd.json",
+  "planningResultRef": null,
+  "dependencies": ["P2-PROF-T5.1"],
+  "blockers": [],
+  "tags": ["user-service", "search", "pagination", "filtering", "query-builder", "phase-2"],
+  "estimatedDuration": "35-40 min",
+  "metadata": {
+    "phase": 2,
+    "feature": "User Profiles",
+    "parentTask": "P2-PROF-T5",
+    "subtaskIndex": "5.2",
+    "estimatedTokens": 22000,
+    "testTier": "mvp",
+    "testCount": 8
+  },
+  "workflow": {
+    "planningRequired": true,
+    "checkpoints": [
+      {
+        "name": "Query Builder Implementation Complete",
+        "tokenLimit": 12000,
+        "requirement": "Query builder functions implemented with WHERE clause, JOIN, ORDER BY, and pagination logic",
+        "askHuman": false,
+        "exitIfFail": false
+      },
+      {
+        "name": "Search Service and Tests Passing",
+        "tokenLimit": 22000,
+        "requirement": "Search service and pagination service complete, all 8 MVP tests passing with SQL injection prevention verified",
+        "askHuman": true,
+        "exitIfFail": false
+      }
+    ],
+    "phases": [
+      {
+        "phase": 1,
+        "name": "Query Builder Implementation",
+        "required": true,
+        "actions": [
+          "Create: src/services/user-service/services/user-search.service.ts",
+          "Implement: buildWhereClause(filters: SearchFilters): { sql: string, params: any[] }",
+          "Build: WHERE clause for username ILIKE %query%",
+          "Build: WHERE clause for full_name ILIKE %query%",
+          "Build: WHERE clause for location_city equality",
+          "Build: WHERE clause for skill_level enum match",
+          "Implement: addJoinClauses(filters: SearchFilters): string",
+          "Build: LEFT JOIN user_sports when sport filter present",
+          "Build: Handle multiple sport filters with IN clause",
+          "Implement: addOrderBy(searchQuery: string): string",
+          "Build: ORDER BY relevance score (if query present), then created_at DESC",
+          "Implement: addPagination(limit: number, offset: number): string",
+          "Build: LIMIT and OFFSET clauses with bounds checking",
+          "Handle: Parameterized queries to prevent SQL injection"
+        ],
+        "gate": "Query builder functions must generate safe, parameterized SQL before proceeding"
+      },
+      {
+        "phase": 2,
+        "name": "Search Service and Pagination Service",
+        "actions": [
+          "Implement: buildSearchQuery(filters: SearchFilters, pagination: PaginationParams): QueryObject",
+          "Combine: WHERE, JOIN, ORDER BY, and LIMIT/OFFSET into complete query",
+          "Return: { sql: string, params: any[] } for repository execution",
+          "Implement: applyFilters(baseQuery: string, filters: SearchFilters): QueryObject",
+          "Implement: formatSearchResults(users: User[], searchQuery?: string): FormattedUser[]",
+          "Create: src/services/user-service/services/pagination.service.ts",
+          "Implement: paginateResults<T>(items: T[], total: number, limit: number, offset: number): PaginatedResponse<T>",
+          "Return: { data: T[], pagination: { total, limit, offset, hasMore } }",
+          "Implement: calculatePageInfo(total: number, limit: number, offset: number): PageInfo",
+          "Calculate: hasMore, currentPage, totalPages"
+        ]
+      },
+      {
+        "phase": 3,
+        "name": "MVP Test Suite (8 tests)",
+        "actions": [
+          "Write: 4 unit tests for query builder logic",
+          "Test: buildWhereClause generates correct SQL for text search (ILIKE)",
+          "Test: addJoinClauses generates LEFT JOIN for sport filter",
+          "Test: buildSearchQuery parameterizes values to prevent SQL injection",
+          "Test: addPagination enforces maximum limit and minimum offset",
+          "Write: 4 integration tests for pagination consistency",
+          "Test: paginateResults returns correct first page items",
+          "Test: Pagination with offset returns next page correctly",
+          "Test: Total count matches filtered results",
+          "Test: Ordering is consistent across multiple pages",
+          "Verify: All 8 tests passing with 85%+ coverage of query builder and pagination services"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,193 @@
+{
+  "taskId": "P2-PROF-T5.1",
+  "testSuiteVersion": "1.0",
+  "testCases": [
+    {
+      "id": "user-search-repository.integration.execute-query",
+      "category": "integration",
+      "description": "Integration test for executeSearchQuery with username filter",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-search-repository.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["executeSearchQuery"],
+        "scenarios": [
+          "Search with username filter returns matching users",
+          "Search excludes soft-deleted users (is_active=false)"
+        ],
+        "edgeCases": [
+          "Case-insensitive search (ILIKE)",
+          "Partial match handling",
+          "Empty result handling"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user-search.repository.ts"
+        ]
+      }
+    },
+    {
+      "id": "user-search-repository.integration.sport-join",
+      "category": "integration",
+      "description": "Integration test for executeSearchQuery with sport filter and JOIN",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-search-repository.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "15 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["executeSearchQuery"],
+        "scenarios": [
+          "Search with sport filter performs LEFT JOIN to user_sports",
+          "Multiple sport filters use IN clause correctly"
+        ],
+        "edgeCases": [
+          "Users with no sports excluded when sport filter applied",
+          "Duplicate user results prevented",
+          "Index usage on user_sports table"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user-search.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-search-repository.integration.execute-query"]
+    },
+    {
+      "id": "user-search-repository.integration.count-results",
+      "category": "integration",
+      "description": "Integration test for countTotalResults accuracy",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/user-search-repository.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["countTotalResults"],
+        "scenarios": [
+          "countTotalResults returns accurate count matching filters",
+          "Count query performs efficiently (under 50ms)"
+        ],
+        "edgeCases": [
+          "Count with JOINs avoids duplicates",
+          "Large dataset performance (1000+ users)"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user-search.repository.ts"
+        ]
+      }
+    },
+    {
+      "id": "user-search-schema.unit.validation",
+      "category": "unit",
+      "description": "Unit tests for searchParamsSchema validation",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-search-schema.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["searchParamsSchema"],
+        "scenarios": [
+          "Valid query parameters pass validation with defaults applied (limit=20, offset=0)",
+          "Invalid limit (>100) returns validation error"
+        ],
+        "edgeCases": [
+          "Negative pagination values rejected",
+          "Non-numeric limit/offset rejected",
+          "Unknown parameters stripped",
+          "Sport enum validation"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user-search.schema.ts"
+        ]
+      }
+    },
+    {
+      "id": "user-ranking-service.unit.relevance",
+      "category": "unit",
+      "description": "Unit tests for ranking and relevance scoring",
+      "required": true,
+      "priority": "medium",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-ranking.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["calculateRelevance", "sortByRelevance"],
+        "scenarios": [
+          "Exact username match ranks higher than partial match",
+          "sortByRelevance orders results correctly by relevance score"
+        ],
+        "edgeCases": [
+          "Identical relevance scores use fallback ordering",
+          "Empty search query (no ranking applied)",
+          "Special characters in search terms"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/services/user-ranking.service.ts"
+        ]
+      }
+    }
+  ],
+  "coverageRequirements": {
+    "enabled": true,
+    "minimumPercentage": 85,
+    "criticalFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/repositories/user-search.repository.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/schemas/user-search.schema.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/services/user-ranking.service.ts"
+    ]
+  },
+  "successCriteria": {
+    "allTestsMustPass": true,
+    "noTypeScriptErrors": true,
+    "noLintingErrors": true,
+    "buildMustSucceed": true
+  },
+  "executionConfig": {
+    "runInOrder": [
+      "user-search-schema.unit.validation",
+      "user-ranking-service.unit.relevance",
+      "user-search-repository.integration.execute-query",
+      "user-search-repository.integration.sport-join",
+      "user-search-repository.integration.count-results"
+    ],
+    "stopOnFirstFailure": false,
+    "parallelizable": false
+  }
+}

@@ -12,7 +12,7 @@
 - [ ] `INDEX.md` (root) - Updated with new major files
 - [ ] `docs/INDEX.md` - New docs referenced
 - [ ] `docs/architecture/INDEX.md` - Architecture changes documented
-- [ ] `docs/parallel-development/INDEX.md` - New service briefs added
+- [ ] `docs/service-briefs/INDEX.md` - New service briefs added
 - [ ] `.claude/context/INDEX.md` - Context sections updated
 
 **Action if not current:** Update relevant INDEX files before closing week
@@ -31,7 +31,7 @@ Run these queries and count tool calls:
 
 **Test 2: Find service implementation**
 - [ ] Query: "Show me the UserService brief"
-- [ ] Expected: 2-3 tool calls via INDEX.md → parallel-development/INDEX.md
+- [ ] Expected: 2-3 tool calls via INDEX.md → service-briefs/INDEX.md
 - [ ] Actual: _____ tool calls
 
 **Test 3: Load architecture context**
@@ -107,7 +107,7 @@ Spot check 5 random links in documentation:
 1. Link from INDEX.md → _____ - [ ] Works
 2. Link from docs/INDEX.md → _____ - [ ] Works
 3. Link from architecture/INDEX.md → _____ - [ ] Works
-4. Link from parallel-development/INDEX.md → _____ - [ ] Works
+4. Link from service-briefs/INDEX.md → _____ - [ ] Works
 5. Link from .claude/context/INDEX.md → _____ - [ ] Works
 
 **Action if broken links:** Fix immediately, broken links defeat INDEX purpose

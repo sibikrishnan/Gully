@@ -1,0 +1,288 @@
+{
+  "taskId": "P2-PROF-T5.2",
+  "testSuiteVersion": "1.0",
+  "testCases": [
+    {
+      "id": "query-builder.unit.where-clause",
+      "category": "unit",
+      "description": "Unit test for buildWhereClause with text search (ILIKE)",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-search-query-builder.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["buildWhereClause"],
+        "scenarios": [
+          "buildWhereClause generates correct SQL for text search (username ILIKE %query% OR full_name ILIKE %query%)",
+          "buildWhereClause generates correct SQL for location_city equality"
+        ],
+        "edgeCases": [
+          "Empty filters object returns valid SQL",
+          "Special characters escaped properly",
+          "NULL filter values handled"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/services/user-search.service.ts"
+        ]
+      }
+    },
+    {
+      "id": "query-builder.unit.join-clause",
+      "category": "unit",
+      "description": "Unit test for addJoinClauses with sport filter",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-search-query-builder.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["addJoinClauses"],
+        "scenarios": [
+          "addJoinClauses generates LEFT JOIN user_sports when sport filter present",
+          "Multiple sport filters generate IN clause (sport_name IN ('pickleball', 'paddle'))"
+        ],
+        "edgeCases": [
+          "No sport filter returns empty string",
+          "Single sport vs multiple sports handling",
+          "Duplicate prevention in JOIN"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/services/user-search.service.ts"
+        ]
+      },
+      "dependsOn": ["query-builder.unit.where-clause"]
+    },
+    {
+      "id": "query-builder.unit.sql-injection",
+      "category": "unit",
+      "description": "Unit test for SQL injection prevention via parameterization",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-search-query-builder.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["buildSearchQuery"],
+        "scenarios": [
+          "buildSearchQuery returns parameterized values array (not inline SQL strings)",
+          "Malicious input ('; DROP TABLE users;--) is safely parameterized"
+        ],
+        "edgeCases": [
+          "Single quote handling",
+          "Backslash escaping",
+          "Unicode characters"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/services/user-search.service.ts"
+        ]
+      }
+    },
+    {
+      "id": "query-builder.unit.pagination-limits",
+      "category": "unit",
+      "description": "Unit test for addPagination with limit/offset bounds",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/unit/user-search-query-builder.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["addPagination"],
+        "scenarios": [
+          "addPagination enforces maximum limit (100)",
+          "addPagination enforces minimum offset (0)"
+        ],
+        "edgeCases": [
+          "Negative offset clamped to 0",
+          "Limit > 100 clamped to 100",
+          "Floating point values handled"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/services/user-search.service.ts"
+        ]
+      }
+    },
+    {
+      "id": "pagination-service.integration.first-page",
+      "category": "integration",
+      "description": "Integration test for paginateResults returning first page",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/pagination-service.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["paginateResults"],
+        "scenarios": [
+          "paginateResults returns correct first page items (limit=10, offset=0)",
+          "Pagination metadata includes total, limit, offset, hasMore=true"
+        ],
+        "edgeCases": [
+          "Single page results (hasMore=false)",
+          "Empty results handling"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/services/pagination.service.ts"
+        ]
+      }
+    },
+    {
+      "id": "pagination-service.integration.next-page",
+      "category": "integration",
+      "description": "Integration test for pagination with offset (next page)",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/pagination-service.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["paginateResults"],
+        "scenarios": [
+          "Pagination with offset returns next page correctly (items 11-20)",
+          "hasMore flag accurate for last page"
+        ],
+        "edgeCases": [
+          "Offset beyond total results",
+          "Last page partial results"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/services/pagination.service.ts"
+        ]
+      },
+      "dependsOn": ["pagination-service.integration.first-page"]
+    },
+    {
+      "id": "pagination-service.integration.total-count",
+      "category": "integration",
+      "description": "Integration test for total count accuracy",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/pagination-service.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["calculatePageInfo"],
+        "scenarios": [
+          "Total count matches filtered results count",
+          "calculatePageInfo computes currentPage and totalPages correctly"
+        ],
+        "edgeCases": [
+          "Total count 0 handling",
+          "Division by zero prevention"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/services/pagination.service.ts"
+        ]
+      }
+    },
+    {
+      "id": "pagination-service.integration.consistent-ordering",
+      "category": "integration",
+      "description": "Integration test for consistent ordering across pages",
+      "required": true,
+      "priority": "medium",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/backend/tests/integration/pagination-service.test.ts",
+        "status": "not_created",
+        "testCount": 2,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["paginateResults"],
+        "scenarios": [
+          "Ordering is consistent across multiple pages (no duplicates, no skips)",
+          "Same query with different offsets maintains order"
+        ],
+        "edgeCases": [
+          "Concurrent data changes during pagination",
+          "Deterministic ordering with identical timestamps"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/services/pagination.service.ts"
+        ]
+      }
+    }
+  ],
+  "coverageRequirements": {
+    "enabled": true,
+    "minimumPercentage": 85,
+    "criticalFiles": [
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/services/user-search.service.ts",
+      "/Users/sibikrishnan/Documents/Gully/backend/src/services/user-service/services/pagination.service.ts"
+    ]
+  },
+  "successCriteria": {
+    "allTestsMustPass": true,
+    "noTypeScriptErrors": true,
+    "noLintingErrors": true,
+    "buildMustSucceed": true
+  },
+  "executionConfig": {
+    "runInOrder": [
+      "query-builder.unit.where-clause",
+      "query-builder.unit.join-clause",
+      "query-builder.unit.sql-injection",
+      "query-builder.unit.pagination-limits",
+      "pagination-service.integration.first-page",
+      "pagination-service.integration.next-page",
+      "pagination-service.integration.total-count",
+      "pagination-service.integration.consistent-ordering"
+    ],
+    "stopOnFirstFailure": false,
+    "parallelizable": false
+  }
+}

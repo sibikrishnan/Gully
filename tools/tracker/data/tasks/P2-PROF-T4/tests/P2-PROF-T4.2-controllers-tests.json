@@ -1,0 +1,171 @@
+{
+  "taskId": "P2-PROF-T4.2",
+  "testSuiteVersion": "1.0",
+  "testCases": [
+    {
+      "id": "user-sports-controller.unit.authorization-add",
+      "category": "unit",
+      "description": "Unit tests for addUserSport authorization logic",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/services/backend/tests/unit/user-sports-controller.test.ts",
+        "status": "created",
+        "testCount": 4,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["addUserSport"],
+        "scenarios": [
+          "User can add sport to own profile (201)",
+          "User cannot add sport to other profile (403)",
+          "Unauthenticated request returns 403",
+          "Invalid sport_name validation returns 400"
+        ],
+        "edgeCases": [
+          "Missing authentication token",
+          "User ID mismatch",
+          "Invalid enum values"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/services/backend/src/services/user-service/controllers/user-sports.controller.ts"
+        ]
+      }
+    },
+    {
+      "id": "user-sports-controller.unit.authorization-remove",
+      "category": "unit",
+      "description": "Unit tests for removeUserSport authorization logic",
+      "required": true,
+      "priority": "critical",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/services/backend/tests/unit/user-sports-controller.test.ts",
+        "status": "created",
+        "testCount": 4,
+        "estimatedDuration": "10 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["removeUserSport"],
+        "scenarios": [
+          "User can remove sport from own profile (204)",
+          "User cannot remove sport from other profile (403)",
+          "Unauthenticated request returns 403",
+          "Non-existent user returns 404"
+        ],
+        "edgeCases": [
+          "Missing authentication token",
+          "User ID mismatch",
+          "Soft-deleted users"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/services/backend/src/services/user-service/controllers/user-sports.controller.ts"
+        ]
+      }
+    },
+    {
+      "id": "user-sports-controller.integration.add-error-handling",
+      "category": "integration",
+      "description": "Integration tests for addUserSport error handling with database",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/services/backend/tests/integration/user-sports-controller.test.ts",
+        "status": "created",
+        "testCount": 4,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["addUserSport"],
+        "scenarios": [
+          "Duplicate sport returns 409 Conflict",
+          "Invalid skill_level returns 400",
+          "Non-existent user returns 404",
+          "Successfully add sport with all optional fields (201)"
+        ],
+        "edgeCases": [
+          "Unique constraint violation",
+          "Foreign key constraint",
+          "NULL optional fields",
+          "Database transaction handling"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/services/backend/src/services/user-service/controllers/user-sports.controller.ts",
+          "/Users/sibikrishnan/Documents/Gully/services/backend/src/services/user-service/repositories/user-sports.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-sports-controller.unit.authorization-add"]
+    },
+    {
+      "id": "user-sports-controller.integration.remove-error-handling",
+      "category": "integration",
+      "description": "Integration tests for removeUserSport error handling with database",
+      "required": true,
+      "priority": "high",
+      "testFile": {
+        "path": "/Users/sibikrishnan/Documents/Gully/services/backend/tests/integration/user-sports-controller.test.ts",
+        "status": "created",
+        "testCount": 4,
+        "estimatedDuration": "20 seconds"
+      },
+      "coverage": {
+        "targetFunctions": ["removeUserSport"],
+        "scenarios": [
+          "Non-existent sport returns 404",
+          "Successfully remove existing sport (204)",
+          "URL-encoded sport names handled correctly",
+          "Idempotent deletion behavior"
+        ],
+        "edgeCases": [
+          "URL encoding/decoding",
+          "Special characters in sport names",
+          "Multiple concurrent deletions",
+          "Database consistency"
+        ]
+      },
+      "trust": false,
+      "skipConditions": {
+        "ifTrusted": false,
+        "unlessFileChanged": [
+          "/Users/sibikrishnan/Documents/Gully/services/backend/src/services/user-service/controllers/user-sports.controller.ts",
+          "/Users/sibikrishnan/Documents/Gully/services/backend/src/services/user-service/repositories/user-sports.repository.ts"
+        ]
+      },
+      "dependsOn": ["user-sports-controller.unit.authorization-remove"]
+    }
+  ],
+  "coverageRequirements": {
+    "enabled": true,
+    "minimumPercentage": 90,
+    "criticalFiles": [
+      "/Users/sibikrishnan/Documents/Gully/services/backend/src/services/user-service/controllers/user-sports.controller.ts"
+    ]
+  },
+  "successCriteria": {
+    "allTestsMustPass": true,
+    "noTypeScriptErrors": true,
+    "noLintingErrors": true,
+    "buildMustSucceed": true
+  },
+  "executionConfig": {
+    "runInOrder": [
+      "user-sports-controller.unit.authorization-add",
+      "user-sports-controller.unit.authorization-remove",
+      "user-sports-controller.integration.add-error-handling",
+      "user-sports-controller.integration.remove-error-handling"
+    ],
+    "stopOnFirstFailure": false,
+    "parallelizable": false
+  }
+}

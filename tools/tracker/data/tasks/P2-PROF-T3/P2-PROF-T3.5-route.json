@@ -1,0 +1,86 @@
+{
+  "id": "P2-PROF-T3.5",
+  "version": "1.0",
+  "content": "Implement route handler for DELETE /api/users/:id with complete middleware chain and E2E tests",
+  "activeForm": "Implementing route handler for DELETE /api/users/:id with complete middleware chain and E2E tests",
+  "description": "Implement user.routes.ts with DELETE /api/users/:id endpoint. Integrates authentication middleware (JWT validation), parameter validation middleware (id validation), and controller from T3.4. Write 4 MVP-tier tests (integration tests for middleware chain, E2E tests for complete deletion flow). This subtask completes the full DELETE /api/users/:id feature.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-PROF-T3.5-route-tests.json",
+  "workflowRef": "workflows/tdd.json",
+  "planningResultRef": null,
+  "dependencies": ["P2-PROF-T3.4"],
+  "blockers": [],
+  "tags": ["user-service", "routes", "middleware", "DELETE", "e2e", "phase-2"],
+  "estimatedDuration": "30-45 min",
+  "metadata": {
+    "phase": 2,
+    "feature": "User Profiles",
+    "parentTask": "P2-PROF-T3",
+    "subtaskIndex": "3.5",
+    "estimatedTokens": 20000,
+    "testTier": "mvp",
+    "testCount": 4,
+    "parallelizable": false
+  },
+  "workflow": {
+    "planningRequired": true,
+    "checkpoints": [
+      {
+        "name": "Route Registration Complete",
+        "tokenLimit": 8000,
+        "requirement": "DELETE /api/users/:id route registered with middleware chain (auth → validation → controller)",
+        "askHuman": false,
+        "exitIfFail": false
+      },
+      {
+        "name": "Middleware Chain and E2E Tests Passing",
+        "tokenLimit": 20000,
+        "requirement": "Route implementation complete with all 4 tests passing (middleware execution and E2E flow verified)",
+        "askHuman": true,
+        "exitIfFail": false
+      }
+    ],
+    "phases": [
+      {
+        "phase": 1,
+        "name": "Route Registration",
+        "required": true,
+        "actions": [
+          "Update: src/services/user-service/routes/user.routes.ts",
+          "Register: router.delete('/:id', ...middleware, deleteUserProfile)",
+          "Add: authenticate middleware (JWT validation, populate req.user)",
+          "Add: validateRequest(getUserParamsSchema) for :id parameter (INTEGER validation)",
+          "Wire: controller.deleteUserProfile from T3.4",
+          "Order: authenticate → validateParams → controller"
+        ],
+        "gate": "Middleware chain must execute in correct order before proceeding"
+      },
+      {
+        "phase": 2,
+        "name": "Error Handling and Response Formatting",
+        "actions": [
+          "Implement: 401 response for missing/invalid JWT",
+          "Implement: 400 response for invalid :id parameter (not INTEGER)",
+          "Implement: 403 response for unauthorized deletion (other user)",
+          "Implement: 404 response for non-existent user",
+          "Implement: 204 No Content response for successful deletion",
+          "Format: Consistent error response structure",
+          "Handle: CORS preflight for DELETE requests"
+        ]
+      },
+      {
+        "phase": 3,
+        "name": "MVP Test Suite (4 tests)",
+        "actions": [
+          "Write: Test 1 - Successful deletion returns 204 No Content",
+          "Write: Test 2 - Missing JWT returns 401",
+          "Write: Test 3 - User cannot delete other user (403)",
+          "Write: Test 4 - E2E flow (login → delete own account → verify soft delete)",
+          "Verify: All 4 tests passing with 90%+ coverage of route layer",
+          "Verify: Middleware executes in correct order",
+          "Verify: Complete deletion flow works end-to-end"
+        ]
+      }
+    ]
+  }
+}

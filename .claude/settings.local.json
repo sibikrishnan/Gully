@@ -1,0 +1,62 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash:*)",
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(npm:*)",
+      "Bash(cat:*)",
+      "Bash(npx eslint:*)",
+      "Bash(mkdir:*)",
+      "Bash(chmod:*)",
+      "Bash(test:*)",
+      "WebFetch(domain:docs.coderabbit.ai)",
+      "Bash(coderabbit auth:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl:*)",
+      "Bash(tree:*)",
+      "Bash(coderabbit --prompt-only:*)",
+      "Bash(coderabbit:*)",
+      "Bash(tee:*)",
+      "WebFetch(domain:www.anthropic.com)",
+      "Bash(npx tsc:*)",
+      "Bash(timeout 60 npm test -- user-search-route.test.ts)",
+      "Bash(psql:*)",
+      "Bash(pkill:*)",
+      "Skill(learning)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/pre-filewrite-tool-use.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/post-cleanup.sh"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/post-tracker-update.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

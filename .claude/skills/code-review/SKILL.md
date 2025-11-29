@@ -1,0 +1,98 @@
+---
+name: code-review
+description: Code review using CodeRabbit CLI with issue fixing workflow. INVOKE AFTER completing task implementation and BEFORE creating PR. Systematically analyzes code, creates task list from findings, and fixes all critical/high issues.
+---
+
+# Code Review Skill
+
+Run CodeRabbit analysis, create task list from findings, and fix all critical/high issues before PR creation.
+
+## When to Invoke This Skill
+
+**MANDATORY - Invoke this skill using `Skill` tool when:**
+- Task implementation complete and tests passing
+- Before creating pull request
+- After refactoring or significant code changes
+- Part of standard task completion workflow
+
+## Workflow
+
+### 1. Pre-Check
+
+Verify:
+- All tests passing (`npm test`)
+- Code committed to feature branch
+- On correct branch: `feature/P{Phase}-{Component}-T{Task}`
+
+### 2. Run Analysis
+
+```bash
+# Analyze uncommitted changes
+coderabbit --prompt-only --type uncommitted
+
+# Or compare against develop
+coderabbit --prompt-only --base develop
+```
+
+### 3. Parse by Severity
+
+- 🔴 **CRITICAL**: Security, data loss, race conditions (MUST fix)
+- 🟠 **HIGH**: Logic errors, broken functionality (MUST fix)
+- 🟡 **MEDIUM**: Code quality, tech debt (Should fix)
+- ⚪ **LOW**: Style, docs (Optional)
+
+### 4. Create TodoWrite Tasks & Get Approval
+
+1. Convert findings to prioritized task list (CRITICAL → HIGH → MEDIUM)
+2. Show plan to user with issue summaries
+<!-- 3. **WAIT for explicit user approval** before fixing -->
+<!-- 4. User may approve all, select specific fixes, or defer some -->
+
+### 5. Fix Issues Systematically
+<!-- After Approval -->
+<!-- Note: Fixes use ephemeral TodoWrite (in-memory), NOT formal task tracker at /tools/tracker/data/tasks/ -->
+
+For each task:
+1. Mark as in_progress
+2. Read affected files
+3. Implement fix (root cause, not symptoms)
+4. Run tests
+5. Mark completed
+6. Commit separately with message:
+```
+fix: [description]
+
+[details]
+
+Related: {TASK-ID} (CodeRabbit-{SEVERITY}-{ID})
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+### 6. Re-Review (If Critical/High Fixed)
+
+```bash
+coderabbit --prompt-only --type uncommitted
+```
+
+Verify no new issues introduced.
+
+### 7. Report Summary
+
+```
+✅ Code Review Complete
+
+🔍 Issues: Critical: 0 (2 fixed) | High: 0 (3 fixed) | Medium: 1 (deferred)
+🛠️ Commits: 5 fixes pushed
+📊 Tests: All passing (42/42)
+
+Ready for PR creation
+```
+
+## Fix Quality
+
+- Address root cause, add validation/null checks, follow project patterns
+- Update tests if logic changes, one commit per fix
+- If >15 issues: Fix CRITICAL/HIGH only, defer MEDIUM/LOW to tech debt PR

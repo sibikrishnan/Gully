@@ -123,17 +123,17 @@ npm run seed:run          # Seed test data
 **Implementation Commit:** `cf01833` - feat: implement authentication utilities and middleware
 
 **Files Created:**
-- `backend/src/shared/types/auth.types.ts`
-- `backend/src/shared/utils/password.utils.ts`
-- `backend/src/shared/utils/jwt.utils.ts`
-- `backend/src/shared/config/passport.config.ts`
-- `backend/src/shared/middleware/auth.middleware.ts`
+- `services/backend/src/shared/types/auth.types.ts`
+- `services/backend/src/shared/utils/password.utils.ts`
+- `services/backend/src/shared/utils/jwt.utils.ts`
+- `services/backend/src/shared/config/passport.config.ts`
+- `services/backend/src/shared/middleware/auth.middleware.ts`
 
 **Test Files Created:**
-- `backend/tests/unit/password.utils.test.ts`
-- `backend/tests/unit/jwt.utils.test.ts`
-- `backend/tests/integration/auth.middleware.test.ts`
-- `backend/tests/integration/passport.config.test.ts`
+- `services/backend/tests/unit/password.utils.test.ts`
+- `services/backend/tests/unit/jwt.utils.test.ts`
+- `services/backend/tests/integration/auth.middleware.test.ts`
+- `services/backend/tests/integration/passport.config.test.ts`
 
 ---
 
@@ -167,10 +167,10 @@ npm run seed:run          # Seed test data
 **Commit:** `4cfed99` - feat: add user service authentication endpoints
 
 **Files Created:**
-- `backend/src/services/user-service/controllers/auth.controller.ts`
-- `backend/src/services/user-service/routes/auth.routes.ts`
-- `backend/src/services/user-service/validators/auth.validators.ts`
-- `backend/tests/integration/auth.routes.test.ts`
+- `services/backend/src/services/user-service/controllers/auth.controller.ts`
+- `services/backend/src/services/user-service/routes/auth.routes.ts`
+- `services/backend/src/services/user-service/validators/auth.validators.ts`
+- `services/backend/tests/integration/auth.routes.test.ts`
 
 ---
 
@@ -223,11 +223,11 @@ npm run seed:run          # Seed test data
 - Verify all tests pass
 
 **Files Created:**
-- `backend/src/app.ts`
-- `backend/src/server.ts`
-- `backend/src/shared/middleware/error.middleware.ts`
-- `backend/src/shared/middleware/logger.middleware.ts`
-- `backend/tests/integration/app.test.ts`
+- `services/backend/src/app.ts`
+- `services/backend/src/server.ts`
+- `services/backend/src/shared/middleware/error.middleware.ts`
+- `services/backend/src/shared/middleware/logger.middleware.ts`
+- `services/backend/tests/integration/app.test.ts`
 
 ---
 

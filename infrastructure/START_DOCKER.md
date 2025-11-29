@@ -42,7 +42,7 @@ docker ps
 Once Docker is running:
 
 ```bash
-cd /Users/sibikrishnan/Documents/Gully/backend
+cd /Users/sibikrishnan/Documents/Gully/services/backend
 
 # Start PostgreSQL and Redis
 docker compose up -d

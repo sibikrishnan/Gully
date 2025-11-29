@@ -1,0 +1,148 @@
+{
+  "version": "3.0",
+  "lastUpdated": "2025-11-12T17:37:00Z",
+  "description": "Task registry with hierarchical directory structure - parent tasks contain subtasks in subdirectories",
+  "structureVersion": "hierarchical",
+  "pathConvention": {
+    "parentTask": "{TASK_ID}/task.json",
+    "subtask": "{PARENT_ID}/{SUBTASK_ID}.json",
+    "example": "P2-PROF-T1/task.json or P2-PROF-T1/P2-PROF-T1.1.json"
+  },
+  "tasks": [
+    {
+      "id": "3",
+      "file": "task-3-jwt-utils/task.json",
+      "status": "completed",
+      "priority": "critical",
+      "title": "JWT Utils Implementation and Testing",
+      "phase": 1,
+      "hasSubtasks": false
+    },
+    {
+      "id": "4",
+      "file": "task-4-auth-tests/task.json",
+      "status": "completed",
+      "priority": "critical",
+      "title": "Auth Middleware and Passport Integration Tests",
+      "phase": 1,
+      "hasSubtasks": false
+    },
+    {
+      "id": "P2-PROF-T1",
+      "file": "P2-PROF-T1/task.json",
+      "status": "pending",
+      "priority": "critical",
+      "title": "GET /api/users/:id - Retrieve User Profile",
+      "phase": 2,
+      "hasSubtasks": true,
+      "subtasks": [
+        "P2-PROF-T1/P2-PROF-T1.1.json",
+        "P2-PROF-T1/P2-PROF-T1.2.json"
+      ]
+    },
+    {
+      "id": "P2-PROF-T2",
+      "file": "P2-PROF-T2/task.json",
+      "status": "pending",
+      "priority": "critical",
+      "title": "PATCH /api/users/:id - Update User Profile",
+      "phase": 2,
+      "hasSubtasks": true,
+      "subtasks": [
+        "P2-PROF-T2/P2-PROF-T2.1-repo.json",
+        "P2-PROF-T2/P2-PROF-T2.2-controller.json",
+        "P2-PROF-T2/P2-PROF-T2.3-route.json"
+      ]
+    },
+    {
+      "id": "P2-PROF-T3",
+      "file": "P2-PROF-T3/task.json",
+      "status": "pending",
+      "priority": "critical",
+      "title": "DELETE /api/users/:id - Soft Delete User",
+      "phase": 2,
+      "hasSubtasks": false
+    },
+    {
+      "id": "P2-PROF-T4",
+      "file": "P2-PROF-T4/task.json",
+      "status": "pending",
+      "priority": "critical",
+      "title": "POST/DELETE /api/users/:id/sports - Manage Sport Preferences",
+      "phase": 2,
+      "hasSubtasks": false
+    },
+    {
+      "id": "P2-PROF-T5",
+      "file": "P2-PROF-T5/task.json",
+      "status": "pending",
+      "priority": "high",
+      "title": "GET /api/users/search - Search Users with Filters",
+      "phase": 2,
+      "hasSubtasks": false
+    },
+    {
+      "id": "P3-TEAM-T1",
+      "file": "P3-TEAM-T1/task.json",
+      "status": "pending",
+      "priority": "critical",
+      "title": "POST /api/teams - Create Team with Captain",
+      "phase": 3,
+      "hasSubtasks": false
+    },
+    {
+      "id": "P3-TEAM-T2",
+      "file": "P3-TEAM-T2/task.json",
+      "status": "pending",
+      "priority": "critical",
+      "title": "GET /api/teams/:id - Retrieve Team Details",
+      "phase": 3,
+      "hasSubtasks": false
+    },
+    {
+      "id": "P3-TEAM-T3",
+      "file": "P3-TEAM-T3/task.json",
+      "status": "pending",
+      "priority": "critical",
+      "title": "PATCH /api/teams/:id - Update Team Details",
+      "phase": 3,
+      "hasSubtasks": false
+    },
+    {
+      "id": "P3-TEAM-T4",
+      "file": "P3-TEAM-T4/task.json",
+      "status": "pending",
+      "priority": "critical",
+      "title": "DELETE /api/teams/:id - Soft Delete Team",
+      "phase": 3,
+      "hasSubtasks": false
+    },
+    {
+      "id": "P3-TEAM-T5",
+      "file": "P3-TEAM-T5/task.json",
+      "status": "pending",
+      "priority": "critical",
+      "title": "POST /api/teams/:id/members - Add Team Member",
+      "phase": 3,
+      "hasSubtasks": false
+    },
+    {
+      "id": "P3-TEAM-T6",
+      "file": "P3-TEAM-T6/task.json",
+      "status": "pending",
+      "priority": "critical",
+      "title": "DELETE /api/teams/:id/members/:userId - Remove Team Member",
+      "phase": 3,
+      "hasSubtasks": false
+    },
+    {
+      "id": "P3-TEAM-T7",
+      "file": "P3-TEAM-T7/task.json",
+      "status": "pending",
+      "priority": "high",
+      "title": "GET /api/teams - Search and List Teams",
+      "phase": 3,
+      "hasSubtasks": false
+    }
+  ]
+}

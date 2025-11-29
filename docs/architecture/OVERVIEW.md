@@ -43,7 +43,7 @@ For active development, load context sections using:
 
 **Structure:**
 ```
-backend/
+services/backend/
   ├── src/
   │   ├── services/           # Service modules (user, team, match, stats)
   │   │   ├── user-service/   # Authentication & profiles
@@ -223,7 +223,7 @@ Use `docs/planning/`:
 - `ROADMAP.md` - Development roadmap
 
 ### Service Implementation
-Use `docs/parallel-development/`:
+Use `docs/service-briefs/`:
 - Service briefs for each microservice (User, Team, Match, etc.)
 - Implementation guides for Week 2+
 

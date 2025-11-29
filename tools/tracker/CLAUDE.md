@@ -1,0 +1,1 @@
+- git branching naming convention - feature/F-X-brief-description: e.g., feature/F1-user-auth, feature/F3-team-creation). Each feature gets it branch.

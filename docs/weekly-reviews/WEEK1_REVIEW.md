@@ -107,11 +107,11 @@ Week 1 successfully completed the foundation phase of the Gully sports platform.
 - `passport.config.ts`: 87.5% coverage
 
 **Files Created:**
-- `backend/src/shared/types/auth.types.ts`
-- `backend/src/shared/utils/password.utils.ts`
-- `backend/src/shared/utils/jwt.utils.ts`
-- `backend/src/shared/config/passport.config.ts`
-- `backend/src/shared/middleware/auth.middleware.ts`
+- `services/backend/src/shared/types/auth.types.ts`
+- `services/backend/src/shared/utils/password.utils.ts`
+- `services/backend/src/shared/utils/jwt.utils.ts`
+- `services/backend/src/shared/config/passport.config.ts`
+- `services/backend/src/shared/middleware/auth.middleware.ts`
 - 4 comprehensive test files
 
 ---
@@ -717,7 +717,7 @@ No structured logging or monitoring yet:
 
 ### Pattern #1: Test Database Utilities
 
-**Location:** `backend/tests/helpers/database.ts`
+**Location:** `services/backend/tests/helpers/database.ts`
 
 **Usage:**
 ```typescript
@@ -732,7 +732,7 @@ afterAll(async () => await teardownTestDatabase())
 
 ### Pattern #2: Test User Fixtures
 
-**Location:** `backend/tests/fixtures/users.ts`
+**Location:** `services/backend/tests/fixtures/users.ts`
 
 **Usage:**
 ```typescript
@@ -761,7 +761,7 @@ res.status(400).json({ success: false, error: { code: 'ERROR_CODE', message: 'Us
 
 ### Pattern #4: Zod Validation Schemas
 
-**Location:** `backend/src/services/user-service/validators/`
+**Location:** `services/backend/src/services/user-service/validators/`
 
 **Pattern:**
 ```typescript

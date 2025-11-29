@@ -1,0 +1,94 @@
+{
+  "id": "P2-PROF-T4.2",
+  "version": "1.0",
+  "content": "Implement controllers for POST/DELETE /api/users/:id/sports with authorization and error handling",
+  "activeForm": "Implementing controllers for POST/DELETE /api/users/:id/sports with authorization and error handling",
+  "description": "Implement user-sports.controller.ts with addUserSport and removeUserSport methods that handle POST and DELETE /api/users/:id/sports endpoints. Implements authorization checks (users can only manage their own sports, 403 for others), payload validation using schemas from T4.1, and proper error handling for duplicate sports (409) and not found (404). Uses repository layer from T4.1. Write 8 MVP-tier tests (4 unit tests for authorization and validation logic, 4 integration tests for controller-repository interaction). This subtask will be integrated with routes in T4.3.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-PROF-T4.2-controllers-tests.json",
+  "workflowRef": "workflows/tdd.json",
+  "planningResultRef": null,
+  "dependencies": ["P2-PROF-T4.1"],
+  "blockers": [],
+  "tags": ["user-service", "controller", "authorization", "sports", "POST", "DELETE", "phase-2"],
+  "estimatedDuration": "30-40 min",
+  "metadata": {
+    "phase": 2,
+    "feature": "User Profiles",
+    "parentTask": "P2-PROF-T4",
+    "subtaskIndex": "4.2",
+    "estimatedTokens": 20000,
+    "testTier": "mvp",
+    "testCount": 8
+  },
+  "workflow": {
+    "planningRequired": true,
+    "checkpoints": [
+      {
+        "name": "Authorization Logic Complete",
+        "tokenLimit": 10000,
+        "requirement": "Controller methods addUserSport and removeUserSport created with authorization checks (req.user.id === req.params.id)",
+        "askHuman": false,
+        "exitIfFail": false
+      },
+      {
+        "name": "Controller Implementation and Tests Passing",
+        "tokenLimit": 20000,
+        "requirement": "Both controller methods complete with all 8 tests passing (authorization, validation, error handling verified)",
+        "askHuman": true,
+        "exitIfFail": false
+      }
+    ],
+    "phases": [
+      {
+        "phase": 1,
+        "name": "addUserSport Controller Implementation",
+        "required": true,
+        "actions": [
+          "Create: src/services/user-service/controllers/user-sports.controller.ts",
+          "Implement: addUserSport(req: AuthenticatedRequest, res: Response)",
+          "Check: Authorization - verify req.user.id === parseInt(req.params.id) (403 if mismatch)",
+          "Validate: Payload using addSportSchema from T4.1",
+          "Check: User exists (404 if not found or soft-deleted)",
+          "Use: UserSportsRepository.addUserSport(userId, sportData) from T4.1",
+          "Return: 201 with created UserSport object",
+          "Handle: Duplicate sport returns 409 Conflict",
+          "Handle: Invalid sport_name or skill_level returns 400",
+          "Handle: User not found returns 404"
+        ],
+        "gate": "addUserSport must enforce authorization and handle all error cases before proceeding"
+      },
+      {
+        "phase": 2,
+        "name": "removeUserSport Controller Implementation",
+        "actions": [
+          "Implement: removeUserSport(req: AuthenticatedRequest, res: Response)",
+          "Check: Authorization - verify req.user.id === parseInt(req.params.id) (403 if mismatch)",
+          "Extract: sportName from req.params.sport (URL-decode if needed)",
+          "Check: User exists (404 if not found)",
+          "Use: UserSportsRepository.removeUserSport(userId, sportName) from T4.1",
+          "Return: 204 No Content on successful deletion",
+          "Handle: Sport not found returns 404 (idempotent - could also return 204)",
+          "Handle: User not found returns 404"
+        ]
+      },
+      {
+        "phase": 3,
+        "name": "MVP Test Suite (8 tests)",
+        "actions": [
+          "Write: 4 unit tests for authorization and validation logic",
+          "Test: addUserSport - user can add sport to own profile (201)",
+          "Test: addUserSport - user cannot add sport to other profile (403)",
+          "Test: removeUserSport - user can remove own sport (204)",
+          "Test: removeUserSport - user cannot remove other's sport (403)",
+          "Write: 4 integration tests for controller-repository interaction",
+          "Test: addUserSport - duplicate sport returns 409",
+          "Test: addUserSport - invalid skill_level returns 400",
+          "Test: removeUserSport - non-existent sport returns 404 (or 204)",
+          "Test: Both methods - non-existent user returns 404",
+          "Verify: All 8 tests passing with 90%+ coverage of controller layer"
+        ]
+      }
+    ]
+  }
+}

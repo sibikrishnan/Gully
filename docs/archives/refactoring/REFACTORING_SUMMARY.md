@@ -76,7 +76,7 @@ Optimize project structure for Claude Code efficiency, reduce context pollution,
 2. **Section-Specific Indexes** (dd7b4d6)
    - `docs/INDEX.md` - Documentation hub
    - `docs/architecture/INDEX.md` - Architecture navigator with decision guide
-   - `docs/parallel-development/INDEX.md` - Service briefs with development order
+   - `docs/service-briefs/INDEX.md` - Service briefs with development order
    - `docs/archives/INDEX.md` - Archive navigator with archival process
    - `.claude/context/INDEX.md` - Context sections with loading strategy
 
@@ -111,7 +111,7 @@ Optimize project structure for Claude Code efficiency, reduce context pollution,
 
 2. **All documentation now points to correct locations:**
    - Architecture docs → `docs/architecture/OVERVIEW.md` (not `ARCHITECTURE.md`)
-   - Service briefs → `docs/parallel-development/INDEX.md`
+   - Service briefs → `docs/service-briefs/INDEX.md`
    - Session guide → `docs/guides/CLAUDE_SESSION_GUIDE.md`
    - Master navigator → `INDEX.md`
 
@@ -174,7 +174,7 @@ Optimize project structure for Claude Code efficiency, reduce context pollution,
 │   │   ├── OVERVIEW.md              (NEW - lean overview)
 │   │   ├── TASK_SYSTEM_DESIGN.md
 │   │   └── CONTEXT_OPTIMIZATION_REPORT.md
-│   ├── parallel-development/
+│   ├── service-briefs/
 │   │   ├── INDEX.md                 (NEW - service briefs navigator)
 │   │   └── [Service]-Brief.md       (6 briefs)
 │   ├── planning/                    (existing, unchanged)

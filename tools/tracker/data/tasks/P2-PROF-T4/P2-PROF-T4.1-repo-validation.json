@@ -1,0 +1,94 @@
+{
+  "id": "P2-PROF-T4.1",
+  "version": "1.0",
+  "content": "Implement repository and validation schemas for user sport preferences management",
+  "activeForm": "Implementing repository and validation schemas for user sport preferences management",
+  "description": "Implement user-sports.repository.ts with addUserSport, removeUserSport, and getUserSports methods for managing the user_sports junction table. Implements INSERT/DELETE operations with unique constraint handling (user_id, sport_name). Create Zod validation schemas for POST payload (sport_name, skill_level, years_experience, preferred_position) and DELETE params. Write 8 MVP-tier tests (4 unit tests for repository methods, 4 integration tests for database operations and constraints). This subtask provides the data access layer and validation that will be used by controllers in T4.2.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-PROF-T4.1-repo-validation-tests.json",
+  "workflowRef": "workflows/tdd.json",
+  "planningResultRef": null,
+  "dependencies": [],
+  "blockers": [],
+  "tags": ["user-service", "repository", "validation", "sports", "junction-table", "phase-2"],
+  "estimatedDuration": "30-40 min",
+  "metadata": {
+    "phase": 2,
+    "feature": "User Profiles",
+    "parentTask": "P2-PROF-T4",
+    "subtaskIndex": "4.1",
+    "estimatedTokens": 20000,
+    "testTier": "mvp",
+    "testCount": 8
+  },
+  "workflow": {
+    "planningRequired": true,
+    "checkpoints": [
+      {
+        "name": "Repository Methods Complete",
+        "tokenLimit": 10000,
+        "requirement": "Repository methods addUserSport, removeUserSport, getUserSports implemented with proper SQL queries",
+        "askHuman": false,
+        "exitIfFail": false
+      },
+      {
+        "name": "Validation Schemas and Tests Passing",
+        "tokenLimit": 20000,
+        "requirement": "Zod schemas created and all 8 tests passing (repository methods and database constraints verified)",
+        "askHuman": true,
+        "exitIfFail": false
+      }
+    ],
+    "phases": [
+      {
+        "phase": 1,
+        "name": "Repository Implementation",
+        "required": true,
+        "actions": [
+          "Create: src/services/user-service/repositories/user-sports.repository.ts",
+          "Implement: addUserSport(userId: number, sportData: AddSportPayload): Promise<UserSport>",
+          "Build: SQL INSERT query with unique constraint handling (user_id, sport_name)",
+          "Implement: removeUserSport(userId: number, sportName: string): Promise<boolean>",
+          "Build: SQL DELETE query for user_sports junction table",
+          "Implement: getUserSports(userId: number): Promise<UserSport[]>",
+          "Build: SQL SELECT query with JOIN to sports table (optional)",
+          "Handle: Unique constraint violations (return 409 conflict indicator)",
+          "Handle: Foreign key constraints (user_id must exist in users table)"
+        ],
+        "gate": "All three repository methods must be implemented with proper error handling before proceeding"
+      },
+      {
+        "phase": 2,
+        "name": "Validation Schema Implementation",
+        "actions": [
+          "Create: src/services/user-service/schemas/user-sports.schema.ts",
+          "Implement: addSportSchema with Zod validation",
+          "Validate: sport_name (string, required, enum: ['pickleball', 'paddle'])",
+          "Validate: skill_level (enum: ['beginner', 'intermediate', 'advanced', 'expert'], required)",
+          "Validate: years_experience (number, optional, min: 0, max: 50)",
+          "Validate: preferred_position (string, optional, max: 100 chars)",
+          "Implement: deleteSportSchema for URL params validation",
+          "Validate: userId (number, required) and sportName (string, required)",
+          "Export: schemas for controller use in T4.2"
+        ]
+      },
+      {
+        "phase": 3,
+        "name": "MVP Test Suite (8 tests)",
+        "actions": [
+          "Write: 4 unit tests for repository method logic and query generation",
+          "Test: addUserSport successful insertion",
+          "Test: removeUserSport successful deletion",
+          "Test: getUserSports returns array of sports",
+          "Test: Duplicate sport rejection (unique constraint)",
+          "Write: 4 integration tests for database operations",
+          "Test: INSERT with valid payload succeeds",
+          "Test: INSERT duplicate sport returns conflict",
+          "Test: DELETE existing sport succeeds",
+          "Test: Foreign key constraint on user_id enforced",
+          "Verify: All 8 tests passing with 90%+ coverage of repository and validation layers"
+        ]
+      }
+    ]
+  }
+}

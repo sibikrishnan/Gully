@@ -1,0 +1,37 @@
+{
+  "id": "BUG-001",
+  "title": "Jest mocking fails with circular dependencies",
+  "description": "When attempting to mock UserRepository in controller tests, Jest throws circular dependency errors due to module-load-time instantiation. Controller instantiates repository at module-load time, causing Jest mock hoisting issues.",
+  "severity": "medium",
+  "priority": "P2",
+  "status": "resolved",
+  "category": "testing",
+  "discoveredIn": {
+    "taskId": "P2-PROF-T1.2-controller",
+    "phaseId": "P2",
+    "date": "2025-11-11T10:30:00Z"
+  },
+  "resolution": {
+    "approach": "Switched to integration-style tests with real DB instead of mocked repository",
+    "rationale": "Avoid Jest mocking complexity, use real database for simpler tests. Integration-style unit tests provide same coverage without mocking fragility.",
+    "resolvedDate": "2025-11-11T11:00:00Z",
+    "resolvedBy": "direct-execution",
+    "tokenCost": 5000,
+    "timeCost": "20 min"
+  },
+  "impact": {
+    "blocksTask": false,
+    "blocksPhase": false,
+    "affectedTests": 15
+  },
+  "relatedBugs": [],
+  "workaround": "Use integration tests instead of unit tests with mocks",
+  "prevention": "Document in learnings: Prefer integration-style tests for layered architecture to avoid Jest mocking complexity",
+  "tags": [
+    "testing",
+    "jest",
+    "mocking",
+    "integration-tests",
+    "controller"
+  ]
+}

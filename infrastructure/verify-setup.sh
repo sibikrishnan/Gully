@@ -68,7 +68,7 @@ if [ $? -eq 0 ]; then
     check "Can connect to PostgreSQL"
 else
     echo -e "${YELLOW}⚠️  PostgreSQL container is NOT running${NC}"
-    echo -e "${YELLOW}→ Start with: cd backend && docker compose up -d${NC}"
+    echo -e "${YELLOW}→ Start with: cd services/backend && docker compose up -d${NC}"
 fi
 
 # Redis Container
@@ -82,7 +82,7 @@ if [ $? -eq 0 ]; then
     check "Can connect to Redis"
 else
     echo -e "${YELLOW}⚠️  Redis container is NOT running${NC}"
-    echo -e "${YELLOW}→ Start with: cd backend && docker compose up -d${NC}"
+    echo -e "${YELLOW}→ Start with: cd services/backend && docker compose up -d${NC}"
 fi
 
 # Git
@@ -98,7 +98,8 @@ echo "====================================="
 echo -e "${GREEN}🎉 Infrastructure verification complete!${NC}"
 echo ""
 echo "Next steps:"
-echo "  1. cd backend"
+echo "  1. cd services/backend"
 echo "  2. npm install"
 echo "  3. npm run dev"
 echo ""
+

@@ -1,0 +1,14 @@
+{
+  "id": "P2-ARCH-T9",
+  "version": "1.0",
+  "content": "Add composite indexes for search query optimization",
+  "activeForm": "Adding composite indexes for search query optimization",
+  "description": "Create migration for composite indexes on user_sports (sport_name, skill_level, user_id) and users (created_at, id). Benchmark query performance before/after. Document index strategy.",
+  "status": "pending",
+  "testSuiteRef": "tests/P2-ARCH-T9-tests.json",
+  "workflowRef": "workflows/test-after.json",
+  "dependencies": [],
+  "blockers": [],
+  "tags": ["architecture", "database", "indexes", "performance", "high-value"],
+  "estimatedDuration": "60-75 min"
+}
