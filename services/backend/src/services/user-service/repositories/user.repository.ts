@@ -262,7 +262,7 @@ export class UserRepository {
       return result;
     } catch (error: any) {
       // Handle unique constraint violations
-      if (error.code === '23505') { // PostgreSQL unique violation
+      if (error.code === '23505') { // PostgreSQL unique violation (verified)
         throw new Error('Username already exists');
       }
 

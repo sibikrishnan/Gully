@@ -48,7 +48,7 @@ export class UserSportsRepository {
       return createdSport as UserSport;
     } catch (error: any) {
       // Handle unique constraint violation (duplicate sport)
-      // PostgreSQL: 23505, MySQL: ER_DUP_ENTRY, SQLite: SQLITE_CONSTRAINT
+      // PostgreSQL: 23505 (verified), MySQL: ER_DUP_ENTRY (untested), SQLite: SQLITE_CONSTRAINT (untested)
       if (
         error.code === '23505' ||
         error.code === 'ER_DUP_ENTRY' ||
